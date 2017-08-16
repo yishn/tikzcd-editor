@@ -1,3 +1,4 @@
 import {h, render} from 'preact'
+import App from './components/App'
 
-render(<h1>Hello World!</h1>, document.body)
+render(<App/>, document.body)
