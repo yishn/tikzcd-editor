@@ -1,5 +1,5 @@
 import {h, Component} from 'preact'
-import {renderToDiagram} from 'jsx-tikzcd'
+import classNames from 'classnames'
 import GridCell from './GridCell'
 
 export default class Grid extends Component {
@@ -15,7 +15,21 @@ export default class Grid extends Component {
 
     componentDidMount() {
         this.updateSize()
+
         window.addEventListener('resize', () => this.updateSize())
+        document.addEventListener('mouseup', () => this.mouseDown = null)
+
+        document.addEventListener('mousemove', evt => {
+            if (this.mouseDown == null || !this.props.pannable) return
+
+            evt.preventDefault()
+
+            let {movementX, movementY} = evt
+
+            this.setState(state => ({
+                cameraPosition: state.cameraPosition.map((x, i) => x - [movementX, movementY][i])
+            }))
+        })
     }
 
     updateSize() {
@@ -23,7 +37,14 @@ export default class Grid extends Component {
         this.setState({width, height})
     }
 
+    onMouseDown = evt => {
+        if (evt.button !== 0) return
+        this.mouseDown = evt
+    }
+
     render() {
+        if (this.state.width == null) return <section ref={el => this.element = el} id="grid"/>
+
         let {cellSize} = this.props
         let size = [this.state.width, this.state.height]
         let [xstart, ystart] = this.state.cameraPosition.map(x => Math.floor(x / cellSize))
@@ -31,30 +52,33 @@ export default class Grid extends Component {
         let [cols, rows] = [xend - xstart + 1, yend - ystart + 1]
         let [tx, ty] = [xstart, ystart].map((x, i) => x * cellSize - this.state.cameraPosition[i])
 
-        let diagram = renderToDiagram(this.props.children[0])
-        let nodeKey
-
-        return <section ref={el => this.element = el} id="grid">
-            <ol style={{
-                gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
-                gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
-                left: tx,
-                top: ty,
-                width: cols * cellSize,
-                height: rows * cellSize
-            }}>
+        return <section
+            ref={el => this.element = el}
+            id="grid"
+            class={classNames({pannable: this.props.pannable})}
+        >
+            <ol
+                style={{
+                    gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
+                    gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
+                    left: tx,
+                    top: ty,
+                    width: cols * cellSize,
+                    height: rows * cellSize
+                }}
+                onMouseDown={this.onMouseDown}
+            >
                 {Array(rows).fill().map((_, j) =>
                     Array(cols).fill().map((_, i) =>
-                        <GridCell
-                            key={[i + xstart, j + ystart].join(',')}
-                            position={[i + xstart, j + ystart]}
-                            size={cellSize}
-                        >
-                            {(nodeKey = Object.keys(diagram.nodes).find(key =>
-                                diagram.nodes[key].attributes.position
-                                    .every((x, k) => x === [i + xstart, j + ystart][k])
-                            )) && diagram.nodes[nodeKey].attributes.value}
-                        </GridCell>
+                        (position =>
+                            <GridCell
+                                key={position.join(',')}
+                                position={position}
+                                size={cellSize}
+                            >
+                                {this.props.data.nodes[position]}
+                            </GridCell>
+                        )([i + xstart, j + ystart])
                     )
                 )}
             </ol>

@@ -20,12 +20,19 @@ body, html {
         display: grid;
         position: relative;
         list-style: none;
+    }
+    #grid.pannable ol {
+        cursor: -webkit-grab;
+    }
+    #grid.pannable:active ol {
+        cursor: -webkit-grabbing;
 }
 
 #grid li {
         display: grid;
-        border-right: 5px dashed #ccc;
-        border-bottom: 5px dashed #ccc;
+        border: 2px dashed #ccc;
+        border-top: none;
+        border-left: none;
         transition: background .2s;
     }
     #grid li:hover {
@@ -33,4 +40,4 @@ body, html {
     }
     #grid li .latex {
         margin: auto;
-    }
+}
