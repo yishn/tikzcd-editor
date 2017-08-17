@@ -14,7 +14,7 @@ export default class GridCell extends Component {
     }
 
     render() {
-        return <li data-position={this.props.position.join(',')}>
+        return <li class="grid-cell" data-position={this.props.position.join(',')}>
             <div class="latex" ref={el => this.latexElement = el}>
                 {this.props.children[0]
                     ? `\\(${this.props.children[0]}\\)`

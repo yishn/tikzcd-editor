@@ -32,9 +32,14 @@ body, html {
     }
     #grid.pan:active ol {
         cursor: -webkit-grabbing;
+    }
+    #grid ul {
+        list-style: none;
+        height: 0;
+        width: 0;
 }
 
-#grid li {
+#grid .grid-cell {
         display: grid;
         border: 2px dashed #ccc;
         border-top: none;
@@ -43,10 +48,10 @@ body, html {
         white-space: nowrap;
         transition: background .2s;
     }
-    #grid li:hover {
+    #grid .grid-cell:hover {
         background: #eee;
     }
-    #grid li .latex {
+    #grid .grid-cell .latex {
         margin: auto;
 }
 

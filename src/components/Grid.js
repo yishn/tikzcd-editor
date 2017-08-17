@@ -1,6 +1,8 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
+
 import GridCell from './GridCell'
+import GridEdge from './GridEdge'
 
 export default class Grid extends Component {
     constructor(props) {
@@ -84,6 +86,17 @@ export default class Grid extends Component {
                     )
                 )}
             </ol>
+
+            <ul
+                style={{
+                    left: -this.state.cameraPosition[0],
+                    top: -this.state.cameraPosition[1]
+                }}
+            >
+                {this.props.data.edges.map(edge =>
+                    <GridEdge from={edge.from} to={edge.to} />
+                )}
+            </ul>
         </section>
     }
 }
