@@ -1,0 +1,36 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    height: 100%;
+}
+
+#grid {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    #grid ol {
+        display: grid;
+        position: relative;
+        list-style: none;
+}
+
+#grid li {
+        display: grid;
+        border-right: 5px dashed #ccc;
+        border-bottom: 5px dashed #ccc;
+        transition: background .2s;
+    }
+    #grid li:hover {
+        background: #eee;
+    }
+    #grid li .latex {
+        margin: auto;
+    }
