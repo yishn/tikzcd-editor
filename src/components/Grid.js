@@ -94,7 +94,11 @@ export default class Grid extends Component {
                 }}
             >
                 {this.props.data.edges.map(edge =>
-                    <GridEdge from={edge.from} to={edge.to} />
+                    <GridEdge
+                        from={edge.from}
+                        to={edge.to}
+                        cellSize={cellSize}
+                    />
                 )}
             </ul>
         </section>

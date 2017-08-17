@@ -34,7 +34,10 @@ body, html {
         cursor: -webkit-grabbing;
     }
     #grid ul {
+        position: absolute;
         list-style: none;
+        left: 0;
+        top: 0;
         height: 0;
         width: 0;
 }
@@ -53,6 +56,10 @@ body, html {
     }
     #grid .grid-cell .latex {
         margin: auto;
+}
+
+#grid .grid-edge {
+    position: absolute;
 }
 
 #toolbox {
