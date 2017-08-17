@@ -8,13 +8,28 @@ export default class Grid extends Component {
 
         this.state = {
             width: null,
-            height: null
+            height: null,
+            cameraPosition: Array(2).fill(Math.round(-props.cellSize / 2))
         }
     }
 
     componentDidMount() {
         this.updateSize()
+
         window.addEventListener('resize', () => this.updateSize())
+        document.addEventListener('mouseup', () => this.mouseDown = null)
+
+        document.addEventListener('mousemove', evt => {
+            if (this.mouseDown == null || !this.props.pannable) return
+
+            evt.preventDefault()
+
+            let {movementX, movementY} = evt
+
+            this.setState(state => ({
+                cameraPosition: state.cameraPosition.map((x, i) => x - [movementX, movementY][i])
+            }))
+        })
     }
 
     updateSize() {
@@ -22,17 +37,26 @@ export default class Grid extends Component {
         this.setState({width, height})
     }
 
+    onMouseDown = evt => {
+        if (evt.button !== 0) return
+        this.mouseDown = evt
+    }
+
     render() {
         if (this.state.width == null) return <section ref={el => this.element = el} id="grid"/>
 
-        let {cellSize, cameraPosition} = this.props
+        let {cellSize} = this.props
         let size = [this.state.width, this.state.height]
-        let [xstart, ystart] = cameraPosition.map(x => Math.floor(x / cellSize))
-        let [xend, yend] = cameraPosition.map((x, i) => Math.floor((x + size[i]) / cellSize))
+        let [xstart, ystart] = this.state.cameraPosition.map(x => Math.floor(x / cellSize))
+        let [xend, yend] = this.state.cameraPosition.map((x, i) => Math.floor((x + size[i]) / cellSize))
         let [cols, rows] = [xend - xstart + 1, yend - ystart + 1]
-        let [tx, ty] = [xstart, ystart].map((x, i) => x * cellSize - cameraPosition[i])
+        let [tx, ty] = [xstart, ystart].map((x, i) => x * cellSize - this.state.cameraPosition[i])
 
-        return <section ref={el => this.element = el} id="grid">
+        return <section
+            ref={el => this.element = el}
+            id="grid"
+            class={classNames({pannable: this.props.pannable})}
+        >
             <ol
                 style={{
                     gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
@@ -42,6 +66,7 @@ export default class Grid extends Component {
                     width: cols * cellSize,
                     height: rows * cellSize
                 }}
+                onMouseDown={this.onMouseDown}
             >
                 {Array(rows).fill().map((_, j) =>
                     Array(cols).fill().map((_, i) =>
