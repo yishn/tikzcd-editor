@@ -20,15 +20,17 @@ export default class Grid extends Component {
         document.addEventListener('mouseup', () => this.mouseDown = null)
 
         document.addEventListener('mousemove', evt => {
-            if (this.mouseDown == null || !this.props.pannable) return
+            if (this.mouseDown == null) return
 
             evt.preventDefault()
 
-            let {movementX, movementY} = evt
+            if (this.props.mode === 'pan') {
+                let {movementX, movementY} = evt
 
-            this.setState(state => ({
-                cameraPosition: state.cameraPosition.map((x, i) => x - [movementX, movementY][i])
-            }))
+                this.setState(state => ({
+                    cameraPosition: state.cameraPosition.map((x, i) => x - [movementX, movementY][i])
+                }))
+            }
         })
     }
 
@@ -55,7 +57,7 @@ export default class Grid extends Component {
         return <section
             ref={el => this.element = el}
             id="grid"
-            class={classNames({pannable: this.props.pannable})}
+            class={classNames({[this.props.mode]: true})}
         >
             <ol
                 style={{

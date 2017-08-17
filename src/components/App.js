@@ -43,7 +43,10 @@ export default class App extends Component {
                     />
                 )}
 
-                {this.state.diagram.edges.map(edge =>
+                {this.state.diagram.edges.map(edge => [
+                    <Node key={edge.from.join(',')} position={edge.from} />,
+                    <Node key={edge.to.join(',')} position={edge.to} />,
+
                     <Edge
                         from={edge.from.join(',')}
                         to={edge.to.join(',')}
@@ -51,7 +54,7 @@ export default class App extends Component {
                         alt={edge.alt}
                         args={edge.args}
                     />
-                )}
+                ])}
             </Diagram>
         ))(th)
     }
@@ -70,7 +73,7 @@ export default class App extends Component {
             <Grid
                 cellSize={130}
                 data={this.state.diagram}
-                pannable={this.state.tool === 'pan'}
+                mode={this.state.tool}
             />
 
             <Toolbox

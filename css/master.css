@@ -21,10 +21,16 @@ body, html {
         position: relative;
         list-style: none;
     }
-    #grid.pannable ol {
+    #grid.arrow ol {
+        cursor: crosshair;
+    }
+    #grid.move ol {
+        cursor: move;
+    }
+    #grid.pan ol {
         cursor: -webkit-grab;
     }
-    #grid.pannable:active ol {
+    #grid.pan:active ol {
         cursor: -webkit-grabbing;
 }
 
@@ -33,6 +39,8 @@ body, html {
         border: 2px dashed #ccc;
         border-top: none;
         border-left: none;
+        overflow: hidden;
+        white-space: nowrap;
         transition: background .2s;
     }
     #grid li:hover {
