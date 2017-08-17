@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "copy-text-to-clipboard": "^1.0.2",
     "jsx-tikzcd": "^0.1.2",
     "preact": "^8.2.1"
   },

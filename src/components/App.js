@@ -1,4 +1,7 @@
 import {h, Component} from 'preact'
+import {h as th, render as renderToTeX, Diagram, Node, Edge} from 'jsx-tikzcd'
+import copy from 'copy-text-to-clipboard'
+
 import Grid from './grid'
 import Toolbox from './toolbox'
 
@@ -29,9 +32,36 @@ export default class App extends Component {
         }
     }
 
+    getTeX() {
+        return (h => renderToTeX(
+            <Diagram>
+                {Object.keys(this.state.diagram.nodes).map(key =>
+                    <Node
+                        key={key}
+                        position={key.split(',').map(x => +x)}
+                        value={this.state.diagram.nodes[key]}
+                    />
+                )}
+
+                {this.state.diagram.edges.map(edge =>
+                    <Edge
+                        from={edge.from.join(',')}
+                        to={edge.to.join(',')}
+                        value={edge.value}
+                        alt={edge.alt}
+                        args={edge.args}
+                    />
+                )}
+            </Diagram>
+        ))(th)
+    }
+
     onToolClick = evt => {
-        if (evt.id === 'code') return
-        
+        if (evt.id === 'code') {
+            let success = copy(this.getTeX())
+            return
+        }
+
         this.setState({tool: evt.id})
     }
 

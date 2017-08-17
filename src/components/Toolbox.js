@@ -25,7 +25,7 @@ export default class Toolbox extends Component {
 
                 <Separator/>
 
-                <Item tool={this.props.tool} id="code" name="Export" onClick={this.onItemClick} />
+                <Item tool={this.props.tool} id="code" name="Copy Code" onClick={this.onItemClick} />
             </ul>
         </section>
     }
