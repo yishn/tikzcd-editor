@@ -16,16 +16,22 @@ body, html {
         height: 100%;
         overflow: hidden;
     }
+    .tool-pan #grid {
+        cursor: -webkit-grab;
+    }
+    .tool-pan #grid:active {
+        cursor: -webkit-grabbing;
+    }
+    .tool-move #grid {
+        cursor: move;
+    }
+    .tool-arrow #grid {
+        cursor: crosshair;
+    }
     #grid ol {
         display: grid;
         position: relative;
         list-style: none;
-    }
-    #grid.pannable ol {
-        cursor: -webkit-grab;
-    }
-    #grid.pannable:active ol {
-        cursor: -webkit-grabbing;
 }
 
 #grid li {
@@ -43,18 +49,20 @@ body, html {
 }
 
 #toolbox {
+        display: grid;
         position: absolute;
-        left: 50%;
+        left: 0;
+        width: 100%;
         bottom: 2em;
-        padding: 0 .5em;
-        background: rgba(221, 221, 221, .7);
-        box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
-        transform: translateX(-50%);
     }
     #toolbox ul {
         display: flex;
         flex-wrap: nowrap;
         align-items: stretch;
+        margin: 0 auto;
+        padding: 0 .5em;
+        background: rgba(221, 221, 221, .7);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
         list-style: none;
     }
     #toolbox li {
@@ -64,7 +72,7 @@ body, html {
         margin: 0 .5em;
         padding-left: 0;
         padding-right: 0;
-        width: 1px;
+        width: 2px;
         height: calc(24px + 1em);
         background: #aaa;
         text-indent: -9999em;

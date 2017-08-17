@@ -1,4 +1,5 @@
 import {h, Component} from 'preact'
+import classNames from 'classnames'
 import Grid from './grid'
 import Toolbox from './toolbox'
 
@@ -8,6 +9,8 @@ export default class App extends Component {
 
         this.state = {
             tool: 'pan',
+            cellSize: 130,
+            cameraPosition: [-60, -60],
             diagram: {
                 nodes: {
                     '1,1': 'T',
@@ -29,18 +32,42 @@ export default class App extends Component {
         }
     }
 
+    componentDidMount() {
+        document.addEventListener('mousedown', evt => {
+            if (evt.button !== 0) return
+            this.mouseDown = evt
+        })
+
+        document.addEventListener('mouseup', () => {
+            this.mouseDown = null
+        })
+
+        document.addEventListener('mousemove', evt => {
+            if (this.mouseDown == null) return
+            evt.preventDefault()
+
+            if (this.state.tool === 'pan') {
+                let diff = [evt.movementX, evt.movementY]
+
+                this.setState(({cameraPosition}) => ({
+                    cameraPosition: cameraPosition.map((x, i) => x - diff[i])
+                }))
+            }
+        })
+    }
+
     onToolClick = evt => {
         if (evt.id === 'code') return
-        
+
         this.setState({tool: evt.id})
     }
 
     render() {
-        return <div id="root">
+        return <div id="root" class={classNames({[`tool-${this.state.tool}`]: true})}>
             <Grid
-                cellSize={130}
+                cellSize={this.state.cellSize}
+                cameraPosition={this.state.cameraPosition}
                 data={this.state.diagram}
-                pannable={this.state.tool === 'pan'}
             />
 
             <Toolbox
