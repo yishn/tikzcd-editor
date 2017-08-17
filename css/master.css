@@ -41,3 +41,45 @@ body, html {
     #grid li .latex {
         margin: auto;
 }
+
+#toolbox {
+        position: absolute;
+        left: 50%;
+        bottom: 2em;
+        padding: 0 .5em;
+        background: rgba(221, 221, 221, .7);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
+        transform: translateX(-50%);
+    }
+    #toolbox ul {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        list-style: none;
+    }
+    #toolbox li {
+        padding: .5em;
+    }
+    #toolbox li.separator {
+        margin: 0 .5em;
+        padding-left: 0;
+        padding-right: 0;
+        width: 1px;
+        height: calc(24px + 1em);
+        background: #aaa;
+        text-indent: -9999em;
+    }
+    #toolbox li:not(.separator):hover {
+        background: #ccc;
+    }
+    #toolbox li:not(.separator).current {
+        background: #bbb;
+    }
+    #toolbox li:not(.separator):active {
+        background: #aaa;
+    }
+    #toolbox li img {
+        vertical-align: bottom;
+        width: 24px;
+        height: 24px;
+}

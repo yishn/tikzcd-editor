@@ -1,5 +1,6 @@
 import {h, Component} from 'preact'
 import Grid from './grid'
+import Toolbox from './toolbox'
 
 export default class App extends Component {
     constructor() {
@@ -28,11 +29,24 @@ export default class App extends Component {
         }
     }
 
+    onToolClick = evt => {
+        if (evt.id === 'code') return
+        
+        this.setState({tool: evt.id})
+    }
+
     render() {
-        return <Grid
-            cellSize={130}
-            data={this.state.diagram}
-            pannable={this.state.tool === 'pan'}
-        />
+        return <div id="root">
+            <Grid
+                cellSize={130}
+                data={this.state.diagram}
+                pannable={this.state.tool === 'pan'}
+            />
+
+            <Toolbox
+                tool={this.state.tool}
+                onItemClick={this.onToolClick}
+            />
+        </div>
     }
 }
