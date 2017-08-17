@@ -80,7 +80,11 @@ export default class Grid extends Component {
                                 position={position}
                                 size={cellSize}
                             >
-                                {this.props.data.nodes[position]}
+                                {(node =>
+                                    node && node.value
+                                )(this.props.data.nodes
+                                    .find(x => x.position.every((y, k) => y === position[k]))
+                                )}
                             </GridCell>
                         )([i + xstart, j + ystart])
                     )
@@ -95,8 +99,8 @@ export default class Grid extends Component {
             >
                 {this.props.data.edges.map(edge =>
                     <GridEdge
-                        from={edge.from}
-                        to={edge.to}
+                        from={this.props.data.nodes[edge.from].position}
+                        to={this.props.data.nodes[edge.to].position}
                         cellSize={cellSize}
                     />
                 )}

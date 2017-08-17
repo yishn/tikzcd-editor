@@ -12,21 +12,21 @@ export default class App extends Component {
         this.state = {
             tool: 'pan',
             diagram: {
-                nodes: {
-                    '1,1': 'T',
-                    '2,1': 'X',
-                    '2,2': 'Z',
-                    '1,2': 'Y',
-                    '0,0': 'X\\times_Z Y'
-                },
+                nodes: [
+                    {position: [1, 1], value: 'T'},
+                    {position: [2, 1], value: 'X'},
+                    {position: [2, 2], value: 'Z'},
+                    {position: [1, 2], value: 'Y'},
+                    {position: [0, 0], value: 'X\\times_Z Y'}
+                ],
                 edges: [
-                    {from: [2, 1], to: [2, 2]},
-                    {from: [1, 2], to: [2, 2]},
-                    {from: [1, 1], to: [2, 1]},
-                    {from: [1, 1], to: [1, 2]},
-                    {from: [0, 0], to: [1, 1], value: '\\phi'},
-                    {from: [0, 0], to: [2, 1], value: 'p_X'},
-                    {from: [0, 0], to: [1, 2], value: 'p_Y'}
+                    {from: 1, to: 2},
+                    {from: 3, to: 2},
+                    {from: 0, to: 1},
+                    {from: 0, to: 3},
+                    {from: 4, to: 0, value: '\\phi'},
+                    {from: 4, to: 1, value: 'p_X'},
+                    {from: 4, to: 3, value: 'p_Y'}
                 ]
             }
         }
@@ -35,21 +35,18 @@ export default class App extends Component {
     getTeX() {
         return (h => renderToTeX(
             <Diagram>
-                {Object.keys(this.state.diagram.nodes).map(key =>
+                {this.state.diagram.nodes.map((node, i) =>
                     <Node
-                        key={key}
-                        position={key.split(',').map(x => +x)}
-                        value={this.state.diagram.nodes[key]}
+                        key={i.toString()}
+                        position={node.position}
+                        value={node.value}
                     />
                 )}
 
                 {this.state.diagram.edges.map(edge => [
-                    <Node key={edge.from.join(',')} position={edge.from} />,
-                    <Node key={edge.to.join(',')} position={edge.to} />,
-
                     <Edge
-                        from={edge.from.join(',')}
-                        to={edge.to.join(',')}
+                        from={edge.from.toString()}
+                        to={edge.to.toString()}
                         value={edge.value}
                         alt={edge.alt}
                         args={edge.args}
