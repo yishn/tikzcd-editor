@@ -56,6 +56,8 @@ body, html {
         position: absolute;
         left: 2px;
         top: 2px;
+        width: 12px;
+        height: 12px;
         cursor: move;
         opacity: 0;
     }

@@ -1,5 +1,6 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
+import {getRectCenteredAround, getRectSegmentIntersections} from '../geometry'
 
 export default class GridEdge extends Component {
     constructor(props) {
@@ -8,7 +9,8 @@ export default class GridEdge extends Component {
         this.state = {
             labelX: '50%',
             labelY: 0,
-            lengthContraction: Math.sqrt(2 * props.cellSize * props.cellSize) / 3
+            startPoint: props.from.map(x => x * props.cellSize + props.cellSize / 2),
+            endPoint: props.to.map(x => x * props.cellSize + props.cellSize / 2)
         }
     }
 
@@ -16,19 +18,25 @@ export default class GridEdge extends Component {
         this.componentDidUpdate()
     }
 
-    shouldComponentUpdate(prevProps, prevState) {
-        for (let key in prevProps) {
-            if (prevProps[key] !== this.props[key]) return true
+    shouldComponentUpdate(nextProps, nextState) {
+        for (let key in nextProps) {
+            if (nextProps[key] instanceof Array
+                && nextProps[key].some((x, i) => x !== this.props[key][i])
+                || !(nextProps[key] instanceof Array)
+                && nextProps[key] !== this.props[key]) return true
         }
 
-        for (let key in prevState) {
-            if (prevState[key] !== this.state[key]) return true
+        for (let key in nextState) {
+            if (nextState[key] instanceof Array
+                && nextState[key].some((x, i) => x !== this.state[key][i])
+                || !(nextState[key] instanceof Array)
+                && nextState[key] !== this.state[key]) return true
         }
 
         return false
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
             span.remove()
         }
@@ -51,36 +59,43 @@ export default class GridEdge extends Component {
                     + (+!!this.props.alt * 2 - 1) * ((newHeight - height) / 2 + 5)
             })
 
+            let {cellSize} = this.props
             let query = position => `.grid-cell[data-position="${position.join(',')}"] .value`
+
             let fromLatexElement = document.querySelector(query(this.props.from))
             let toLatexElement = document.querySelector(query(this.props.to))
 
             let {width: fromWidth, height: fromHeight} = fromLatexElement.getBoundingClientRect()
             let {width: toWidth, height: toHeight} = toLatexElement.getBoundingClientRect()
 
-            let diagonal = [[fromWidth, fromHeight], [toWidth, toHeight]]
-                .map(([w, h]) => Math.sqrt(w * w + h * h))
-                .reduce((acc, x) => Math.max(acc, x))
+            let [fromCenter, toCenter] = [this.props.from, this.props.to]
+                .map(x => x.map(y => y * cellSize + cellSize / 2))
+
+            let fromRect = getRectCenteredAround(fromCenter, fromWidth, fromHeight)
+            let toRect = getRectCenteredAround(toCenter, toWidth, toHeight)
+            let fromIntersection = getRectSegmentIntersections(fromRect, fromCenter, toCenter)[0]
+            let toIntersection = getRectSegmentIntersections(toRect, fromCenter, toCenter)[0]
 
             this.setState({
-                lengthContraction: diagonal
+                startPoint: fromIntersection,
+                endPoint: toIntersection
             })
         })
     }
 
     getAngle() {
-        let {from, to, cellSize} = this.props
-        let [dx, dy] = to.map((x, i) => (x - from[i]) * cellSize)
+        let {startPoint, endPoint} = this.state
+        let [dx, dy] = endPoint.map((x, i) => x - startPoint[i])
 
         return Math.atan2(dy, dx)
     }
 
     render() {
-        let {cellSize} = this.props
-        let [dx, dy] = this.props.to.map((x, i) => (x - this.props.from[i]) * cellSize)
-        let [mx, my] = this.props.to.map((x, i) => (x + this.props.from[i] + 1) * cellSize / 2)
+        let {startPoint, endPoint} = this.state
+        let [dx, dy] = endPoint.map((x, i) => x - startPoint[i])
+        let [mx, my] = endPoint.map((x, i) => (x + startPoint[i]) / 2)
 
-        let length = Math.sqrt(dx * dx + dy * dy) - this.state.lengthContraction
+        let length = Math.sqrt(dx * dx + dy * dy) - 20
         let angle = this.getAngle() * 180 / Math.PI
 
         let bend = this.props.bend == null ? 0 : -this.props.bend
@@ -101,7 +116,7 @@ export default class GridEdge extends Component {
                 ref={el => this.svgElement = el}
                 width={length}
                 height={height}
-                style={{marginTop: bend * 0.7}}
+                style={{marginTop: bend * 0.5}}
             >
                 <path
                     ref={el => this.edgePath = el}
@@ -133,7 +148,7 @@ export default class GridEdge extends Component {
                 class={classNames({alt: this.props.alt}, 'value')}
                 style={{
                     left: this.state.labelX,
-                    top: this.state.labelY + bend * 0.7,
+                    top: this.state.labelY + bend * 0.5,
                     transform: `rotate(${-angle}deg)`
                 }}
             >

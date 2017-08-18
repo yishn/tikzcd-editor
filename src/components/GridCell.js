@@ -30,8 +30,6 @@ export default class GridCell extends Component {
             <img
                 class="grabber"
                 src="./img/grabber.svg"
-                width="16"
-                height="16"
                 onMouseDown={this.handleGrabberMouseDown}
             />
 
