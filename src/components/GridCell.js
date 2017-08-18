@@ -12,13 +12,11 @@ export default class GridCell extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (!this.props.edit) {
-            for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
-                span.remove()
-            }
-
-            MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
+        for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
+            span.remove()
         }
+
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
 
         if (this.inputElement != null && prevProps.edit !== this.props.edit) {
             this.inputElement.select()

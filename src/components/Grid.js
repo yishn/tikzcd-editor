@@ -1,5 +1,6 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
+import {getId} from '../helper'
 
 import GridCell from './GridCell'
 import GridEdge from './GridEdge'
@@ -130,15 +131,16 @@ export default class Grid extends Component {
 
         if (index < 0) {
             if (evt.value.trim() !== '') {
-                nodes.push({position: evt.position, value: evt.value})
+                nodes.push({id: getId(), position: evt.position, value: evt.value})
             }
         } else {
-            nodes[index] = {position: [...evt.position], value: evt.value}
+            let {id} = nodes[index]
+            nodes[index] = {id, position: [...evt.position], value: evt.value}
 
             if (evt.value.trim() === '') {
                 // Cleanup if necessary
-                
-                let existingEdge = this.props.data.edges.find(e => e.from === index || e.to === index)
+
+                let existingEdge = this.props.data.edges.find(e => e.from === id || e.to === id)
                 if (!existingEdge) nodes[index] = null
             }
         }
@@ -210,8 +212,8 @@ export default class Grid extends Component {
             >
                 {this.props.data.edges.map(edge =>
                     <GridEdge
-                        from={this.props.data.nodes[edge.from].position}
-                        to={this.props.data.nodes[edge.to].position}
+                        from={this.props.data.nodes.find(n => n.id === edge.from).position}
+                        to={this.props.data.nodes.find(n => n.id === edge.to).position}
 
                         bend={edge.bend}
                         dashed={edge.dashed}
