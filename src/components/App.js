@@ -1,6 +1,6 @@
 import {h, render, Component} from 'preact'
-import {h as th, render as renderToTeX, Diagram, Node, Edge} from 'jsx-tikzcd'
 import copy from 'copy-text-to-clipboard'
+import * as diagram from '../diagram'
 
 import Grid from './grid'
 import Toolbox from './toolbox'
@@ -34,7 +34,7 @@ export default class App extends Component {
 
     componentDidMount() {
         // Switch tool when holding Control
-        
+
         document.addEventListener('keydown', evt => {
             if (evt.keyCode === 17) {
                 // Control
@@ -58,51 +58,9 @@ export default class App extends Component {
         })
     }
 
-    getTeX() {
-        return (h => renderToTeX(
-            <Diagram>
-                {this.state.diagram.nodes.map((node, i) =>
-                    <Node
-                        key={i.toString()}
-                        position={node.position}
-                        value={node.value}
-                    />
-                )}
-
-                {this.state.diagram.edges.map(edge => [
-                    <Edge
-                        from={edge.from.toString()}
-                        to={edge.to.toString()}
-                        value={edge.value}
-                        alt={edge.alt}
-                        args={[
-                            ...[edge.head, edge.tail].map((id, i) => ({
-                                none: ['no head', null][i],
-                                default: null,
-                                harpoon: 'harpoon',
-                                harpoonalt: "harpoon'",
-                                hook: 'hook',
-                                hookalt: "hook'",
-                                mapsto: 'maps to',
-                                tail: 'tail',
-                                twoheads: 'two heads'
-                            })[id]),
-
-                            edge.dashed ? 'dashed' : null,
-
-                            edge.bend > 0 ? `bend left=${edge.bend}`.replace('=30', '')
-                            : edge.bend < 0 ? `bend right=${-edge.bend}`.replace('=30', '')
-                            : null
-                        ].filter(x => x)}
-                    />
-                ])}
-            </Diagram>
-        ))(th)
-    }
-
     handleToolClick = evt => {
         if (evt.id === 'code') {
-            copy(this.getTeX())
+            copy(diagram.toTeX(this.state.diagram))
 
             return
         } else if (evt.id === 'about') {

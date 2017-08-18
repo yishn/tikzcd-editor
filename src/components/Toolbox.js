@@ -1,7 +1,8 @@
 import {h, Component} from 'preact'
+import classNames from 'classnames'
 
-const Item = ({currentTool, id, name, onClick}) => (
-    <li class={currentTool === id ? 'current' : null} data-id={id} title={name} onClick={onClick}>
+const Item = ({current, id, name, onClick}) => (
+    <li class={classNames({current})} data-id={id} title={name} onClick={onClick}>
         <img
             style={{backgroundImage: `url(./img/tools/${id}.svg)`}}
             src="./img/tools/blank.svg"
@@ -44,14 +45,14 @@ export default class Toolbox extends Component {
         return <section id="toolbox">
             <ul>
                 <Item
-                    currentTool={this.props.tool}
+                    current={this.props.tool === 'pan'}
                     id="pan"
                     name="Pan Tool"
                     onClick={this.handleItemClick}
                 />
 
                 <Item
-                    currentTool={this.props.tool}
+                    current={this.props.tool === 'arrow'}
                     id="arrow"
                     name="Arrow Tool"
                     onClick={this.handleItemClick}
