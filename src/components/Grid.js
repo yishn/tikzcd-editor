@@ -32,6 +32,30 @@ export default class Grid extends Component {
                 this.setState(state => ({
                     cameraPosition: state.cameraPosition.map((x, i) => x - [movementX, movementY][i])
                 }))
+            } else if (this.props.mode === 'move') {
+                let {node} = this.mouseDown
+                if (node == null) return
+
+                let {cellSize} = this.props
+                let {cameraPosition} = this.state
+                let newPosition = [evt.clientX, evt.clientY]
+                    .map((x, i) => Math.floor((x + cameraPosition[i]) / cellSize))
+                let existingNode = this.props.data.nodes
+                    .find(x => x.position.every((y, i) => y === newPosition[i]))
+
+                if (existingNode != null) return
+
+                let {onDataChange = () => {}} = this.props
+
+                onDataChange({
+                    data: {
+                        nodes: (nodes =>
+                            (nodes[nodes.indexOf(node)].position = newPosition, nodes)
+                        )(this.props.data.nodes.slice()),
+
+                        edges: this.props.data.edges
+                    }
+                })
             }
         })
     }
@@ -41,9 +65,28 @@ export default class Grid extends Component {
         this.setState({width, height})
     }
 
-    onMouseDown = evt => {
+    handleNodeMouseDown = evt => {
         if (evt.button !== 0) return
-        this.mouseDown = evt
+
+        let {cellSize} = this.props
+        let {cameraPosition} = this.state
+        let position = [evt.clientX, evt.clientY]
+            .map((x, i) => Math.floor((x + cameraPosition[i]) / cellSize))
+        let node = this.props.data.nodes
+            .find(x => x.position.every((y, i) => y === position[i]))
+
+        this.mouseDown = {evt, position, node}
+    }
+
+    handleNodeMouseUp = evt => {
+        if (this.mouseDown == null) return
+
+        let oldEvt = this.mouseDown.evt
+        if (evt.clientX !== oldEvt.clientX || evt.clientY !== oldEvt.clientY) return
+
+        let {onNodeClick = () => {}} = this.props
+
+        onNodeClick(this.mouseDown)
     }
 
     render() {
@@ -70,7 +113,8 @@ export default class Grid extends Component {
                     width: cols * cellSize,
                     height: rows * cellSize
                 }}
-                onMouseDown={this.onMouseDown}
+                onMouseDown={this.handleNodeMouseDown}
+                onMouseUp={this.handleNodeMouseUp}
             >
                 {Array(rows).fill().map((_, j) =>
                     Array(cols).fill().map((_, i) =>

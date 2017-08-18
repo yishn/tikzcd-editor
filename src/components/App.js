@@ -74,13 +74,21 @@ export default class App extends Component {
         ))(th)
     }
 
-    onToolClick = evt => {
+    handleToolClick = evt => {
         if (evt.id === 'code') {
-            let success = copy(this.getTeX())
+            copy(this.getTeX())
             return
         }
 
         this.setState({tool: evt.id})
+    }
+
+    handleNodeClick = evt => {
+        console.log(evt)
+    }
+
+    handleDataChange = evt => {
+        this.setState({diagram: evt.data})
     }
 
     render() {
@@ -89,11 +97,14 @@ export default class App extends Component {
                 cellSize={130}
                 data={this.state.diagram}
                 mode={this.state.tool}
+
+                onNodeClick={this.handleNodeClick}
+                onDataChange={this.handleDataChange}
             />
 
             <Toolbox
                 tool={this.state.tool}
-                onItemClick={this.onToolClick}
+                onItemClick={this.handleToolClick}
             />
         </div>
     }
