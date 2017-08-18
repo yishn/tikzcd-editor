@@ -20,11 +20,11 @@ export default class App extends Component {
                     {position: [0, 0], value: 'X\\times_Z Y'}
                 ],
                 edges: [
-                    {from: 1, to: 2, tail: 'hookalt'},
+                    {from: 1, to: 2, tail: 'hookalt', head: 'none'},
                     {from: 3, to: 2, tail: 'mapsto', head: 'harpoonalt'},
                     {from: 0, to: 1, value: 'f', tail: 'tail', head: 'twoheads'},
                     {from: 0, to: 3, value: 'g\\circ h', alt: true, dashed: true},
-                    {from: 4, to: 0, value: '\\phi', tail: 'hook'},
+                    {from: 4, to: 0, value: '\\phi', tail: 'hook', head: 'harpoon'},
                     {from: 4, to: 1, value: 'p_X', tail: 'hook', bend: 30},
                     {from: 4, to: 3, value: 'p_Y', alt: true, tail: 'tail', bend: -30}
                 ]

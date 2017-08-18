@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="3.089" height="6.483">
-  <path fill="none" stroke="#000" stroke-width=".498" stroke-miterlimit="10" d="M1.71 3.243h1.38"/>
-  <path fill="none" stroke="#000" stroke-width=".498" stroke-miterlimit="10" d="M1.544 5.283V1.2" stroke-linecap="round"/>
+  <g fill="none" stroke="#000" stroke-width=".498" stroke-miterlimit="10">
+    <path d="M1.71 3.243h1.38"/>
+    <path d="M1.544 5.283V1.2" stroke-linecap="round"/>
+  </g>
 </svg>
