@@ -32,6 +32,32 @@ export default class App extends Component {
         }
     }
 
+    componentDidMount() {
+        // Switch tool when holding Control
+        
+        document.addEventListener('keydown', evt => {
+            if (evt.keyCode === 17) {
+                // Control
+
+                if (this.prevTool != null) return
+
+                this.prevTool = this.state.tool
+                this.setState({tool: this.prevTool === 'pan' ? 'arrow' : 'pan'})
+            }
+        })
+
+        document.addEventListener('keyup', evt => {
+            if (evt.keyCode === 17) {
+                // Control
+
+                if (this.prevTool == null) return
+
+                this.setState({tool: this.prevTool})
+                this.prevTool = null
+            }
+        })
+    }
+
     getTeX() {
         return (h => renderToTeX(
             <Diagram>
