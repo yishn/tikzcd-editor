@@ -2,12 +2,13 @@ import {h, Component} from 'preact'
 import classNames from 'classnames'
 
 export default class GridEdge extends Component {
-    constructor() {
+    constructor(props) {
         super()
 
         this.state = {
             labelX: '50%',
-            labelY: 0
+            labelY: 0,
+            lengthContraction: Math.sqrt(2 * props.cellSize * props.cellSize) / 3
         }
     }
 
@@ -47,7 +48,22 @@ export default class GridEdge extends Component {
             this.setState({
                 labelX: `calc(50% + ${-width / 2}px)`,
                 labelY: (this.props.alt ? bbox.y + bbox.height : bbox.y - height)
-                    - (this.props.alt ? -1 : 1) * ((newHeight - height) / 2 + 5)
+                    + (+!!this.props.alt * 2 - 1) * ((newHeight - height) / 2 + 5)
+            })
+
+            let query = position => `.grid-cell[data-position="${position.join(',')}"] .value`
+            let fromLatexElement = document.querySelector(query(this.props.from))
+            let toLatexElement = document.querySelector(query(this.props.to))
+
+            let {width: fromWidth, height: fromHeight} = fromLatexElement.getBoundingClientRect()
+            let {width: toWidth, height: toHeight} = toLatexElement.getBoundingClientRect()
+
+            let diagonal = [[fromWidth, fromHeight], [toWidth, toHeight]]
+                .map(([w, h]) => Math.sqrt(w * w + h * h))
+                .reduce((acc, x) => Math.max(acc, x))
+
+            this.setState({
+                lengthContraction: diagonal
             })
         })
     }
@@ -64,7 +80,7 @@ export default class GridEdge extends Component {
         let [dx, dy] = this.props.to.map((x, i) => (x - this.props.from[i]) * cellSize)
         let [mx, my] = this.props.to.map((x, i) => (x + this.props.from[i] + 1) * cellSize / 2)
 
-        let length = Math.sqrt(dx * dx + dy * dy) - Math.sqrt(2 * cellSize * cellSize) / 3
+        let length = Math.sqrt(dx * dx + dy * dy) - this.state.lengthContraction
         let angle = this.getAngle() * 180 / Math.PI
 
         let bend = this.props.bend == null ? 0 : -this.props.bend
