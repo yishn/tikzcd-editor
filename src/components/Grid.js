@@ -79,13 +79,12 @@ export default class Grid extends Component {
                                 key={position.join(',')}
                                 position={position}
                                 size={cellSize}
-                            >
-                                {(node =>
+                                value={(node =>
                                     node && node.value
                                 )(this.props.data.nodes
                                     .find(x => x.position.every((y, k) => y === position[k]))
                                 )}
-                            </GridCell>
+                            />
                         )([i + xstart, j + ystart])
                     )
                 )}

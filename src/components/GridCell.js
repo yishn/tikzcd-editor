@@ -6,7 +6,7 @@ export default class GridCell extends Component {
     }
 
     shouldComponentUpdate(prevProps) {
-        return prevProps.children[0] !== this.props.children[0]
+        return prevProps.value !== this.props.value
     }
 
     componentDidUpdate() {
@@ -20,9 +20,7 @@ export default class GridCell extends Component {
     render() {
         return <li class="grid-cell" data-position={this.props.position.join(',')}>
             <div class="value" ref={el => this.valueElement = el}>
-                {this.props.children[0]
-                    ? `\\(${this.props.children[0]}\\)`
-                    : null}
+                {this.props.value && `\\(${this.props.value}\\)`}
             </div>
         </li>
     }

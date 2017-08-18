@@ -6,7 +6,7 @@ export default class GridEdge extends Component {
         super()
 
         this.state = {
-            labelX: 0,
+            labelX: '50%',
             labelY: 0
         }
     }
@@ -28,8 +28,6 @@ export default class GridEdge extends Component {
     }
 
     componentDidUpdate() {
-        if (!this.valueElement) return
-
         for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
             span.remove()
         }
@@ -39,7 +37,6 @@ export default class GridEdge extends Component {
         MathJax.Hub.Queue(() => {
             let bbox = this.edgePath.getBBox()
             let {width, height} = window.getComputedStyle(this.valueElement)
-            let {marginTop} = window.getComputedStyle(this.svgElement)
 
             ;[width, height] = [width, height].map(parseFloat)
 
@@ -51,7 +48,6 @@ export default class GridEdge extends Component {
                 labelX: `calc(50% - ${newWidth / 2}px)`,
                 labelY: (this.props.alt ? bbox.y + bbox.height : bbox.y - newHeight)
                     - (this.props.alt ? -1 : 1) * ((newHeight - height) / 2 + 5)
-                    + parseFloat(marginTop)
             })
         })
     }
@@ -116,19 +112,17 @@ export default class GridEdge extends Component {
                 />
             </svg>
 
-            {this.props.value &&
-                <div
-                    ref={el => this.valueElement = el}
-                    class={classNames({alt: this.props.alt}, 'value')}
-                    style={{
-                        left: this.state.labelX,
-                        top: this.state.labelY,
-                        transform: `rotate(${-angle}deg)`
-                    }}
-                >
-                    \({this.props.value}\)
-                </div>
-            }
+            <div
+                ref={el => this.valueElement = el}
+                class={classNames({alt: this.props.alt}, 'value')}
+                style={{
+                    left: this.state.labelX,
+                    top: this.state.labelY + bend * 0.7,
+                    transform: `rotate(${-angle}deg)`
+                }}
+            >
+                {this.props.value && `\\(${this.props.value}\\)`}
+            </div>
         </li>
     }
 }

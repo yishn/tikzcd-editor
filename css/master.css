@@ -65,6 +65,9 @@ body, html {
     #grid .grid-edge svg {
         display: block;
     }
+    #grid .grid-edge svg * {
+        pointer-events: all;
+    }
     #grid .grid-edge .value {
         position: absolute;
         white-space: nowrap;
