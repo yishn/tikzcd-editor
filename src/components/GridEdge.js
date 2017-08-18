@@ -21,11 +21,18 @@ export default class GridEdge extends Component {
             }}
         >
             <svg width={length} height={height}>
-                <line
+                <path
                     stroke-width="1"
                     stroke="black"
-                    x1="0" y1={height / 2}
-                    x2={length} y2={height / 2}
+                    stroke-dasharray={this.props.dashed ? '7, 3' : null}
+                    d={`M 9.764 ${height / 2} L ${length} ${height / 2}`}
+                />
+
+                <image
+                    x="0" y="0"
+                    width="9.764" height={height}
+                    style="background: white;"
+                    href={`./img/arrow/${this.props.tail || 'none'}.svg`}
                 />
 
                 <image

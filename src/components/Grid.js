@@ -101,6 +101,11 @@ export default class Grid extends Component {
                     <GridEdge
                         from={this.props.data.nodes[edge.from].position}
                         to={this.props.data.nodes[edge.to].position}
+
+                        dashed={edge.dashed}
+                        tail={edge.tail}
+                        tip={edge.tip}
+
                         cellSize={cellSize}
                     />
                 )}
