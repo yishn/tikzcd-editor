@@ -17,8 +17,24 @@ export default class GridCell extends Component {
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
     }
 
+    handleGrabberMouseDown = evt => {
+        let {onGrabberMouseDown = () => {}} = this.props
+
+        evt.position = this.props.position
+
+        onGrabberMouseDown(evt)
+    }
+
     render() {
         return <li class="grid-cell" data-position={this.props.position.join(',')}>
+            <img
+                class="grabber"
+                src="./img/grabber.svg"
+                width="16"
+                height="16"
+                onMouseDown={this.handleGrabberMouseDown}
+            />
+
             <div class="value" ref={el => this.valueElement = el}>
                 {this.props.value && `\\(${this.props.value}\\)`}
             </div>

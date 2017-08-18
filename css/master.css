@@ -24,9 +24,6 @@ body, html {
     #grid.arrow ol {
         cursor: crosshair;
     }
-    #grid.move ol {
-        cursor: move;
-    }
     #grid.pan ol {
         cursor: -webkit-grab;
     }
@@ -43,6 +40,7 @@ body, html {
 }
 
 #grid .grid-cell {
+        position: relative;
         display: grid;
         border: 2px dashed #ccc;
         border-top: none;
@@ -53,6 +51,16 @@ body, html {
     }
     #grid .grid-cell:hover {
         background: #eee;
+    }
+    #grid .grid-cell .grabber {
+        position: absolute;
+        left: 2px;
+        top: 2px;
+        cursor: move;
+        opacity: 0;
+    }
+    #grid .grid-cell:hover .grabber {
+        opacity: 1;
     }
     #grid .grid-cell .value {
         margin: auto;

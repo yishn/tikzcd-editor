@@ -26,13 +26,13 @@ export default class Grid extends Component {
 
             evt.preventDefault()
 
-            if (this.props.mode === 'pan') {
+            if (this.mouseDown.mode === 'pan') {
                 let {movementX, movementY} = evt
 
                 this.setState(state => ({
                     cameraPosition: state.cameraPosition.map((x, i) => x - [movementX, movementY][i])
                 }))
-            } else if (this.props.mode === 'move') {
+            } else if (this.mouseDown.mode === 'move') {
                 let {node} = this.mouseDown
                 if (node == null) return
 
@@ -75,7 +75,25 @@ export default class Grid extends Component {
         let node = this.props.data.nodes
             .find(x => x.position.every((y, i) => y === position[i]))
 
-        this.mouseDown = {evt, position, node}
+        this.mouseDown = {
+            evt, position, node,
+            mode: this.props.mode
+        }
+    }
+
+    handleNodeGrabberMouseDown = evt => {
+        if (evt.button !== 0) return
+
+        evt.stopPropagation()
+
+        let {position} = evt
+        let node = this.props.data.nodes
+            .find(x => x.position.every((y, i) => y === position[i]))
+
+        this.mouseDown = {
+            evt, position, node,
+            mode: 'move'
+        }
     }
 
     handleNodeMouseUp = evt => {
@@ -86,7 +104,10 @@ export default class Grid extends Component {
 
         let {onNodeClick = () => {}} = this.props
 
-        onNodeClick(this.mouseDown)
+        onNodeClick({
+            ...this.mouseDown,
+            mode: 'node'
+        })
     }
 
     render() {
@@ -113,6 +134,7 @@ export default class Grid extends Component {
                     width: cols * cellSize,
                     height: rows * cellSize
                 }}
+
                 onMouseDown={this.handleNodeMouseDown}
                 onMouseUp={this.handleNodeMouseUp}
             >
@@ -128,6 +150,8 @@ export default class Grid extends Component {
                                 )(this.props.data.nodes
                                     .find(x => x.position.every((y, k) => y === position[k]))
                                 )}
+
+                                onGrabberMouseDown={this.handleNodeGrabberMouseDown}
                             />
                         )([i + xstart, j + ystart])
                     )
