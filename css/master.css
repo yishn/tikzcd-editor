@@ -113,4 +113,5 @@ body, html {
         vertical-align: bottom;
         width: 24px;
         height: 24px;
+        transition: background-image .2s;
 }
