@@ -102,6 +102,7 @@ export default class Grid extends Component {
                         from={this.props.data.nodes[edge.from].position}
                         to={this.props.data.nodes[edge.to].position}
 
+                        bend={edge.bend}
                         dashed={edge.dashed}
                         tail={edge.tail}
                         tip={edge.tip}

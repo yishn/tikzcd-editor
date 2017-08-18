@@ -60,6 +60,7 @@ body, html {
 
 #grid .grid-edge {
     position: absolute;
+    pointer-events: none;
 }
 
 #toolbox {
