@@ -4,7 +4,7 @@ const Item = ({tool, id, name, onClick}) => (
     <li class={tool === id ? 'current' : null} data-id={id} title={name} onClick={onClick}>
         <img
             style={{backgroundImage: `url(./img/tools/${id}.svg)`}}
-            src="./img/tools/blank.svg" 
+            src="./img/tools/blank.svg"
             alt={name}
         />
     </li>
@@ -45,11 +45,12 @@ export default class Toolbox extends Component {
                 <Separator/>
 
                 <Item
-                    tool={this.props.tool}
                     id={this.state.codeDone ? 'tick' : 'code'}
                     name="Copy Code"
                     onClick={this.onItemClick}
                 />
+
+                <Item id="about" name="About" onClick={this.onItemClick} />
             </ul>
         </section>
     }

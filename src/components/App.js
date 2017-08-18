@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {h, render, Component} from 'preact'
 import {h as th, render as renderToTeX, Diagram, Node, Edge} from 'jsx-tikzcd'
 import copy from 'copy-text-to-clipboard'
 
@@ -77,6 +77,16 @@ export default class App extends Component {
     handleToolClick = evt => {
         if (evt.id === 'code') {
             copy(this.getTeX())
+
+            return
+        } else if (evt.id === 'about') {
+            let a = render((
+                <a href="https://github.com/yishn/tikzcd-editor" target="_blank" />
+            ), document.body)
+
+            a.click()
+            a.remove()
+
             return
         }
 
