@@ -1,13 +1,75 @@
 import {h, Component} from 'preact'
+import classNames from 'classnames'
 
 export default class GridEdge extends Component {
+    constructor() {
+        super()
+
+        this.state = {
+            labelX: 0,
+            labelY: 0
+        }
+    }
+
+    componentDidMount() {
+        this.componentDidUpdate()
+    }
+
+    shouldComponentUpdate(prevProps, prevState) {
+        for (let key in prevProps) {
+            if (prevProps[key] !== this.props[key]) return true
+        }
+
+        for (let key in prevState) {
+            if (prevState[key] !== this.state[key]) return true
+        }
+
+        return false
+    }
+
+    componentDidUpdate() {
+        if (!this.valueElement) return
+
+        for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
+            span.remove()
+        }
+
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
+
+        MathJax.Hub.Queue(() => {
+            let bbox = this.edgePath.getBBox()
+            let {width, height} = window.getComputedStyle(this.valueElement)
+            let {marginTop} = window.getComputedStyle(this.svgElement)
+
+            ;[width, height] = [width, height].map(parseFloat)
+
+            let angle = Math.abs(this.getAngle())
+            let newWidth = width * Math.cos(angle) + height * Math.sin(angle)
+            let newHeight = height * Math.cos(angle) + width * Math.sin(angle)
+
+            this.setState({
+                labelX: `calc(50% - ${newWidth / 2}px)`,
+                labelY: (this.props.alt ? bbox.y + bbox.height : bbox.y - newHeight)
+                    - (this.props.alt ? -1 : 1) * ((newHeight - height) / 2 + 5)
+                    + parseFloat(marginTop)
+            })
+        })
+    }
+
+    getAngle() {
+        let {from, to, cellSize} = this.props
+        let [dx, dy] = to.map((x, i) => (x - from[i]) * cellSize)
+
+        return Math.atan2(dy, dx)
+    }
+
     render() {
         let {cellSize} = this.props
         let [dx, dy] = this.props.to.map((x, i) => (x - this.props.from[i]) * cellSize)
         let [mx, my] = this.props.to.map((x, i) => (x + this.props.from[i] + 1) * cellSize / 2)
 
         let length = Math.sqrt(dx * dx + dy * dy) - Math.sqrt(2 * cellSize * cellSize) / 3
-        let angle = Math.atan2(dy, dx) * 180 / Math.PI
+        let angle = this.getAngle() * 180 / Math.PI
 
         let bend = this.props.bend == null ? 0 : -this.props.bend
         let [cx, cy] = [length / 2, length * Math.tan(bend * Math.PI / 180) / 2]
@@ -23,8 +85,14 @@ export default class GridEdge extends Component {
                 transform: `rotate(${angle}deg)`
             }}
         >
-            <svg width={length} height={height}>
+            <svg
+                ref={el => this.svgElement = el}
+                width={length}
+                height={height}
+                style={{marginTop: bend * 0.7}}
+            >
                 <path
+                    ref={el => this.edgePath = el}
                     fill="none"
                     stroke-width="1"
                     stroke="black"
@@ -47,6 +115,20 @@ export default class GridEdge extends Component {
                     href={`./img/arrow/${this.props.head || 'default'}.svg`}
                 />
             </svg>
+
+            {this.props.value &&
+                <div
+                    ref={el => this.valueElement = el}
+                    class={classNames({alt: this.props.alt}, 'value')}
+                    style={{
+                        left: this.state.labelX,
+                        top: this.state.labelY,
+                        transform: `rotate(${-angle}deg)`
+                    }}
+                >
+                    \({this.props.value}\)
+                </div>
+            }
         </li>
     }
 }

@@ -10,12 +10,16 @@ export default class GridCell extends Component {
     }
 
     componentDidUpdate() {
-        MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.latexElement])
+        for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
+            span.remove()
+        }
+
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
     }
 
     render() {
         return <li class="grid-cell" data-position={this.props.position.join(',')}>
-            <div class="latex" ref={el => this.latexElement = el}>
+            <div class="value" ref={el => this.valueElement = el}>
                 {this.props.children[0]
                     ? `\\(${this.props.children[0]}\\)`
                     : null}

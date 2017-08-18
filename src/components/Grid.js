@@ -105,7 +105,9 @@ export default class Grid extends Component {
                         bend={edge.bend}
                         dashed={edge.dashed}
                         tail={edge.tail}
-                        tip={edge.tip}
+                        head={edge.head}
+                        value={edge.value}
+                        alt={edge.alt}
 
                         cellSize={cellSize}
                     />

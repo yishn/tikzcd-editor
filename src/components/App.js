@@ -22,11 +22,11 @@ export default class App extends Component {
                 edges: [
                     {from: 1, to: 2, tail: 'hookalt'},
                     {from: 3, to: 2, tail: 'mapsto', head: 'harpoonalt'},
-                    {from: 0, to: 1, tail: 'tail', head: 'twoheads'},
-                    {from: 0, to: 3, dashed: true},
+                    {from: 0, to: 1, value: 'f', tail: 'tail', head: 'twoheads'},
+                    {from: 0, to: 3, value: 'g\\circ h', alt: true, dashed: true},
                     {from: 4, to: 0, value: '\\phi', tail: 'hook'},
                     {from: 4, to: 1, value: 'p_X', tail: 'hook', bend: 30},
-                    {from: 4, to: 3, value: 'p_Y', tail: 'tail', bend: -30}
+                    {from: 4, to: 3, value: 'p_Y', alt: true, tail: 'tail', bend: -30}
                 ]
             }
         }
@@ -64,8 +64,8 @@ export default class App extends Component {
 
                             edge.dashed ? 'dashed' : null,
 
-                            edge.bend > 0 ? `bend left=${edge.bend}`
-                            : edge.bend < 0 ? `bend right=${-edge.bend}`
+                            edge.bend > 0 ? `bend left=${edge.bend}`.replace('=30', '')
+                            : edge.bend < 0 ? `bend right=${-edge.bend}`.replace('=30', '')
                             : null
                         ].filter(x => x)}
                     />
