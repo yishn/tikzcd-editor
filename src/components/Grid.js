@@ -11,7 +11,8 @@ export default class Grid extends Component {
         this.state = {
             width: null,
             height: null,
-            cameraPosition: Array(2).fill(Math.round(-props.cellSize / 2))
+            cameraPosition: Array(2).fill(Math.round(-props.cellSize / 2)),
+            editPosition: [null, null]
         }
     }
 
@@ -20,6 +21,14 @@ export default class Grid extends Component {
 
         window.addEventListener('resize', () => this.updateSize())
         document.addEventListener('mouseup', () => this.mouseDown = null)
+
+        document.addEventListener('keyup', evt => {
+            if (evt.keyCode === 27) {
+                // Escape
+
+                this.setState({editPosition: [null, null]})
+            }
+        })
 
         document.addEventListener('mousemove', evt => {
             if (this.mouseDown == null) return
@@ -51,7 +60,7 @@ export default class Grid extends Component {
                     data: {
                         nodes: (nodes =>
                             (nodes[nodes.indexOf(node)].position = newPosition, nodes)
-                        )(this.props.data.nodes.slice()),
+                        )(this.props.data.nodes),
 
                         edges: this.props.data.edges
                     }
@@ -102,11 +111,43 @@ export default class Grid extends Component {
         let oldEvt = this.mouseDown.evt
         if (evt.clientX !== oldEvt.clientX || evt.clientY !== oldEvt.clientY) return
 
-        let {onNodeClick = () => {}} = this.props
+        let {position} = this.mouseDown
 
-        onNodeClick({
-            ...this.mouseDown,
-            mode: 'node'
+        this.setState({
+            editPosition: position
+        })
+    }
+
+    handleNodeSubmit = () => {
+        this.setState({editPosition: [null, null]})
+    }
+
+    handleNodeChange = evt => {
+        let {onDataChange = () => {}} = this.props
+
+        let nodes = [...this.props.data.nodes]
+        let index = nodes.findIndex(n => n.position.every((x, i) => x === evt.position[i]))
+
+        if (index < 0) {
+            if (evt.value.trim() !== '') {
+                nodes.push({position: evt.position, value: evt.value})
+            }
+        } else {
+            nodes[index] = {position: [...evt.position], value: evt.value}
+
+            if (evt.value.trim() === '') {
+                // Cleanup if necessary
+                
+                let existingEdge = this.props.data.edges.find(e => e.from === index || e.to === index)
+                if (!existingEdge) nodes[index] = null
+            }
+        }
+
+        onDataChange({
+            data: {
+                nodes: nodes.filter(x => x != null),
+                edges: this.props.data.edges
+            }
         })
     }
 
@@ -145,6 +186,7 @@ export default class Grid extends Component {
                                 key={position.join(',')}
                                 position={position}
                                 size={cellSize}
+                                edit={position.every((x, i) => x === this.state.editPosition[i])}
                                 value={(node =>
                                     node && node.value
                                 )(this.props.data.nodes
@@ -152,6 +194,8 @@ export default class Grid extends Component {
                                 )}
 
                                 onGrabberMouseDown={this.handleNodeGrabberMouseDown}
+                                onSubmit={this.handleNodeSubmit}
+                                onChange={this.handleNodeChange}
                             />
                         )([i + xstart, j + ystart])
                     )

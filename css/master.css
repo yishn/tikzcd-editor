@@ -39,7 +39,7 @@ body, html {
         width: 0;
 }
 
-#grid .grid-cell {
+.grid-cell {
         position: relative;
         display: grid;
         border: 2px dashed #ccc;
@@ -49,10 +49,10 @@ body, html {
         white-space: nowrap;
         transition: background .2s;
     }
-    #grid .grid-cell:hover {
+    .grid-cell:hover {
         background: #eee;
     }
-    #grid .grid-cell .grabber {
+    .grid-cell .grabber {
         position: absolute;
         left: 2px;
         top: 2px;
@@ -61,21 +61,37 @@ body, html {
         cursor: move;
         opacity: 0;
     }
-    #grid .grid-cell:hover .grabber {
+    .grid-cell:hover .grabber {
         opacity: 1;
     }
-    #grid .grid-cell .value {
+    .grid-cell .value, .grid-cell .edit {
         margin: auto;
-}
+    }
+    .grid-cell.edit .value {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .grid-cell .edit {
+        width: 100%;
+    }
+    .grid-cell .edit input {
+        border: none;
+        outline: none;
+        width: 100%;
+        text-align: center;
+        background: transparent;
+        font: 1em/1.5 Consolas, monospace;
+    }
 
-#grid .grid-edge {
+.grid-edge {
         position: absolute;
         pointer-events: none;
     }
-    #grid .grid-edge svg {
+    .grid-edge svg {
         display: block;
     }
-    #grid .grid-edge .value {
+    .grid-edge .value {
         position: absolute;
         white-space: nowrap;
 }

@@ -93,10 +93,6 @@ export default class App extends Component {
         this.setState({tool: evt.id})
     }
 
-    handleNodeClick = evt => {
-        console.log(evt)
-    }
-
     handleDataChange = evt => {
         this.setState({diagram: evt.data})
     }
@@ -108,7 +104,6 @@ export default class App extends Component {
                 data={this.state.diagram}
                 mode={this.state.tool}
 
-                onNodeClick={this.handleNodeClick}
                 onDataChange={this.handleDataChange}
             />
 

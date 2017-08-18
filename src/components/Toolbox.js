@@ -21,7 +21,12 @@ export default class Toolbox extends Component {
         }
     }
 
-    onItemClick = evt => {
+    shouldComponentUpdate(nextProps, nextState) {
+        return nextProps.tool !== this.props.tool
+            || nextState.codeDone !== this.state.codeDone
+    }
+
+    handleItemClick = evt => {
         let {id} = evt.currentTarget.dataset
         let {onItemClick = () => {}} = this.props
 
@@ -42,14 +47,14 @@ export default class Toolbox extends Component {
                     currentTool={this.props.tool}
                     id="pan"
                     name="Pan Tool"
-                    onClick={this.onItemClick}
+                    onClick={this.handleItemClick}
                 />
-                
+
                 <Item
                     currentTool={this.props.tool}
                     id="arrow"
                     name="Arrow Tool"
-                    onClick={this.onItemClick}
+                    onClick={this.handleItemClick}
                 />
 
                 <Separator/>
@@ -57,10 +62,10 @@ export default class Toolbox extends Component {
                 <Item
                     id={this.state.codeDone ? 'tick' : 'code'}
                     name="Copy Code"
-                    onClick={this.onItemClick}
+                    onClick={this.handleItemClick}
                 />
 
-                <Item id="about" name="About…" onClick={this.onItemClick} />
+                <Item id="about" name="About…" onClick={this.handleItemClick} />
             </ul>
         </section>
     }

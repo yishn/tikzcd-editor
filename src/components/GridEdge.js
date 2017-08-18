@@ -20,10 +20,7 @@ export default class GridEdge extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         for (let key in nextProps) {
-            if (nextProps[key] instanceof Array
-                && nextProps[key].some((x, i) => x !== this.props[key][i])
-                || !(nextProps[key] instanceof Array)
-                && nextProps[key] !== this.props[key]) return true
+            if (nextProps[key] !== this.props[key]) return true
         }
 
         for (let key in nextState) {
@@ -36,7 +33,7 @@ export default class GridEdge extends Component {
         return false
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate() {
         for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
             span.remove()
         }
