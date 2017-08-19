@@ -48,8 +48,20 @@ export default class GridEdge extends Component {
             let fromLatexElement = document.querySelector(query(nextProps.from))
             let toLatexElement = document.querySelector(query(nextProps.to))
 
-            let {width: fromWidth, height: fromHeight} = fromLatexElement.getBoundingClientRect()
-            let {width: toWidth, height: toHeight} = toLatexElement.getBoundingClientRect()
+            let [fromWidth, fromHeight, toWidth, toHeight] = Array(4).fill(0)
+
+            if (fromLatexElement != null) {
+                let {width, height} = fromLatexElement.getBoundingClientRect()
+                fromWidth = width
+                fromHeight = height
+            }
+
+            if (toLatexElement != null) {
+                let {width, height} = toLatexElement.getBoundingClientRect()
+                toWidth = width
+                toHeight = height
+            }
+
             fromWidth += 20
             fromHeight += 20
             toWidth += 20
@@ -85,7 +97,9 @@ export default class GridEdge extends Component {
         MathJax.Hub.Queue(() => {
             if (prevProps != null
                 && this.props.value === prevProps.value
-                && this.props.alt === prevProps.alt) return
+                && this.props.alt === prevProps.alt
+                && this.props.from === prevProps.from
+                && this.props.to === prevProps.to) return
 
             if (prevProps == null) prevProps = this.props
 
