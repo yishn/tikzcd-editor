@@ -81,7 +81,6 @@ export default class GridCell extends Component {
                         onInput={this.handleInputChange}
                         onMouseDown={this.stopPropagation}
                         onKeyDown={this.stopPropagation}
-                        onKeyUp={this.stopPropagation}
                     />
                 </form>
             }

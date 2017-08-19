@@ -12,6 +12,7 @@ export default class App extends Component {
         this.state = {
             tool: 'pan',
             cellSize: 130,
+            selectedEdge: null,
             diagram: {
                 nodes: [
                     {id: '0', position: [1, 1], value: 'T'},
@@ -78,11 +79,18 @@ export default class App extends Component {
             return
         }
 
-        this.setState({tool: evt.id})
+        this.setState({
+            tool: evt.id,
+            selectedEdge: null
+        })
     }
 
     handleDataChange = evt => {
         this.setState({diagram: evt.data})
+    }
+
+    handleEdgeClick = evt => {
+        this.setState({selectedEdge: evt.edge})
     }
 
     render() {
@@ -91,8 +99,10 @@ export default class App extends Component {
                 cellSize={this.state.cellSize}
                 data={this.state.diagram}
                 mode={this.state.tool}
+                selectedEdge={this.state.selectedEdge}
 
                 onDataChange={this.handleDataChange}
+                onEdgeClick={this.handleEdgeClick}
             />
 
             <Toolbox

@@ -153,6 +153,21 @@ export default class Grid extends Component {
         })
     }
 
+    handleEdgeClick = index => {
+        let cache = {}
+
+        if (cache[index] == null) {
+            cache[index] = evt => {
+                let {onEdgeClick = () => {}} = this.props
+
+                evt.edge = index
+                onEdgeClick(evt)
+            }
+        }
+
+        return cache[index]
+    }
+
     render() {
         if (this.state.width == null) return <section ref={el => this.element = el} id="grid"/>
 
@@ -210,10 +225,11 @@ export default class Grid extends Component {
                     top: -this.state.cameraPosition[1]
                 }}
             >
-                {this.props.data.edges.map(edge =>
+                {this.props.data.edges.map((edge, i) =>
                     <GridEdge
                         from={this.props.data.nodes.find(n => n.id === edge.from).position}
                         to={this.props.data.nodes.find(n => n.id === edge.to).position}
+                        selected={this.props.selectedEdge === i}
 
                         bend={edge.bend}
                         dashed={edge.dashed}
@@ -223,6 +239,8 @@ export default class Grid extends Component {
                         alt={edge.alt}
 
                         cellSize={cellSize}
+
+                        onClick={this.handleEdgeClick(i)}
                     />
                 )}
             </ul>

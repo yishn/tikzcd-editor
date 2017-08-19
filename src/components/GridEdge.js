@@ -141,7 +141,7 @@ export default class GridEdge extends Component {
         let height = Math.max(Math.abs(cy) + 13, 13)
 
         return <li
-            class="grid-edge"
+            class={classNames('grid-edge', {selected: this.props.selected})}
             style={{
                 height,
                 width: length,
@@ -149,6 +149,8 @@ export default class GridEdge extends Component {
                 top: my - height / 2,
                 transform: `rotate(${degree}deg)`
             }}
+
+            onClick={this.props.onClick}
         >
             <svg
                 ref={el => this.svgElement = el}

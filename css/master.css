@@ -100,7 +100,10 @@ body, html {
         pointer-events: all;
     }
     .arrow .grid-edge svg .mouse:hover {
-        stroke: rgba(255, 102, 0, .6);
+        stroke: rgba(204, 204, 204, .6);
+    }
+    .grid-edge.selected svg .mouse.mouse {
+        stroke: rgb(204, 204, 204);
     }
     .grid-edge .value {
         position: absolute;
