@@ -136,8 +136,12 @@ body, html {
         background: #aaa;
         text-indent: -9999em;
     }
+    .toolbox li.button {
+        transition: background .2s;
+    }
     .toolbox li.button:hover {
         background: #ccc;
+        transition: none;
     }
     .toolbox li.button.checked {
         background: #bbb;
@@ -166,14 +170,20 @@ body, html {
     #properties.show {
         top: 1em;
     }
-    #properties li.button:hover {
-        background: #0050C0;
-    }
     #properties li.button.checked {
         background: rgba(255, 255, 255, .2);
     }
+    #properties li.button:hover {
+        background: #0050C0;
+    }
     #properties li.button:active {
         background: #0030A0;
+    }
+    #properties li.button.remove:hover {
+        background: #E81123;
+    }
+    #properties li.button.remove:active {
+        background: #C60001;
     }
     #properties li.button img {
         width: 16px;

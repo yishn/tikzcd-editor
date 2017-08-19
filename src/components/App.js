@@ -102,6 +102,24 @@ export default class App extends Component {
         a.remove()
     }
 
+    handleEdgeRemoveClick = () => {
+        let newEdges = this.state.diagram.edges
+            .filter((_, i) => i !== this.state.selectedEdge)
+
+        let newNodes = this.state.diagram.nodes
+            .filter(n => n.value.trim() !== '' || newEdges.some(e =>
+                e.from === n.id || e.to === n.id
+            ))
+
+        this.setState({
+            selectedEdge: null,
+            diagram: {
+                nodes: newNodes,
+                edges: newEdges
+            }
+        })
+    }
+
     render() {
         return <div id="root">
             <Grid
@@ -116,6 +134,8 @@ export default class App extends Component {
 
             <Properties
                 show={this.state.selectedEdge != null}
+                data={this.state.diagram.edges[this.state.selectedEdge]}
+                onRemoveClick={this.handleEdgeRemoveClick}
             />
 
             <Toolbox id="toolbox">

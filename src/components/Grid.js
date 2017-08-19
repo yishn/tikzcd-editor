@@ -154,10 +154,10 @@ export default class Grid extends Component {
     }
 
     handleEdgeClick = index => {
-        let cache = {}
+        if (this.edgeClickHandlersCache == null) this.edgeClickHandlersCache = {}
 
-        if (cache[index] == null) {
-            cache[index] = evt => {
+        if (this.edgeClickHandlersCache[index] == null) {
+            this.edgeClickHandlersCache[index] = evt => {
                 let {onEdgeClick = () => {}} = this.props
 
                 evt.edge = index
@@ -165,7 +165,7 @@ export default class Grid extends Component {
             }
         }
 
-        return cache[index]
+        return this.edgeClickHandlersCache[index]
     }
 
     render() {
