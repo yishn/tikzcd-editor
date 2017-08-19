@@ -3,7 +3,7 @@ import copy from 'copy-text-to-clipboard'
 import * as diagram from '../diagram'
 
 import Grid from './grid'
-import Toolbox from './toolbox'
+import Toolbox, {Button, Separator} from './toolbox'
 
 export default class App extends Component {
     constructor() {
@@ -13,6 +13,7 @@ export default class App extends Component {
             tool: 'pan',
             cellSize: 130,
             selectedEdge: null,
+            confirmCopy: false,
             diagram: {
                 nodes: [
                     {id: '0', position: [1, 1], value: 'T'},
@@ -63,34 +64,41 @@ export default class App extends Component {
         })
     }
 
-    handleToolClick = evt => {
-        if (evt.id === 'code') {
-            copy(diagram.toTeX(this.state.diagram))
-
-            return
-        } else if (evt.id === 'about') {
-            let a = render((
-                <a href="https://github.com/yishn/tikzcd-editor" target="_blank" />
-            ), document.body)
-
-            a.click()
-            a.remove()
-
-            return
-        }
-
-        this.setState({
-            tool: evt.id,
-            selectedEdge: null
-        })
-    }
-
     handleDataChange = evt => {
         this.setState({diagram: evt.data})
     }
 
     handleEdgeClick = evt => {
         this.setState({selectedEdge: evt.edge})
+    }
+
+    handleToolClick = tool => {
+        let handler = tool => evt => {
+            this.setState({tool, selectedEdge: null})
+        }
+
+        return ({
+            pan: handler('pan'),
+            arrow: handler('arrow')
+        })[tool]
+    }
+
+    handleCopyClick = () => {
+        let success = copy(diagram.toTeX(this.state.diagram))
+
+        if (success) {
+            this.setState({confirmCopy: true})
+            setTimeout(() => this.setState({confirmCopy: false}), 1000)
+        }
+    }
+
+    handleAboutClick = () => {
+        let a = render((
+            <a href="https://github.com/yishn/tikzcd-editor" target="_blank" />
+        ), document.body)
+
+        a.click()
+        a.remove()
     }
 
     render() {
@@ -105,10 +113,35 @@ export default class App extends Component {
                 onEdgeClick={this.handleEdgeClick}
             />
 
-            <Toolbox
-                tool={this.state.tool}
-                onItemClick={this.handleToolClick}
-            />
+            <Toolbox id="toolbox">
+                <Button
+                    checked={this.state.tool === 'pan'}
+                    icon="pan"
+                    name="Pan Tool (Space)"
+                    onClick={this.handleToolClick('pan')}
+                />
+
+                <Button
+                    checked={this.state.tool === 'arrow'}
+                    icon="arrow"
+                    name="Arrow Tool (Ctrl)"
+                    onClick={this.handleToolClick('arrow')}
+                />
+
+                <Separator/>
+
+                <Button
+                    icon={this.state.confirmCopy ? 'tick' : 'code'}
+                    name="Copy Code"
+                    onClick={this.handleCopyClick}
+                />
+
+                <Button
+                    icon="about"
+                    name="About…"
+                    onClick={this.handleAboutClick}
+                />
+            </Toolbox>
         </div>
     }
 }

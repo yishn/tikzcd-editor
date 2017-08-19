@@ -110,7 +110,7 @@ body, html {
         white-space: nowrap;
 }
 
-#toolbox {
+.toolbox {
         position: absolute;
         left: 50%;
         bottom: 2em;
@@ -119,16 +119,16 @@ body, html {
         box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
         transform: translateX(-50%);
     }
-    #toolbox ul {
+    .toolbox ul {
         display: flex;
         flex-wrap: nowrap;
         align-items: stretch;
         list-style: none;
     }
-    #toolbox li {
+    .toolbox li {
         padding: .5em;
     }
-    #toolbox li.separator {
+    .toolbox li.separator {
         margin: 0 .5em;
         padding-left: 0;
         padding-right: 0;
@@ -137,16 +137,16 @@ body, html {
         background: #aaa;
         text-indent: -9999em;
     }
-    #toolbox li:not(.separator):hover {
+    .toolbox li:not(.separator):hover {
         background: #ccc;
     }
-    #toolbox li:not(.separator).current {
+    .toolbox li:not(.separator).checked {
         background: #bbb;
     }
-    #toolbox li:not(.separator):active {
+    .toolbox li:not(.separator):active {
         background: #aaa;
     }
-    #toolbox li img {
+    .toolbox li img {
         vertical-align: bottom;
         width: 24px;
         height: 24px;
