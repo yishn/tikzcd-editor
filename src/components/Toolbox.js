@@ -47,14 +47,14 @@ export default class Toolbox extends Component {
                 <Item
                     current={this.props.tool === 'pan'}
                     id="pan"
-                    name="Pan Tool"
+                    name="Pan Tool (Space)"
                     onClick={this.handleItemClick}
                 />
 
                 <Item
                     current={this.props.tool === 'arrow'}
                     id="arrow"
-                    name="Arrow Tool"
+                    name="Arrow Tool (Ctrl)"
                     onClick={this.handleItemClick}
                 />
 

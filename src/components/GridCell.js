@@ -42,7 +42,7 @@ export default class GridCell extends Component {
         this.handleEditSubmit(evt)
     }
 
-    handleInputMouseDown = evt => {
+    stopPropagation = evt => {
         evt.stopPropagation()
     }
 
@@ -79,7 +79,9 @@ export default class GridCell extends Component {
 
                         onBlur={this.handleInputBlur}
                         onInput={this.handleInputChange}
-                        onMouseDown={this.handleInputMouseDown}
+                        onMouseDown={this.stopPropagation}
+                        onKeyDown={this.stopPropagation}
+                        onKeyUp={this.stopPropagation}
                     />
                 </form>
             }
