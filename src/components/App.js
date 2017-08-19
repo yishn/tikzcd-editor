@@ -2,9 +2,9 @@ import {h, render, Component} from 'preact'
 import copy from 'copy-text-to-clipboard'
 import * as diagram from '../diagram'
 
-import Grid from './grid'
-import Properties from './properties'
-import Toolbox, {Button, Separator} from './toolbox'
+import Grid from './Grid'
+import Properties from './Properties'
+import Toolbox, {Button, Separator} from './Toolbox'
 
 export default class App extends Component {
     constructor() {
@@ -102,6 +102,22 @@ export default class App extends Component {
         a.remove()
     }
 
+    handleEdgeChange = evt => {
+        let newEdges = [...this.state.diagram.edges]
+
+        newEdges[this.state.selectedEdge] = {
+            ...newEdges[this.state.selectedEdge],
+            ...evt.data
+        }
+
+        this.setState({
+            diagram: {
+                nodes: this.state.diagram.nodes,
+                edges: newEdges
+            }
+        })
+    }
+
     handleEdgeRemoveClick = () => {
         let newEdges = this.state.diagram.edges
             .filter((_, i) => i !== this.state.selectedEdge)
@@ -135,6 +151,8 @@ export default class App extends Component {
             <Properties
                 show={this.state.selectedEdge != null}
                 data={this.state.diagram.edges[this.state.selectedEdge]}
+
+                onChange={this.handleEdgeChange}
                 onRemoveClick={this.handleEdgeRemoveClick}
             />
 

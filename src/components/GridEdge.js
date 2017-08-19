@@ -37,7 +37,8 @@ export default class GridEdge extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps != null
             && nextProps.from === this.props.from
-            && nextProps.to === this.props.to) return
+            && nextProps.to === this.props.to
+            && nextProps.bend === this.props.bend) return
 
         if (nextProps == null) nextProps = this.props
 

@@ -1,6 +1,8 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
-import Toolbox, {Button, Separator} from './toolbox'
+import * as helper from '../helper'
+
+import Toolbox, {Button, Separator} from './Toolbox'
 
 export default class Properties extends Component {
     shouldComponentUpdate(nextProps) {
@@ -13,7 +15,38 @@ export default class Properties extends Component {
 
         if (this.buttonClickHandlersCache[id] == null) {
             this.buttonClickHandlersCache[id] = evt => {
-                console.log(id)
+                let {data, onChange = () => {}} = this.props
+                let change = {}
+
+                if (['tail', 'mapsto', 'twoheads'].includes(id)) {
+                    let prop = id === 'twoheads' ? 'head' : 'tail'
+
+                    change = {[prop]: data[prop] === id ? 'none' : id}
+                } else if (id === 'head') {
+                    change = {head: data.head == null ? 'none' : null}
+                } else if (['solid', 'dashed'].includes(id)) {
+                    change = {dashed: id === 'dashed'}
+                } else if (['hook', 'harpoon'].includes(id)) {
+                    let prop = id === 'hook' ? 'tail' : 'head'
+                    let ids = [id, `${id}alt`, 'none']
+                    let index = (ids.indexOf(data[prop]) + 1) % ids.length
+
+                    change = {[prop]: ids[index]}
+                } else if (['bendleft', 'bendright'].includes(id)) {
+                    let {bend = 0} = data
+                    let increase = bend === 0 || (id === 'bendleft' ? bend > 0 : bend < 0)
+                    let sign = bend !== 0 ? Math.sign(bend) : id === 'bendleft' ? 1 : -1
+                    let steps = [0, 30, 45, 55, 65, 70, 75, 78, 80]
+
+                    let index = steps.reduce((acc, x, i) => x <= Math.abs(bend) ? i : acc, -1)
+                    if (index < steps.length - 1 && bend >= (steps[index + 1] + steps[index]) / 2) index++
+
+                    let newBend = sign * steps[Math.min(index + (+increase * 2 - 1), steps.length - 1)]
+
+                    change = {bend: helper.clamp(-80, 80, newBend)}
+                }
+
+                onChange({data: {...data, ...change}})
             }
         }
 
@@ -40,7 +73,7 @@ export default class Properties extends Component {
 
             <Button
                 checked={['hook', 'hookalt'].includes(data.tail)}
-                icon="./img/properties/hook.svg"
+                icon={`./img/properties/${data.tail === 'hookalt' ? 'hookalt' : 'hook'}.svg`}
                 name="Hook"
                 onClick={this.handleButtonClick('hook')}
             />
@@ -91,7 +124,7 @@ export default class Properties extends Component {
 
             <Button
                 checked={['harpoon', 'harpoonalt'].includes(data.head)}
-                icon="./img/properties/harpoon.svg"
+                icon={`./img/properties/${data.head === 'harpoonalt' ? 'harpoonalt' : 'harpoon'}.svg`}
                 name="Harpoon"
                 onClick={this.handleButtonClick('harpoon')}
             />
