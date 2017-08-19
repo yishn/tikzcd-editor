@@ -87,7 +87,7 @@ export default class GridEdge extends Component {
         })
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
             span.remove()
         }
@@ -99,7 +99,9 @@ export default class GridEdge extends Component {
                 && this.props.value === prevProps.value
                 && this.props.alt === prevProps.alt
                 && this.props.from === prevProps.from
-                && this.props.to === prevProps.to) return
+                && this.props.to === prevProps.to
+                && this.state.startPoint === prevState.startPoint
+                && this.state.endPoint === prevState.endPoint) return
 
             if (prevProps == null) prevProps = this.props
 

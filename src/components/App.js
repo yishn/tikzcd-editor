@@ -3,6 +3,7 @@ import copy from 'copy-text-to-clipboard'
 import * as diagram from '../diagram'
 
 import Grid from './grid'
+import Properties from './properties'
 import Toolbox, {Button, Separator} from './toolbox'
 
 export default class App extends Component {
@@ -69,7 +70,7 @@ export default class App extends Component {
     }
 
     handleEdgeClick = evt => {
-        this.setState({selectedEdge: evt.edge})
+        this.setState({selectedEdge: this.state.selectedEdge === evt.edge ? null : evt.edge})
     }
 
     handleToolClick = tool => {
@@ -113,17 +114,21 @@ export default class App extends Component {
                 onEdgeClick={this.handleEdgeClick}
             />
 
+            <Properties
+                show={this.state.selectedEdge != null}
+            />
+
             <Toolbox id="toolbox">
                 <Button
                     checked={this.state.tool === 'pan'}
-                    icon="pan"
+                    icon="./img/tools/pan.svg"
                     name="Pan Tool (Space)"
                     onClick={this.handleToolClick('pan')}
                 />
 
                 <Button
                     checked={this.state.tool === 'arrow'}
-                    icon="arrow"
+                    icon="./img/tools/arrow.svg"
                     name="Arrow Tool (Ctrl)"
                     onClick={this.handleToolClick('arrow')}
                 />
@@ -131,13 +136,13 @@ export default class App extends Component {
                 <Separator/>
 
                 <Button
-                    icon={this.state.confirmCopy ? 'tick' : 'code'}
+                    icon={`./img/tools/${this.state.confirmCopy ? 'tick' : 'code'}.svg`}
                     name="Copy Code"
                     onClick={this.handleCopyClick}
                 />
 
                 <Button
-                    icon="about"
+                    icon="./img/tools/about.svg"
                     name="About…"
                     onClick={this.handleAboutClick}
                 />

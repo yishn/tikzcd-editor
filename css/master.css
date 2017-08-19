@@ -113,13 +113,13 @@ body, html {
 .toolbox {
         position: absolute;
         left: 50%;
-        bottom: 2em;
         padding: 0 .5em;
         background: rgba(221, 221, 221, .7);
         box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
         transform: translateX(-50%);
     }
     .toolbox ul {
+        line-height: 0;
         display: flex;
         flex-wrap: nowrap;
         align-items: stretch;
@@ -132,23 +132,54 @@ body, html {
         margin: 0 .5em;
         padding-left: 0;
         padding-right: 0;
-        width: 1px;
-        height: calc(24px + 1em);
+        width: 2px;
         background: #aaa;
         text-indent: -9999em;
     }
-    .toolbox li:not(.separator):hover {
+    .toolbox li.button:hover {
         background: #ccc;
     }
-    .toolbox li:not(.separator).checked {
+    .toolbox li.button.checked {
         background: #bbb;
     }
-    .toolbox li:not(.separator):active {
+    .toolbox li.button:active {
         background: #aaa;
     }
-    .toolbox li img {
-        vertical-align: bottom;
+    .toolbox li.button img {
+        display: block;
+        background-size: 100%;
+        background-position: center;
         width: 24px;
         height: 24px;
         transition: background-image .2s;
+}
+
+#toolbox {
+    bottom: 2em;
+}
+
+#properties {
+        top: calc(-16px - 2em);
+        background: rgba(0, 0, 0, .7);
+        transition: top .2s;
+    }
+    #properties.show {
+        top: 1em;
+    }
+    #properties li.button:hover {
+        background: #0050C0;
+    }
+    #properties li.button.checked {
+        background: rgba(255, 255, 255, .2);
+    }
+    #properties li.button:active {
+        background: #0030A0;
+    }
+    #properties li.button img {
+        width: 16px;
+        height: 16px;
+        filter: invert(100%);
+    }
+    #properties li.separator {
+        background: rgba(255, 255, 255, .4);
 }

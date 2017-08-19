@@ -9,7 +9,8 @@ MathJax.Hub.processUpdateDelay = 0
 MathJax.Hub.Config({
     messageStyle: 'none',
     skipStartupTypeset: true,
-    showMathMenu: false
+    showMathMenu: false,
+    errorSettings: {message: ['']}
 })
 
 // Render
