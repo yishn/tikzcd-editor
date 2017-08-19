@@ -11,6 +11,7 @@ export default class App extends Component {
 
         this.state = {
             tool: 'pan',
+            cellSize: 130,
             diagram: {
                 nodes: [
                     {id: '0', position: [1, 1], value: 'T'},
@@ -84,7 +85,7 @@ export default class App extends Component {
     render() {
         return <div id="root">
             <Grid
-                cellSize={130}
+                cellSize={this.state.cellSize}
                 data={this.state.diagram}
                 mode={this.state.tool}
 

@@ -1,6 +1,6 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
-import {getRectCenteredAround, getRectSegmentIntersections} from '../geometry'
+import * as geometry from '../geometry'
 
 export default class GridEdge extends Component {
     constructor(props) {
@@ -16,6 +16,7 @@ export default class GridEdge extends Component {
 
     componentDidMount() {
         this.componentDidUpdate()
+        this.componentWillReceiveProps()
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -33,7 +34,48 @@ export default class GridEdge extends Component {
         return false
     }
 
-    componentDidUpdate() {
+    componentWillReceiveProps(nextProps) {
+        if (nextProps != null
+            && nextProps.from === this.props.from
+            && nextProps.to === this.props.to) return
+
+        if (nextProps == null) nextProps = this.props
+
+        MathJax.Hub.Queue(() => {
+            let {cellSize} = nextProps
+            let query = position => `.grid-cell[data-position="${position.join(',')}"] .value`
+
+            let fromLatexElement = document.querySelector(query(nextProps.from))
+            let toLatexElement = document.querySelector(query(nextProps.to))
+
+            let {width: fromWidth, height: fromHeight} = fromLatexElement.getBoundingClientRect()
+            let {width: toWidth, height: toHeight} = toLatexElement.getBoundingClientRect()
+            fromWidth += 20
+            fromHeight += 20
+            toWidth += 20
+            toHeight += 20
+
+            let [fromCenter, toCenter] = [nextProps.from, nextProps.to]
+                .map(x => x.map(y => y * cellSize + cellSize / 2))
+            let m = fromCenter.map((x, i) => (x + toCenter[i]) / 2)
+            let d = fromCenter.map((x, i) => toCenter[i] - x)
+            let {length} = this.getLengthAngle()
+            let controlPoint = geometry.normalize(geometry.getPerpendicularLeftVector(d))
+                .map((x, i) => m[i] + length * Math.tan(-(nextProps.bend || 0) * Math.PI / 180) * x / 2)
+
+            let fromRect = geometry.getRectCenteredAround(fromCenter, fromWidth, fromHeight)
+            let toRect = geometry.getRectCenteredAround(toCenter, toWidth, toHeight)
+            let fromIntersection = geometry.getRectSegmentIntersections(fromRect, fromCenter, controlPoint)[0]
+            let toIntersection = geometry.getRectSegmentIntersections(toRect, controlPoint, toCenter)[0]
+
+            this.setState({
+                startPoint: fromIntersection || fromCenter,
+                endPoint: toIntersection || toCenter
+            })
+        })
+    }
+
+    componentDidUpdate(prevProps) {
         for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
             span.remove()
         }
@@ -41,13 +83,18 @@ export default class GridEdge extends Component {
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
 
         MathJax.Hub.Queue(() => {
+            if (prevProps != null
+                && this.props.value === prevProps.value
+                && this.props.alt === prevProps.alt) return
+
+            if (prevProps == null) prevProps = this.props
+
             let bbox = this.edgePath.getBBox()
             let {width, height} = window.getComputedStyle(this.valueElement)
 
             ;[width, height] = [width, height].map(parseFloat)
 
-            let angle = this.getAngle()
-            let newWidth = width * Math.abs(Math.cos(angle)) + height * Math.abs(Math.sin(angle))
+            let {angle} = this.getLengthAngle()
             let newHeight = height * Math.abs(Math.cos(angle)) + width * Math.abs(Math.sin(angle))
 
             this.setState({
@@ -55,49 +102,29 @@ export default class GridEdge extends Component {
                 labelY: (this.props.alt ? bbox.y + bbox.height : bbox.y - height)
                     + (+!!this.props.alt * 2 - 1) * ((newHeight - height) / 2 + 5)
             })
-
-            let {cellSize} = this.props
-            let query = position => `.grid-cell[data-position="${position.join(',')}"] .value`
-
-            let fromLatexElement = document.querySelector(query(this.props.from))
-            let toLatexElement = document.querySelector(query(this.props.to))
-
-            let {width: fromWidth, height: fromHeight} = fromLatexElement.getBoundingClientRect()
-            let {width: toWidth, height: toHeight} = toLatexElement.getBoundingClientRect()
-
-            let [fromCenter, toCenter] = [this.props.from, this.props.to]
-                .map(x => x.map(y => y * cellSize + cellSize / 2))
-
-            let fromRect = getRectCenteredAround(fromCenter, fromWidth, fromHeight)
-            let toRect = getRectCenteredAround(toCenter, toWidth, toHeight)
-            let fromIntersection = getRectSegmentIntersections(fromRect, fromCenter, toCenter)[0]
-            let toIntersection = getRectSegmentIntersections(toRect, fromCenter, toCenter)[0]
-
-            this.setState({
-                startPoint: fromIntersection,
-                endPoint: toIntersection
-            })
         })
     }
 
-    getAngle() {
+    getLengthAngle() {
         let {startPoint, endPoint} = this.state
         let [dx, dy] = endPoint.map((x, i) => x - startPoint[i])
 
-        return Math.atan2(dy, dx)
+        return {
+            length: geometry.norm([dx, dy]),
+            angle: Math.atan2(dy, dx)
+        }
     }
 
     render() {
         let {startPoint, endPoint} = this.state
-        let [dx, dy] = endPoint.map((x, i) => x - startPoint[i])
         let [mx, my] = endPoint.map((x, i) => (x + startPoint[i]) / 2)
 
-        let length = Math.sqrt(dx * dx + dy * dy) - 20
-        let angle = this.getAngle() * 180 / Math.PI
+        let {length, angle} = this.getLengthAngle()
+        let degree = angle * 180 / Math.PI
 
-        let bend = this.props.bend == null ? 0 : -this.props.bend
-        let [cx, cy] = [length / 2, length * Math.tan(bend * Math.PI / 180) / 2]
-        let height = Math.max(2 * Math.abs(cy), 13)
+        let bend = this.props.bend || 0
+        let [cx, cy] = [length / 2, length * Math.tan(-bend * Math.PI / 180) / 2]
+        let height = Math.max(Math.abs(cy) + 2, 13)
 
         return <li
             class="grid-edge"
@@ -106,14 +133,13 @@ export default class GridEdge extends Component {
                 width: length,
                 left: mx - length / 2,
                 top: my - height / 2,
-                transform: `rotate(${angle}deg)`
+                transform: `rotate(${degree}deg)`
             }}
         >
             <svg
                 ref={el => this.svgElement = el}
                 width={length}
                 height={height}
-                style={{marginTop: bend * 0.5}}
             >
                 <path
                     ref={el => this.edgePath = el}
@@ -128,14 +154,14 @@ export default class GridEdge extends Component {
                     x="0" y={height / 2 - 13 / 2}
                     width="9.764" height="13"
                     style="background: white;"
-                    transform={`rotate(${bend} ${9.764} ${height / 2})`}
+                    transform={`rotate(${-bend} ${9.764} ${height / 2})`}
                     href={`./img/arrow/${this.props.tail || 'none'}.svg`}
                 />
 
                 <image
                     x={length - 9.764} y={height / 2 - 13 / 2}
                     width="9.764" height="13"
-                    transform={`rotate(${-bend} ${length} ${height / 2})`}
+                    transform={`rotate(${bend} ${length} ${height / 2})`}
                     href={`./img/arrow/${this.props.head || 'default'}.svg`}
                 />
             </svg>
@@ -145,8 +171,8 @@ export default class GridEdge extends Component {
                 class={classNames({alt: this.props.alt}, 'value')}
                 style={{
                     left: this.state.labelX,
-                    top: this.state.labelY + bend * 0.5,
-                    transform: `rotate(${-angle}deg)`
+                    top: this.state.labelY,
+                    transform: `rotate(${-degree}deg)`
                 }}
             >
                 {this.props.value && `\\(${this.props.value}\\)`}

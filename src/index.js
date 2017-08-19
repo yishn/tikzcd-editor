@@ -5,7 +5,12 @@ import App from './components/App'
 
 MathJax.Hub.processSectionDelay = 0
 MathJax.Hub.processUpdateDelay = 0
-MathJax.Hub.Config({messageStyle: 'none', skipStartupTypeset: true})
+
+MathJax.Hub.Config({
+    messageStyle: 'none',
+    skipStartupTypeset: true,
+    showMathMenu: false
+})
 
 // Render
 

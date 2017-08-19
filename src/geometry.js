@@ -30,3 +30,16 @@ export function getRectSegmentIntersections(rect, p1, p2) {
         .map(t => p1.map((x, i) => x + t * d[i]))
         .filter(p => insideRect(rect, p))
 }
+
+export function getPerpendicularLeftVector([x, y]) {
+    return [-y, x]
+}
+
+export function norm(p) {
+    return Math.sqrt(p.reduce((acc, x) => acc + x * x, 0))
+}
+
+export function normalize(p) {
+    let n = norm(p)
+    return p.map(x => x / n)
+}
