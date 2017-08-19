@@ -26,6 +26,8 @@ export default class Properties extends Component {
                     change = {head: data.head == null ? 'none' : null}
                 } else if (['solid', 'dashed'].includes(id)) {
                     change = {dashed: id === 'dashed'}
+                } else if (['labelleft', 'labelright'].includes(id)) {
+                    change = {alt: id === 'labelright'}
                 } else if (['hook', 'harpoon'].includes(id)) {
                     let prop = id === 'hook' ? 'tail' : 'head'
                     let ids = [id, `${id}alt`, 'none']
@@ -57,6 +59,22 @@ export default class Properties extends Component {
         let data = this.props.data == null ? {} : this.props.data
 
         return <Toolbox id="properties" class={classNames({show: this.props.show})}>
+            <Button
+                checked={!data.alt}
+                icon="./img/properties/labelleft.svg"
+                name="Left Label"
+                onClick={this.handleButtonClick('labelleft')}
+            />
+
+            <Button
+                checked={!!data.alt}
+                icon="./img/properties/labelright.svg"
+                name="Right Label"
+                onClick={this.handleButtonClick('labelright')}
+            />
+
+            <Separator/>
+
             <Button
                 checked={data.tail === 'tail'}
                 icon="./img/properties/tail.svg"
