@@ -5,7 +5,7 @@ export function toTeX(diagram) {
         <Diagram>
             {diagram.nodes.map((node, i) =>
                 <Node
-                    key={i.toString()}
+                    key={node.id}
                     position={node.position}
                     value={node.value}
                 />
