@@ -178,7 +178,7 @@ export default class App extends Component {
 
                 <Button
                     icon="./img/tools/about.svg"
-                    name="About…"
+                    name="GitHub Repository"
                     onClick={this.handleAboutClick}
                 />
             </Toolbox>
