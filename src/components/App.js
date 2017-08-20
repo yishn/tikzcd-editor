@@ -54,6 +54,13 @@ export default class App extends Component {
                 this.setState({selectedEdge: null})
             }
         })
+
+        window.addEventListener('beforeunload', evt => {
+            let message = 'Do you really want to leave?'
+
+            evt.returnValue = message
+            return message
+        })
     }
 
     handleDataChange = evt => {
