@@ -8,6 +8,11 @@ body, html {
     height: 100%;
 }
 
+.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
 #grid {
         position: absolute;
         left: 0;
@@ -163,11 +168,57 @@ body, html {
 }
 
 #properties {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+    }
+    #properties.edit {
+        pointer-events: all;
+    }
+    #properties .edit {
+        border-radius: 5px;
+        position: absolute;
+        width: 130px;
+        padding: .3em 1em;
+        background: rgba(57, 57, 57, .9);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
+        opacity: 0;
+        transform: scale(.7) translate(0, 100%);
+        transition: opacity .1s, transform .1s;
+    }
+    #properties .edit::after {
+        content: '';
+        display: block;
+        position: absolute;
+        left: calc(50% - 10px);
+        bottom: -10px;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid rgb(77, 77, 77);
+    }
+    #properties.edit .edit {
+        opacity: 1;
+        transform: scale(1);
+    }
+    #properties .edit input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: white;
+        font: 1em/1.5 Consolas, monospace;
+        text-align: center;
+    }
+    #properties .toolbox {
         top: calc(-16px - 2em);
         background: rgba(0, 0, 0, .7);
         transition: top .2s;
+        pointer-events: all;
     }
-    #properties.show {
+    #properties.show .toolbox {
         top: 1em;
     }
     #properties li.button:hover {

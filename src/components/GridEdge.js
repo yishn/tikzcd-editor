@@ -85,8 +85,12 @@ export default class GridEdge extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        for (let span of this.valueElement.querySelectorAll('span[id^="MathJax"]')) {
-            span.remove()
+        for (let el of this.valueElement.querySelectorAll([
+            'span[id^="MathJax"]',
+            '.MathJax_Preview',
+            'script',
+        ].join(', '))) {
+            el.remove()
         }
 
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
@@ -140,6 +144,7 @@ export default class GridEdge extends Component {
         let height = Math.max(Math.abs(cy) + 13, 13)
 
         return <li
+            data-id={this.props.id}
             class={classNames('grid-edge', {selected: this.props.selected})}
             style={{
                 height,
@@ -199,7 +204,10 @@ export default class GridEdge extends Component {
                     transform: `rotate(${-degree}deg)`
                 }}
             >
-                {this.props.value && `\\(${this.props.value}\\)`}
+                {this.props.value
+                    ? `\\(${this.props.value}\\)`
+                    : <span class="hide">\(_\)</span>
+                }
             </div>
         </li>
     }

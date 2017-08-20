@@ -63,6 +63,14 @@ export default class App extends Component {
                 this.prevTool = null
             }
         })
+
+        document.addEventListener('keyup', evt => {
+            if (evt.keyCode === 27) {
+                // Escape
+
+                this.setState({selectedEdge: null})
+            }
+        })
     }
 
     handleDataChange = evt => {
@@ -149,6 +157,7 @@ export default class App extends Component {
             />
 
             <Properties
+                edgeId={this.state.selectedEdge}
                 show={this.state.selectedEdge != null}
                 data={this.state.diagram.edges[this.state.selectedEdge]}
 

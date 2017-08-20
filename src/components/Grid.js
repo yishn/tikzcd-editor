@@ -27,6 +27,7 @@ export default class Grid extends Component {
             if (evt.keyCode === 27) {
                 // Escape
 
+                evt.stopPropagation()
                 this.setState({editPosition: [null, null]})
             }
         })
@@ -227,6 +228,9 @@ export default class Grid extends Component {
             >
                 {this.props.data.edges.map((edge, i) =>
                     <GridEdge
+                        cellSize={cellSize}
+
+                        id={i.toString()}
                         from={this.props.data.nodes.find(n => n.id === edge.from).position}
                         to={this.props.data.nodes.find(n => n.id === edge.to).position}
                         selected={this.props.selectedEdge === i}
@@ -237,8 +241,6 @@ export default class Grid extends Component {
                         head={edge.head}
                         value={edge.value}
                         alt={edge.alt}
-
-                        cellSize={cellSize}
 
                         onClick={this.handleEdgeClick(i)}
                     />
