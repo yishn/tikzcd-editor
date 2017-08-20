@@ -88,6 +88,8 @@ export default class App extends Component {
     }
 
     handleCopyClick = () => {
+        if (this.state.confirmCopy) return
+        
         let success = copy(diagram.toTeX(this.state.diagram))
 
         if (success) {
