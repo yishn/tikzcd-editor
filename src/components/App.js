@@ -1,5 +1,5 @@
 import {h, render, Component} from 'preact'
-import copy from 'copy-text-to-clipboard'
+import copyText from 'copy-text-to-clipboard'
 import * as diagram from '../diagram'
 
 import Grid from './Grid'
@@ -91,7 +91,7 @@ export default class App extends Component {
         if (this.state.confirmCopy) return
 
         let code = diagram.toTeX(this.state.diagram)
-        let success = copy(code)
+        let success = copyText(code)
 
         if (success) {
             this.setState({confirmCopy: true})
