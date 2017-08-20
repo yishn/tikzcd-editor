@@ -32,3 +32,7 @@ Use the `watch` command for development:
 ~~~
 $ npm run watch
 ~~~
+
+## Related
+
+* [jsx-tikzcd](https://github.com/yishn/jsx-tikzcd) - Render tikzcd diagrams with JSX.
