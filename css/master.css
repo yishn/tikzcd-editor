@@ -2,10 +2,17 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -moz-user-select: none;
+    user-select: none;
 }
 
 body, html {
     height: 100%;
+}
+
+img {
+    -webkit-user-drag: none;
+    user-drag: none;
 }
 
 .hide {

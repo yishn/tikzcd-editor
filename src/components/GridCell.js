@@ -35,6 +35,10 @@ export default class GridCell extends Component {
         onGrabberMouseDown(evt)
     }
 
+    handleGrabberDragStart = evt => {
+        evt.preventDefault()
+    }
+
     handleEditSubmit = evt => {
         evt.preventDefault()
 
@@ -67,7 +71,9 @@ export default class GridCell extends Component {
             <img
                 class="grabber"
                 src="./img/grabber.svg"
+
                 onMouseDown={this.handleGrabberMouseDown}
+                onDragStart={this.handleGrabberDragStart}
             />
 
             <div class="value" ref={el => this.valueElement = el}>
