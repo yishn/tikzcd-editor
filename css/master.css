@@ -54,7 +54,7 @@ body, html {
         white-space: nowrap;
         transition: background .2s;
     }
-    .pan .grid-cell:hover {
+    .pan .grid-cell:hover, .grid-cell.edit {
         background: #eee;
     }
     .grid-cell .grabber {

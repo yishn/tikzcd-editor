@@ -106,6 +106,10 @@ export default class App extends Component {
             ...evt.data
         }
 
+        if (evt.data.value != null && evt.data.value.trim() === '') {
+            delete newEdges[this.state.selectedEdge].value
+        }
+
         this.setState({
             diagram: {
                 nodes: this.state.diagram.nodes,
