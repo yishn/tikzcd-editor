@@ -101,7 +101,7 @@ body, html {
     .grid-edge svg .mouse {
         transition: stroke .1s;
     }
-    .arrow .grid-edge svg .mouse {
+    .arrow .grid-edge:not(.phantom) svg .mouse {
         pointer-events: all;
     }
     .arrow .grid-edge svg .mouse:hover {

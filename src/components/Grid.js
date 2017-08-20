@@ -13,7 +13,8 @@ export default class Grid extends Component {
             width: null,
             height: null,
             cameraPosition: Array(2).fill(Math.round(-props.cellSize / 2)),
-            editPosition: [null, null]
+            editPosition: [null, null],
+            phantomEdge: null
         }
     }
 
@@ -21,7 +22,39 @@ export default class Grid extends Component {
         this.updateSize()
 
         window.addEventListener('resize', () => this.updateSize())
-        document.addEventListener('mouseup', () => this.mouseDown = null)
+
+        document.addEventListener('mouseup', () => {
+            this.mouseDown = null
+
+            let {phantomEdge} = this.state
+
+            if (phantomEdge != null) {
+                if (phantomEdge.from.some((x, i) => x !== phantomEdge.to[i])) {
+                    // Add edge
+
+                    let newNodes = [...this.props.data.nodes]
+
+                    let [fromNode, toNode] = [phantomEdge.from, phantomEdge.to].map(position =>
+                        newNodes.find(n => n.position.every((x, i) => x === position[i]))
+                    )
+
+                    if (fromNode == null)
+                        newNodes.push(fromNode = {id: getId(), position: phantomEdge.from, value: ''})
+                    if (toNode == null)
+                        newNodes.push(toNode = {id: getId(), position: phantomEdge.to, value: ''})
+
+                    let newEdges = [...this.props.data.edges, {
+                        from: fromNode.id,
+                        to: toNode.id
+                    }]
+
+                    let {onDataChange = () => {}} = this.props
+                    onDataChange({data: {nodes: newNodes, edges: newEdges}})
+                }
+
+                this.setState({phantomEdge: null})
+            }
+        })
 
         document.addEventListener('keyup', evt => {
             if (evt.keyCode === 27) {
@@ -37,20 +70,21 @@ export default class Grid extends Component {
 
             evt.preventDefault()
 
+            let {cellSize} = this.props
+            let {cameraPosition} = this.state
+            let newPosition = [evt.clientX, evt.clientY]
+                .map((x, i) => Math.floor((x + cameraPosition[i]) / cellSize))
+
             if (this.mouseDown.mode === 'pan') {
                 let {movementX, movementY} = evt
 
-                this.setState(state => ({
-                    cameraPosition: state.cameraPosition.map((x, i) => x - [movementX, movementY][i])
-                }))
+                this.setState({
+                    cameraPosition: cameraPosition.map((x, i) => x - [movementX, movementY][i])
+                })
             } else if (this.mouseDown.mode === 'move') {
                 let {node} = this.mouseDown
                 if (node == null) return
 
-                let {cellSize} = this.props
-                let {cameraPosition} = this.state
-                let newPosition = [evt.clientX, evt.clientY]
-                    .map((x, i) => Math.floor((x + cameraPosition[i]) / cellSize))
                 let existingNode = this.props.data.nodes
                     .find(x => x.position.every((y, i) => y === newPosition[i]))
 
@@ -66,6 +100,17 @@ export default class Grid extends Component {
 
                         edges: this.props.data.edges
                     }
+                })
+            } else if (this.mouseDown.mode === 'arrow') {
+                let {position: from} = this.mouseDown
+                let to = newPosition
+
+                if (this.state.phantomEdge != null
+                    && from.every((x, i) => x === this.state.phantomEdge.from[i])
+                    && to.every((x, i) => x === this.state.phantomEdge.to[i])) return
+
+                this.setState({
+                    phantomEdge: {from, to}
                 })
             }
         })
@@ -245,6 +290,16 @@ export default class Grid extends Component {
                         onClick={this.handleEdgeClick(i)}
                     />
                 )}
+
+                {this.state.phantomEdge &&
+                    <GridEdge
+                        cellSize={cellSize}
+                        phantom
+
+                        from={this.state.phantomEdge.from}
+                        to={this.state.phantomEdge.to}
+                    />
+                }
             </ul>
         </section>
     }

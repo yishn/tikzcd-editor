@@ -145,7 +145,10 @@ export default class GridEdge extends Component {
 
         return <li
             data-id={this.props.id}
-            class={classNames('grid-edge', {selected: this.props.selected})}
+            class={classNames('grid-edge', {
+                selected: this.props.selected,
+                phantom: this.props.phantom
+            })}
             style={{
                 height,
                 width: length,
