@@ -1,6 +1,6 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
-import {getId} from '../helper'
+import * as helper from '../helper'
 
 import GridCell from './GridCell'
 import GridEdge from './GridEdge'
@@ -29,19 +29,19 @@ export default class Grid extends Component {
             let {phantomEdge} = this.state
 
             if (phantomEdge != null) {
-                if (phantomEdge.from.some((x, i) => x !== phantomEdge.to[i])) {
+                if (!helper.arrEquals(phantomEdge.from, phantomEdge.to)) {
                     // Add edge
 
                     let newNodes = [...this.props.data.nodes]
 
                     let [fromNode, toNode] = [phantomEdge.from, phantomEdge.to].map(position =>
-                        newNodes.find(n => n.position.every((x, i) => x === position[i]))
+                        newNodes.find(n => helper.arrEquals(n.position, position))
                     )
 
                     if (fromNode == null)
-                        newNodes.push(fromNode = {id: getId(), position: phantomEdge.from, value: ''})
+                        newNodes.push(fromNode = {id: helper.getId(), position: phantomEdge.from, value: ''})
                     if (toNode == null)
-                        newNodes.push(toNode = {id: getId(), position: phantomEdge.to, value: ''})
+                        newNodes.push(toNode = {id: helper.getId(), position: phantomEdge.to, value: ''})
 
                     let newEdges = [...this.props.data.edges, {
                         from: fromNode.id,
@@ -79,15 +79,13 @@ export default class Grid extends Component {
                 let {movementX, movementY} = evt
 
                 this.setState({
-                    cameraPosition: cameraPosition.map((x, i) => x - [movementX, movementY][i])
+                    cameraPosition: helper.arrSubtract(cameraPosition, [movementX, movementY])
                 })
             } else if (this.mouseDown.mode === 'move') {
                 let {node} = this.mouseDown
                 if (node == null) return
 
-                let existingNode = this.props.data.nodes
-                    .find(x => x.position.every((y, i) => y === newPosition[i]))
-
+                let existingNode = this.props.data.nodes.find(n => helper.arrEquals(n.position, newPosition))
                 if (existingNode != null) return
 
                 let {onDataChange = () => {}} = this.props
@@ -106,8 +104,8 @@ export default class Grid extends Component {
                 let to = newPosition
 
                 if (this.state.phantomEdge != null
-                    && from.every((x, i) => x === this.state.phantomEdge.from[i])
-                    && to.every((x, i) => x === this.state.phantomEdge.to[i])) return
+                    && helper.arrEquals(from, this.state.phantomEdge.from)
+                    && helper.arrEquals(to, this.state.phantomEdge.to)) return
 
                 this.setState({
                     phantomEdge: {from, to}
@@ -129,7 +127,7 @@ export default class Grid extends Component {
         let position = [evt.clientX, evt.clientY]
             .map((x, i) => Math.floor((x + cameraPosition[i]) / cellSize))
         let node = this.props.data.nodes
-            .find(x => x.position.every((y, i) => y === position[i]))
+            .find(n => helper.arrEquals(n.position, position))
 
         this.mouseDown = {
             evt, position, node,
@@ -143,8 +141,7 @@ export default class Grid extends Component {
         evt.stopPropagation()
 
         let {position} = evt
-        let node = this.props.data.nodes
-            .find(x => x.position.every((y, i) => y === position[i]))
+        let node = this.props.data.nodes.find(n => helper.arrEquals(n.position, position))
 
         this.mouseDown = {
             evt, position, node,
@@ -173,11 +170,11 @@ export default class Grid extends Component {
         let {onDataChange = () => {}} = this.props
 
         let nodes = [...this.props.data.nodes]
-        let index = nodes.findIndex(n => n.position.every((x, i) => x === evt.position[i]))
+        let index = nodes.findIndex(n => helper.arrEquals(n.position, evt.position))
 
         if (index < 0) {
             if (evt.value.trim() !== '') {
-                nodes.push({id: getId(), position: evt.position, value: evt.value})
+                nodes.push({id: helper.getId(), position: evt.position, value: evt.value})
             }
         } else {
             let {id} = nodes[index]
@@ -222,7 +219,7 @@ export default class Grid extends Component {
         let [xstart, ystart] = this.state.cameraPosition.map(x => Math.floor(x / cellSize))
         let [xend, yend] = this.state.cameraPosition.map((x, i) => Math.floor((x + size[i]) / cellSize))
         let [cols, rows] = [xend - xstart + 1, yend - ystart + 1]
-        let [tx, ty] = [xstart, ystart].map((x, i) => x * cellSize - this.state.cameraPosition[i])
+        let [tx, ty] = helper.arrSubtract(helper.arrScale(cellSize, [xstart, ystart]), this.state.cameraPosition)
 
         return <section
             ref={el => this.element = el}
@@ -249,12 +246,12 @@ export default class Grid extends Component {
                                 key={position.join(',')}
                                 position={position}
                                 size={cellSize}
-                                edit={position.every((x, i) => x === this.state.editPosition[i])}
+                                edit={helper.arrEquals(position, this.state.editPosition)}
                                 value={(node =>
                                     node && node.value
-                                )(this.props.data.nodes
-                                    .find(x => x.position.every((y, k) => y === position[k]))
-                                )}
+                                )(this.props.data.nodes.find(
+                                    n => helper.arrEquals(n.position, position)
+                                ))}
 
                                 onGrabberMouseDown={this.handleNodeGrabberMouseDown}
                                 onSubmit={this.handleNodeSubmit}

@@ -1,5 +1,6 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
+import * as helper from '../helper'
 import * as geometry from '../geometry'
 
 export default class GridEdge extends Component {
@@ -26,7 +27,7 @@ export default class GridEdge extends Component {
 
         for (let key in nextState) {
             if (nextState[key] instanceof Array
-                && nextState[key].some((x, i) => x !== this.state[key][i])
+                && !helper.arrEquals(nextState[key], this.state[key])
                 || !(nextState[key] instanceof Array)
                 && nextState[key] !== this.state[key]) return true
         }
@@ -66,11 +67,14 @@ export default class GridEdge extends Component {
 
             let [fromCenter, toCenter] = [nextProps.from, nextProps.to]
                 .map(x => x.map(y => y * cellSize + cellSize / 2))
-            let m = fromCenter.map((x, i) => (x + toCenter[i]) / 2)
-            let d = fromCenter.map((x, i) => toCenter[i] - x)
+            let m = helper.arrScale(0.5, helper.arrAdd(fromCenter, toCenter))
+            let d = helper.arrSubtract(toCenter, fromCenter)
             let {length} = this.getLengthAngle()
-            let controlPoint = geometry.normalize(geometry.getPerpendicularLeftVector(d))
-                .map((x, i) => m[i] + length * Math.tan(-(nextProps.bend || 0) * Math.PI / 180) * x / 2)
+
+            let controlPoint = helper.arrAdd(m, helper.arrScale(
+                length * Math.tan(-(nextProps.bend || 0) * Math.PI / 180) / 2,
+                geometry.normalize(geometry.getPerpendicularLeftVector(d))
+            ))
 
             let fromRect = geometry.getRectCenteredAround(fromCenter, fromWidth, fromHeight)
             let toRect = geometry.getRectCenteredAround(toCenter, toWidth, toHeight)
@@ -124,7 +128,7 @@ export default class GridEdge extends Component {
 
     getLengthAngle() {
         let {startPoint, endPoint} = this.state
-        let [dx, dy] = endPoint.map((x, i) => x - startPoint[i])
+        let [dx, dy] = helper.arrSubtract(endPoint, startPoint)
 
         return {
             length: geometry.norm([dx, dy]),
@@ -134,7 +138,7 @@ export default class GridEdge extends Component {
 
     render() {
         let {startPoint, endPoint} = this.state
-        let [mx, my] = endPoint.map((x, i) => (x + startPoint[i]) / 2)
+        let [mx, my] = helper.arrScale(0.5, helper.arrAdd(startPoint, endPoint))
 
         let {length, angle} = this.getLengthAngle()
         let degree = angle * 180 / Math.PI
