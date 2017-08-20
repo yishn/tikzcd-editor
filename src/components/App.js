@@ -89,12 +89,15 @@ export default class App extends Component {
 
     handleCopyClick = () => {
         if (this.state.confirmCopy) return
-        
-        let success = copy(diagram.toTeX(this.state.diagram))
+
+        let code = diagram.toTeX(this.state.diagram)
+        let success = copy(code)
 
         if (success) {
             this.setState({confirmCopy: true})
             setTimeout(() => this.setState({confirmCopy: false}), 1000)
+        } else {
+            prompt('Copy code down below:', code.replace(/\n/g, ' '))
         }
     }
 
