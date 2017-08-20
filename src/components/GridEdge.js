@@ -49,24 +49,20 @@ export default class GridEdge extends Component {
             let fromLatexElement = document.querySelector(query(nextProps.from))
             let toLatexElement = document.querySelector(query(nextProps.to))
 
-            let [fromWidth, fromHeight, toWidth, toHeight] = Array(4).fill(0)
+            let [fromWidth, fromHeight, toWidth, toHeight] = [0, 0, 0, 0]
 
             if (fromLatexElement != null) {
                 let {width, height} = fromLatexElement.getBoundingClientRect()
-                fromWidth = width
-                fromHeight = height
+                ;[fromWidth, fromHeight] = [width, height]
             }
 
             if (toLatexElement != null) {
                 let {width, height} = toLatexElement.getBoundingClientRect()
-                toWidth = width
-                toHeight = height
+                ;[toWidth, toHeight] = [width, height]
             }
 
-            fromWidth += 20
-            fromHeight += 20
-            toWidth += 20
-            toHeight += 20
+            ;[fromWidth, fromHeight, toWidth, toHeight] = [fromWidth, fromHeight, toWidth, toHeight]
+                .map(x => Math.min(cellSize, x + 20))
 
             let [fromCenter, toCenter] = [nextProps.from, nextProps.to]
                 .map(x => x.map(y => y * cellSize + cellSize / 2))
