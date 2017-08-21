@@ -97,7 +97,9 @@ export default class GridEdge extends Component {
             el.remove()
         }
 
-        MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
+        if (this.props.value) {
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
+        }
 
         MathJax.Hub.Queue(() => {
             if (prevProps != null
@@ -213,7 +215,7 @@ export default class GridEdge extends Component {
             >
                 {this.props.value
                     ? `\\(${this.props.value}\\)`
-                    : <span class="hide">\(_\)</span>
+                    : <span class="hide">_</span>
                 }
             </div>
         </li>

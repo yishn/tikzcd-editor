@@ -20,7 +20,9 @@ export default class GridCell extends Component {
             el.remove()
         }
 
-        MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
+        if (this.props.value) {
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
+        }
 
         if (this.inputElement != null && prevProps.edit !== this.props.edit) {
             this.inputElement.select()
@@ -79,7 +81,7 @@ export default class GridCell extends Component {
             <div class="value" ref={el => this.valueElement = el}>
                 {this.props.value
                     ? `\\(${this.props.value}\\)`
-                    : <span class="hide">\(_\)</span>
+                    : <span class="hide">_</span>
                 }
             </div>
 
