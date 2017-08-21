@@ -15,6 +15,19 @@ export default class Properties extends Component {
         }
     }
 
+    componentDidMount() {
+        document.addEventListener('keyup', evt => {
+            if (!this.props.show) return
+
+            if (evt.keyCode === 46) {
+                // Delete
+
+                let {onRemoveClick = () => {}} = this.props
+                onRemoveClick(evt)
+            }
+        })
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         return nextProps.show !== this.props.show
             || nextProps.data !== this.props.data
@@ -232,7 +245,7 @@ export default class Properties extends Component {
                 <Button
                     class="remove"
                     icon="./img/properties/trash.svg"
-                    name="Remove Arrow"
+                    name="Remove Arrow (Del)"
                     onClick={this.props.onRemoveClick}
                 />
             </Toolbox>
