@@ -161,8 +161,8 @@ export default class GridEdge extends Component {
             })}
             style={{
                 height,
-                width: length,
-                left: mx - length / 2,
+                width: length + 13,
+                left: mx - (length + 13) / 2,
                 top: my - height / 2,
                 transform: `rotate(${degree}deg)`
             }}
@@ -171,7 +171,7 @@ export default class GridEdge extends Component {
         >
             <svg
                 ref={el => this.svgElement = el}
-                width={length}
+                width={length + 13}
                 height={height}
             >
                 <path
