@@ -193,7 +193,7 @@ export default class Properties extends Component {
                 <Button
                     checked={data.line && data.line === 'dotted'}
                     icon="./img/properties/dotted.svg"
-                    name="Dashed"
+                    name="Dotted"
                     onClick={this.handleButtonClick('dotted')}
                 />
 
