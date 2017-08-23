@@ -150,7 +150,7 @@ export default class GridEdge extends Component {
         let degree = angle * 180 / Math.PI
 
         let bend = this.props.bend || 0
-        let [cx, cy] = [length / 2, length * Math.tan(-bend * Math.PI / 180) / 2]
+        let [cx, cy] = [length / 2, length * Math.tan(bend * Math.PI / 180) / 2]
         let height = Math.max(Math.abs(cy) + 13, 13)
 
         return <li
@@ -180,7 +180,7 @@ export default class GridEdge extends Component {
                     stroke-width="12"
                     stroke="transparent"
                     stroke-linecap="square"
-                    d={`M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 + cy} ${length} ${height / 2}`}
+                    d={`M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 - cy} ${length} ${height / 2}`}
                 />
 
                 <path
@@ -193,7 +193,7 @@ export default class GridEdge extends Component {
                         dashed: '7, 3',
                         dotted: '2, 4'
                     }[this.props.line]}
-                    d={`M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 + cy} ${length} ${height / 2}`}
+                    d={`M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 - cy} ${length} ${height / 2}`}
                 />
 
                 <image

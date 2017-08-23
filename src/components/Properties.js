@@ -83,7 +83,7 @@ export default class Properties extends Component {
                     let {bend = 0} = data
                     let increase = bend === 0 || (id === 'bendleft' ? bend > 0 : bend < 0)
                     let sign = bend !== 0 ? Math.sign(bend) : id === 'bendleft' ? 1 : -1
-                    let steps = [0, 30, 45, 55, 65, 70, 75, 78, 80]
+                    let steps = [0, 30, 49.11, 60, 66.59, 70.89, 73.89, 76.1, 77.78, 79.11, 80]
 
                     let index = steps.reduce((acc, x, i) => x <= Math.abs(bend) ? i : acc, -1)
                     if (index < steps.length - 1 && bend >= (steps[index + 1] + steps[index]) / 2) index++
