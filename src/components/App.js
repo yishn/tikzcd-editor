@@ -103,8 +103,9 @@ export default class App extends Component {
         let edgeAdded = this.state.diagram.edges.length + 1 === evt.data.edges.length
         let historyEntry = {diagram: evt.data, time: Date.now()}
 
-        if (this.historyPointer < this.history.length - 1
-        || Date.now() - this.history[this.historyPointer].time > 500) {
+        if ((this.historyPointer < this.history.length - 1
+        || Date.now() - this.history[this.historyPointer].time > 500)
+        && this.history[this.historyPointer].diagram !== evt.data) {
             this.history.splice(this.historyPointer + 1, this.history.length, historyEntry)
             this.historyPointer = this.history.length - 1
         } else {

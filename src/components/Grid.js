@@ -82,8 +82,8 @@ export default class Grid extends Component {
                     cameraPosition: helper.arrSubtract(cameraPosition, [movementX, movementY])
                 })
             } else if (this.mouseDown.mode === 'move') {
-                let {node} = this.mouseDown
-                if (node == null) return
+                let {nodeIndex} = this.mouseDown
+                if (nodeIndex < 0) return
 
                 let existingNode = this.props.data.nodes.find(n => helper.arrEquals(n.position, newPosition))
                 if (existingNode != null) return
@@ -92,9 +92,10 @@ export default class Grid extends Component {
 
                 onDataChange({
                     data: {
-                        nodes: (nodes =>
-                            (nodes[nodes.indexOf(node)].position = newPosition, nodes)
-                        )(this.props.data.nodes),
+                        nodes: this.props.data.nodes.map((x, i) =>
+                            i !== nodeIndex ? x
+                            : {...x, position: newPosition}
+                        ),
 
                         edges: this.props.data.edges
                     }
@@ -126,11 +127,12 @@ export default class Grid extends Component {
         let {cameraPosition} = this.state
         let position = [evt.clientX, evt.clientY]
             .map((x, i) => Math.floor((x + cameraPosition[i]) / cellSize))
-        let node = this.props.data.nodes
-            .find(n => helper.arrEquals(n.position, position))
+        let nodeIndex = this.props.data.nodes
+            .findIndex(n => helper.arrEquals(n.position, position))
+        let node = this.props.data.nodes[nodeIndex]
 
         this.mouseDown = {
-            evt, position, node,
+            evt, position, nodeIndex, node,
             mode: this.props.mode
         }
     }
@@ -141,10 +143,12 @@ export default class Grid extends Component {
         evt.stopPropagation()
 
         let {position} = evt
-        let node = this.props.data.nodes.find(n => helper.arrEquals(n.position, position))
+        let nodeIndex = this.props.data.nodes
+            .findIndex(n => helper.arrEquals(n.position, position))
+        let node = this.props.data.nodes[nodeIndex]
 
         this.mouseDown = {
-            evt, position, node,
+            evt, position, nodeIndex, node,
             mode: 'move'
         }
     }
