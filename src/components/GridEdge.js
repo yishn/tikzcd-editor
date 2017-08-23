@@ -130,8 +130,8 @@ export default class GridEdge extends Component {
                     left: bbox.y - height - heightDiff / 2 - 5,
                     right: bbox.y + bbox.height + heightDiff / 2 + 5,
                     inside: this.props.bend > 0
-                        ? bbox.y - height / 2 - heightDiff / 2 - 5
-                        : bbox.y + bbox.height - height / 2 - heightDiff / 2 - 5
+                        ? bbox.y - height / 2
+                        : bbox.y + bbox.height - height / 2
                 })[this.props.labelPosition || 'left']
             })
         })
