@@ -1,8 +1,8 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
 
-export const Button = ({class: c, checked, icon, name, onClick}) => (
-    <li class={classNames('button', c, {checked})} title={name} onClick={onClick}>
+export const Button = ({class: c, checked, disabled, icon, name, onClick}) => (
+    <li class={classNames('button', c, {checked, disabled})} title={name} onClick={onClick}>
         <img
             style={{backgroundImage: `url('${icon}')`}}
             src="./img/tools/blank.svg"

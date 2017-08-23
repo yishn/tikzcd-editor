@@ -17,6 +17,9 @@ export default class App extends Component {
             confirmCopy: false,
             diagram: {nodes: [], edges: []}
         }
+
+        this.history = [{diagram: this.state.diagram, time: Date.now()}]
+        this.historyPointer = 0
     }
 
     componentDidMount() {
@@ -63,8 +66,50 @@ export default class App extends Component {
         })
     }
 
+    copyCode = () => {
+        if (this.state.confirmCopy) return
+
+        let code = diagram.toTeX(this.state.diagram)
+        let success = copyText(code)
+
+        if (success) {
+            this.setState({confirmCopy: true})
+            setTimeout(() => this.setState({confirmCopy: false}), 1000)
+        } else {
+            prompt('Copy code down below:', code.replace(/\n/g, ' '))
+        }
+    }
+
+    moveInHistory = step => {
+        if (this.history[this.historyPointer + step] == null) return
+
+        this.historyPointer += step
+
+        this.setState({
+            diagram: this.history[this.historyPointer].diagram,
+            selectedEdge: null
+        })
+    }
+
+    undo = () => {
+        return this.moveInHistory(-1)
+    }
+
+    redo = () => {
+        return this.moveInHistory(1)
+    }
+
     handleDataChange = evt => {
-        let edgeAdded = this.state.diagram.edges.length < evt.data.edges.length
+        let edgeAdded = this.state.diagram.edges.length + 1 === evt.data.edges.length
+        let historyEntry = {diagram: evt.data, time: Date.now()}
+
+        if (this.historyPointer < this.history.length - 1
+        || Date.now() - this.history[this.historyPointer].time > 500) {
+            this.history.splice(this.historyPointer + 1, this.history.length, historyEntry)
+            this.historyPointer = this.history.length - 1
+        } else {
+            this.history[this.historyPointer] = historyEntry
+        }
 
         this.setState({
             diagram: evt.data,
@@ -85,20 +130,6 @@ export default class App extends Component {
             pan: handler('pan'),
             arrow: handler('arrow')
         })[tool]
-    }
-
-    handleCopyClick = () => {
-        if (this.state.confirmCopy) return
-
-        let code = diagram.toTeX(this.state.diagram)
-        let success = copyText(code)
-
-        if (success) {
-            this.setState({confirmCopy: true})
-            setTimeout(() => this.setState({confirmCopy: false}), 1000)
-        } else {
-            prompt('Copy code down below:', code.replace(/\n/g, ' '))
-        }
     }
 
     handleAboutClick = () => {
@@ -122,8 +153,8 @@ export default class App extends Component {
             delete newEdges[this.state.selectedEdge].value
         }
 
-        this.setState({
-            diagram: {
+        this.handleDataChange({
+            data: {
                 nodes: this.state.diagram.nodes,
                 edges: newEdges
             }
@@ -139,13 +170,14 @@ export default class App extends Component {
                 e.from === n.id || e.to === n.id
             ))
 
-        this.setState({
-            selectedEdge: null,
-            diagram: {
+        this.handleDataChange({
+            data: {
                 nodes: newNodes,
                 edges: newEdges
             }
         })
+
+        this.setState({selectedEdge: null})
     }
 
     render() {
@@ -187,9 +219,25 @@ export default class App extends Component {
                 <Separator/>
 
                 <Button
+                    disabled={this.history[this.historyPointer - 1] == null}
+                    icon="./img/tools/undo.svg"
+                    name="Undo"
+                    onClick={this.undo}
+                />
+
+                <Button
+                    disabled={this.history[this.historyPointer + 1] == null}
+                    icon="./img/tools/redo.svg"
+                    name="Redo"
+                    onClick={this.redo}
+                />
+
+                <Separator/>
+
+                <Button
                     icon={`./img/tools/${this.state.confirmCopy ? 'tick' : 'code'}.svg`}
                     name="Copy Code"
-                    onClick={this.handleCopyClick}
+                    onClick={this.copyCode}
                 />
 
                 <Button

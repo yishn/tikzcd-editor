@@ -166,6 +166,10 @@ img {
     .toolbox li.button.checked {
         background: #bbb;
     }
+    .toolbox li.button.disabled {
+        opacity: .5;
+        pointer-events: none;
+    }
     .toolbox li.button img {
         display: block;
         background-size: 100%;
