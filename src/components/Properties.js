@@ -69,8 +69,8 @@ export default class Properties extends Component {
                     change = {[prop]: data[prop] === id ? 'none' : id}
                 } else if (id === 'head') {
                     change = {head: data.head == null ? 'none' : null}
-                } else if (['solid', 'dashed'].includes(id)) {
-                    change = {dashed: id === 'dashed'}
+                } else if (['solid', 'dashed', 'dotted'].includes(id)) {
+                    change = {line: id}
                 } else if (['labelleft', 'labelright'].includes(id)) {
                     change = {alt: id === 'labelright'}
                 } else if (['hook', 'harpoon'].includes(id)) {
@@ -191,17 +191,24 @@ export default class Properties extends Component {
                 />
 
                 <Button
-                    checked={!data.dashed}
-                    icon="./img/properties/solid.svg"
-                    name="Solid"
-                    onClick={this.handleButtonClick('solid')}
+                    checked={data.line && data.line === 'dotted'}
+                    icon="./img/properties/dotted.svg"
+                    name="Dashed"
+                    onClick={this.handleButtonClick('dotted')}
                 />
 
                 <Button
-                    checked={!!data.dashed}
+                    checked={data.line && data.line === 'dashed'}
                     icon="./img/properties/dashed.svg"
                     name="Dashed"
                     onClick={this.handleButtonClick('dashed')}
+                />
+
+                <Button
+                    checked={!data.line || data.line === 'solid'}
+                    icon="./img/properties/solid.svg"
+                    name="Solid"
+                    onClick={this.handleButtonClick('solid')}
                 />
 
                 <Button

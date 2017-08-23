@@ -184,7 +184,11 @@ export default class GridEdge extends Component {
                     fill="none"
                     stroke-width="1"
                     stroke="black"
-                    stroke-dasharray={this.props.dashed ? '7, 3' : null}
+                    stroke-dasharray={{
+                        solid: null,
+                        dashed: '7, 3',
+                        dotted: '1, 5'
+                    }[this.props.line]}
                     d={`M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 + cy} ${length} ${height / 2}`}
                 />
 

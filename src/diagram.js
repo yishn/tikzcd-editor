@@ -18,7 +18,7 @@ export function toTeX(diagram) {
                     value={edge.value}
                     alt={edge.alt}
                     args={[
-                        ...[edge.head, edge.tail].map((id, i) => ({
+                        ...[edge.head, edge.line, edge.tail].map((id, i) => ({
                             none: ['no head', null][i],
                             default: null,
                             harpoon: 'harpoon',
@@ -27,10 +27,11 @@ export function toTeX(diagram) {
                             hookalt: "hook'",
                             mapsto: 'maps to',
                             tail: 'tail',
-                            twoheads: 'two heads'
+                            twoheads: 'two heads',
+                            dashed: 'dashed',
+                            dotted: 'dotted',
+                            solid: null
                         })[id]),
-
-                        edge.dashed ? 'dashed' : null,
 
                         edge.bend > 0 ? `bend left=${edge.bend}`.replace('=30', '')
                         : edge.bend < 0 ? `bend right=${-edge.bend}`.replace('=30', '')
