@@ -16,7 +16,7 @@ export function toTeX(diagram) {
                     from={edge.from.toString()}
                     to={edge.to.toString()}
                     value={edge.value}
-                    alt={edge.alt}
+                    labelPosition={edge.labelPosition}
                     args={[
                         ...[edge.head, edge.line, edge.tail].map((id, i) => ({
                             none: ['no head', null][i],

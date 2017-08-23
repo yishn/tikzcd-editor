@@ -282,7 +282,7 @@ export default class Grid extends Component {
                         line={edge.line}
                         head={edge.head}
                         value={edge.value}
-                        alt={edge.alt}
+                        labelPosition={edge.labelPosition}
 
                         onClick={this.handleEdgeClick(i)}
                     />

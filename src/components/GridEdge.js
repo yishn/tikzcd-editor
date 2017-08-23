@@ -106,9 +106,10 @@ export default class GridEdge extends Component {
         MathJax.Hub.Queue(() => {
             if (prevProps != null
                 && this.props.value === prevProps.value
-                && this.props.alt === prevProps.alt
+                && this.props.labelPosition === prevProps.labelPosition
                 && this.props.from === prevProps.from
                 && this.props.to === prevProps.to
+                && this.props.bend === prevProps.bend
                 && this.state.startPoint === prevState.startPoint
                 && this.state.endPoint === prevState.endPoint) return
 
@@ -121,11 +122,17 @@ export default class GridEdge extends Component {
 
             let {angle} = this.getLengthAngle()
             let newHeight = height * Math.abs(Math.cos(angle)) + width * Math.abs(Math.sin(angle))
+            let heightDiff = newHeight - height
 
             this.setState({
                 labelX: `calc(50% + ${-width / 2 - 6.5}px)`,
-                labelY: (this.props.alt ? bbox.y + bbox.height : bbox.y - height)
-                    + (+!!this.props.alt * 2 - 1) * ((newHeight - height) / 2 + 5)
+                labelY: ({
+                    left: bbox.y - height - heightDiff / 2 - 5,
+                    right: bbox.y + bbox.height + heightDiff / 2 + 5,
+                    inside: this.props.bend > 0
+                        ? bbox.y - height / 2 - heightDiff / 2 - 5
+                        : bbox.y + bbox.height - height / 2 - heightDiff / 2 - 5
+                })[this.props.labelPosition || 'left']
             })
         })
     }
@@ -214,7 +221,7 @@ export default class GridEdge extends Component {
 
             <div
                 ref={el => this.valueElement = el}
-                class={classNames({alt: this.props.alt}, 'value')}
+                class={classNames('value', this.props.labelPosition)}
                 style={{
                     left: this.state.labelX,
                     top: this.state.labelY,

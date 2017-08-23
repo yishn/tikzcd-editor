@@ -125,6 +125,10 @@ img {
     .grid-edge .value {
         position: absolute;
         white-space: nowrap;
+    }
+    .grid-edge .value.inside {
+        padding: 0 5px;
+        background: white;
 }
 
 .toolbox {

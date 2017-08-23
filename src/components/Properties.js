@@ -71,8 +71,8 @@ export default class Properties extends Component {
                     change = {head: data.head == null ? 'none' : null}
                 } else if (['solid', 'dashed', 'dotted'].includes(id)) {
                     change = {line: id}
-                } else if (['labelleft', 'labelright'].includes(id)) {
-                    change = {alt: id === 'labelright'}
+                } else if (['labelleft', 'labelright', 'labelinside'].includes(id)) {
+                    change = {labelPosition: id.slice(5)}
                 } else if (['hook', 'harpoon'].includes(id)) {
                     let prop = id === 'hook' ? 'tail' : 'head'
                     let ids = [id, `${id}alt`, 'none']
@@ -146,14 +146,21 @@ export default class Properties extends Component {
         >
             <Toolbox>
                 <Button
-                    checked={!data.alt}
+                    checked={!data.labelPosition || data.labelPosition === 'left'}
                     icon="./img/properties/labelleft.svg"
                     name="Left Label"
                     onClick={this.handleButtonClick('labelleft')}
                 />
 
                 <Button
-                    checked={!!data.alt}
+                    checked={data.labelPosition === 'inside'}
+                    icon="./img/properties/labelinside.svg"
+                    name="Inside Label"
+                    onClick={this.handleButtonClick('labelinside')}
+                />
+
+                <Button
+                    checked={data.labelPosition === 'right'}
                     icon="./img/properties/labelright.svg"
                     name="Right Label"
                     onClick={this.handleButtonClick('labelright')}
@@ -191,14 +198,14 @@ export default class Properties extends Component {
                 />
 
                 <Button
-                    checked={data.line && data.line === 'dotted'}
+                    checked={data.line === 'dotted'}
                     icon="./img/properties/dotted.svg"
                     name="Dotted"
                     onClick={this.handleButtonClick('dotted')}
                 />
 
                 <Button
-                    checked={data.line && data.line === 'dashed'}
+                    checked={data.line === 'dashed'}
                     icon="./img/properties/dashed.svg"
                     name="Dashed"
                     onClick={this.handleButtonClick('dashed')}
