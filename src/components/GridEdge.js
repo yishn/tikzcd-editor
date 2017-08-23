@@ -89,6 +89,8 @@ export default class GridEdge extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        if (this.valueElement == null) return
+
         for (let el of this.valueElement.querySelectorAll([
             'span[id^="MathJax"]',
             '.MathJax_Preview',
@@ -139,6 +141,8 @@ export default class GridEdge extends Component {
     }
 
     render() {
+        if (helper.arrEquals(this.props.from, this.props.to)) return
+
         let {startPoint, endPoint} = this.state
         let [mx, my] = helper.arrScale(0.5, helper.arrAdd(startPoint, endPoint))
 
