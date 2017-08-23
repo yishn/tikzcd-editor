@@ -123,7 +123,7 @@ export default class GridEdge extends Component {
             let newHeight = height * Math.abs(Math.cos(angle)) + width * Math.abs(Math.sin(angle))
 
             this.setState({
-                labelX: `calc(50% + ${-width / 2}px)`,
+                labelX: `calc(50% + ${-width / 2 - 6.5}px)`,
                 labelY: (this.props.alt ? bbox.y + bbox.height : bbox.y - height)
                     + (+!!this.props.alt * 2 - 1) * ((newHeight - height) / 2 + 5)
             })
