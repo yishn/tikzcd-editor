@@ -62,8 +62,8 @@ export default class GridEdge extends Component {
                 ;[toWidth, toHeight] = [width, height]
             }
 
-            ;[fromWidth, fromHeight, toWidth, toHeight] = [fromWidth, fromHeight, toWidth, toHeight]
-                .map(x => Math.min(cellSize, x + 20))
+            ;[toWidth, toHeight] = [toWidth, toHeight].map(x => Math.min(cellSize, x + 20))
+            ;[fromWidth, fromHeight] = [fromWidth, fromHeight].map(x => Math.min(cellSize, x + 40))
 
             let [fromCenter, toCenter] = [nextProps.from, nextProps.to]
                 .map(x => x.map(y => y * cellSize + cellSize / 2))
