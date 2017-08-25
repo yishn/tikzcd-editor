@@ -174,7 +174,7 @@ export default class Properties extends Component {
 
                 <Button
                     checked={false}
-                    icon="./img/properties/blank.svg"
+                    icon="./img/properties/reverse.svg"
                     name="Reverse Arrow"
                     onClick={this.handleButtonClick('reversearrow')}
                 />
