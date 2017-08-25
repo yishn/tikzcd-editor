@@ -91,6 +91,10 @@ export default class Properties extends Component {
                     let newBend = sign * steps[Math.min(index + (+increase * 2 - 1), steps.length - 1)]
 
                     change = {bend: helper.clamp(-80, 80, newBend)}
+                } else if (['reversearrow'].includes(id)) {
+                    let oldFrom = data.from
+                    let oldTo = data.to
+                    change = {to: oldFrom, from: oldTo}
                 }
 
                 onChange({data: {...data, ...change}})
@@ -164,6 +168,15 @@ export default class Properties extends Component {
                     icon="./img/properties/labelright.svg"
                     name="Right Label"
                     onClick={this.handleButtonClick('labelright')}
+                />
+
+                <Separator/>
+
+                <Button
+                    checked={false}
+                    icon="./img/properties/blank.svg"
+                    name="Reverse Arrow"
+                    onClick={this.handleButtonClick('reversearrow')}
                 />
 
                 <Separator/>
