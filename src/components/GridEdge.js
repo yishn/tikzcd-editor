@@ -159,6 +159,7 @@ export default class GridEdge extends Component {
         let bend = this.props.bend || 0
         let [cx, cy] = [length / 2, length * Math.tan(bend * Math.PI / 180) / 2]
         let height = Math.max(Math.abs(cy) + 13, 13)
+        let path = `M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 - cy} ${length} ${height / 2}`
 
         return <li
             data-id={this.props.id}
@@ -187,7 +188,7 @@ export default class GridEdge extends Component {
                     stroke-width="12"
                     stroke="transparent"
                     stroke-linecap="square"
-                    d={`M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 - cy} ${length} ${height / 2}`}
+                    d={path}
                 />
 
                 <path
@@ -200,13 +201,12 @@ export default class GridEdge extends Component {
                         dashed: '7, 3',
                         dotted: '2, 4'
                     }[this.props.line]}
-                    d={`M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 - cy} ${length} ${height / 2}`}
+                    d={path}
                 />
 
                 <image
                     x="0" y={height / 2 - 13 / 2}
                     width="9.764" height="13"
-                    style="background: white;"
                     transform={`rotate(${-bend} ${9.764} ${height / 2})`}
                     href={`./img/arrow/${this.props.tail || 'none'}.svg`}
                 />
