@@ -13,13 +13,13 @@ export function toTeX(diagram) {
 
             {diagram.edges.map(edge => [
                 <Edge
-                    from={edge.from.toString()}
-                    to={edge.to.toString()}
+                    from={edge.from}
+                    to={edge.to}
                     value={edge.value}
                     labelPosition={edge.labelPosition}
                     args={[
                         ...[edge.head, edge.line, edge.tail].map((id, i) => ({
-                            none: ['no head', null][i],
+                            none: ['no head', null, null][i],
                             default: null,
                             harpoon: 'harpoon',
                             harpoonalt: "harpoon'",
