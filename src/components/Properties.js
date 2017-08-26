@@ -95,6 +95,17 @@ export default class Properties extends Component {
                     let oldFrom = data.from
                     let oldTo = data.to
                     change = {to: oldFrom, from: oldTo}
+                    // invert label position if defined
+                    let oldLabelPos = data.labelPosition
+                    if (typeof(oldLabelPos) !== 'undefined') {
+                        let newLabelPos = oldLabelPos
+                        if (oldLabelPos === 'left') {
+                             newLabelPos = 'right'
+                        } else if (oldLabelPos === 'right') {
+                            newLabelPos = 'left'
+                        }
+                        change.labelPosition = newLabelPos
+                    }
                 }
 
                 onChange({data: {...data, ...change}})
@@ -122,7 +133,7 @@ export default class Properties extends Component {
         let {value} = evt.currentTarget
         let {onChange = () => {}} = this.props
 
-        onChange({data: {...this.props.data, value}})
+        onChange({data: {...this.props.data, value, labelPosition: 'left'}})
     }
 
     handleInputKeyDown = evt => {
