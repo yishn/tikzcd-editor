@@ -106,6 +106,11 @@ export default class Properties extends Component {
                         }
                         change.labelPosition = newLabelPos
                     }
+                    // invert bend if defined
+                    let oldBend = data.bend
+                    if (typeof(oldBend) !== 'undefined') {
+                        change.bend = -1 * oldBend
+                    }
                 }
 
                 onChange({data: {...data, ...change}})
