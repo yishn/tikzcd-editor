@@ -123,14 +123,15 @@ export default class App extends Component {
     }
 
     handleToolClick = tool => {
-        let handler = tool => evt => {
-            this.setState({tool, selectedEdge: null})
+        if (this.toolClickHandlersCache == null) this.toolClickHandlersCache = {}
+
+        if (this.toolClickHandlersCache[tool] == null) {
+            this.toolClickHandlersCache[tool] = evt => {
+                this.setState({tool, selectedEdge: null})
+            }
         }
 
-        return ({
-            pan: handler('pan'),
-            arrow: handler('arrow')
-        })[tool]
+        return this.toolClickHandlersCache[tool]
     }
 
     handleAboutClick = () => {
