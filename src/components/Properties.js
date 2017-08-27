@@ -92,24 +92,26 @@ export default class Properties extends Component {
 
                     change = {bend: helper.clamp(-80, 80, newBend)}
                 } else if (['reversearrow'].includes(id)) {
-                    let oldFrom = data.from
-                    let oldTo = data.to
-                    change = {to: oldFrom, from: oldTo}
-                    // invert label position if defined
-                    let oldLabelPos = data.labelPosition
-                    if (typeof(oldLabelPos) !== 'undefined') {
-                        let newLabelPos = oldLabelPos
-                        if (oldLabelPos === 'left') {
-                             newLabelPos = 'right'
-                        } else if (oldLabelPos === 'right') {
-                            newLabelPos = 'left'
-                        }
-                        change.labelPosition = newLabelPos
+                    let {from, to, labelPosition = 'left'} = data
+
+                    change = {to: from, from: to}
+
+                    // Invert label position
+
+                    let newLabelPos = labelPosition
+
+                    if (labelPosition === 'left') {
+                        newLabelPos = 'right'
+                    } else if (labelPosition === 'right') {
+                        newLabelPos = 'left'
                     }
-                    // invert bend if defined
-                    let oldBend = data.bend
-                    if (typeof(oldBend) !== 'undefined') {
-                        change.bend = -1 * oldBend
+
+                    change.labelPosition = newLabelPos
+
+                    // Invert bend
+
+                    if (data.bend != null) {
+                        change.bend = -data.bend
                     }
                 }
 
@@ -138,7 +140,7 @@ export default class Properties extends Component {
         let {value} = evt.currentTarget
         let {onChange = () => {}} = this.props
 
-        onChange({data: {...this.props.data, value, labelPosition: 'left'}})
+        onChange({data: {...this.props.data, value}})
     }
 
     handleInputKeyDown = evt => {
