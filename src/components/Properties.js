@@ -168,29 +168,6 @@ export default class Properties extends Component {
         >
             <Toolbox>
                 <Button
-                    checked={!data.labelPosition || data.labelPosition === 'left'}
-                    icon="./img/properties/labelleft.svg"
-                    name="Left Label"
-                    onClick={this.handleButtonClick('labelleft')}
-                />
-
-                <Button
-                    checked={data.labelPosition === 'inside'}
-                    icon="./img/properties/labelinside.svg"
-                    name="Inside Label"
-                    onClick={this.handleButtonClick('labelinside')}
-                />
-
-                <Button
-                    checked={data.labelPosition === 'right'}
-                    icon="./img/properties/labelright.svg"
-                    name="Right Label"
-                    onClick={this.handleButtonClick('labelright')}
-                />
-
-                <Separator/>
-
-                <Button
                     checked={false}
                     icon="./img/properties/reverse.svg"
                     name="Reverse Arrow"
@@ -281,11 +258,34 @@ export default class Properties extends Component {
                 <Separator/>
 
                 <Button
+                    checked={!data.labelPosition || data.labelPosition === 'left'}
+                    icon="./img/properties/labelleft.svg"
+                    name="Left Label"
+                    onClick={this.handleButtonClick('labelleft')}
+                />
+
+                <Button
+                    checked={data.labelPosition === 'inside'}
+                    icon="./img/properties/labelinside.svg"
+                    name="Inside Label"
+                    onClick={this.handleButtonClick('labelinside')}
+                />
+
+                <Button
+                    checked={data.labelPosition === 'right'}
+                    icon="./img/properties/labelright.svg"
+                    name="Right Label"
+                    onClick={this.handleButtonClick('labelright')}
+                />
+
+                <Button
                     checked={this.state.edit}
                     icon="./img/properties/edit.svg"
                     name="Edit Label"
                     onClick={this.handleEditButtonClick}
                 />
+
+                <Separator/>
 
                 <Button
                     class="remove"
