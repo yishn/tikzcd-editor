@@ -208,14 +208,14 @@ export default class GridEdge extends Component {
                     x="0" y={height / 2 - 13 / 2}
                     width="9.764" height="13"
                     transform={`rotate(${-bend} ${9.764} ${height / 2})`}
-                    href={`./img/arrow/${this.props.tail || 'none'}.svg`}
+                    xlinkHref={`./img/arrow/${this.props.tail || 'none'}.svg`}
                 />
 
                 <image
                     x={length - 9.764} y={height / 2 - 13 / 2}
                     width="9.764" height="13"
                     transform={`rotate(${bend} ${length} ${height / 2})`}
-                    href={`./img/arrow/${this.props.head || 'default'}.svg`}
+                    xlinkHref={`./img/arrow/${this.props.head || 'default'}.svg`}
                 />
             </svg>
 
