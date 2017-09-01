@@ -15,7 +15,7 @@ textarea {
     user-select: all;
 }
 
-img {
+a, img {
     -webkit-user-drag: none;
     user-drag: none;
 }
@@ -146,33 +146,33 @@ img {
         align-items: stretch;
         list-style: none;
     }
-    .toolbox li {
-        padding: .5em;
-    }
     .toolbox li.separator {
         margin: 0 .5em;
-        padding-left: 0;
-        padding-right: 0;
         width: 2px;
         background: #aaa;
         text-indent: -9999em;
     }
-    .toolbox li.button {
+    .toolbox li.button a {
+        cursor: default;
         transition: background .2s;
     }
-    .toolbox li.button:hover {
+    .toolbox li.button a:hover {
         background: #ccc;
         transition: none;
     }
-    .toolbox li.button:active {
+    .toolbox li.button a:active {
         background: #aaa;
     }
-    .toolbox li.button.checked {
+    .toolbox li.button.checked a {
         background: #bbb;
     }
-    .toolbox li.button.disabled {
-        opacity: .5;
+    .toolbox li.button.disabled a {
+        opacity: .4;
         pointer-events: none;
+    }
+    .toolbox li.button a {
+        display: block;
+        padding: .5em;
     }
     .toolbox li.button img {
         display: block;
@@ -241,19 +241,19 @@ img {
     #properties.show .toolbox {
         top: 1em;
     }
-    #properties li.button:hover {
+    #properties li.button a:hover {
         background: #0050C0;
     }
-    #properties li.button:active {
+    #properties li.button a:active {
         background: #0030A0;
     }
-    #properties li.button.checked {
+    #properties li.button.checked a {
         background: #2272E2;
     }
-    #properties li.button.remove:hover {
+    #properties li.button.remove a:hover {
         background: #E81123;
     }
-    #properties li.button.remove:active {
+    #properties li.button.remove a:active {
         background: #C60001;
     }
     #properties li.button img {

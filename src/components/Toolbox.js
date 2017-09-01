@@ -2,12 +2,14 @@ import {h, Component} from 'preact'
 import classNames from 'classnames'
 
 export const Button = ({class: c, checked, disabled, icon, name, onClick}) => (
-    <li class={classNames('button', c, {checked, disabled})} title={name} onClick={onClick}>
-        <img
-            style={{backgroundImage: `url('${icon}')`}}
-            src="./img/tools/blank.svg"
-            alt={name}
-        />
+    <li class={classNames('button', c, {checked, disabled})} title={name}>
+        <a href="#" onClick={onClick}>
+            <img
+                style={{backgroundImage: `url('${icon}')`}}
+                src="./img/tools/blank.svg"
+                alt={name}
+            />
+        </a>
     </li>
 )
 
