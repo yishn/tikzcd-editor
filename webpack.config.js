@@ -17,7 +17,7 @@ module.exports = {
                 loader: 'babel-loader',
                 test: /\.js$/,
                 query: {
-                    presets: [['es2015', {modules: false}], 'stage-1'],
+                    presets: [['env', {modules: false}], 'stage-1'],
                     plugins: [['transform-react-jsx', {pragma: 'h'}]]
                 }
             }
