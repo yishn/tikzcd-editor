@@ -15,6 +15,7 @@ export default class App extends Component {
             cellSize: 130,
             selectedEdge: null,
             confirmCopy: false,
+            confirmLink: false,
             diagram: {nodes: [], edges: []}
         }
 
@@ -89,7 +90,7 @@ export default class App extends Component {
         }
     }
 
-    getLink = (event) => {
+    copyLink = (event) => {
 
         // This prevents the href="#" on this button from causing a hash change after we set the hash with replaceState below
         event.preventDefault();
@@ -277,7 +278,7 @@ export default class App extends Component {
                 <Button
                     icon={`./img/tools/${this.state.confirmLink ? 'tick' : 'link'}.svg`}
                     name="Get Link"
-                    onClick={this.getLink}
+                    onClick={this.copyLink}
                 />
 
                 <Button
