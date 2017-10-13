@@ -18,6 +18,15 @@ export default class App extends Component {
             diagram: {nodes: [], edges: []}
         }
 
+        // Try to load a digram from the hash if given
+        if (window.location.hash.length > 0) {
+            try {
+                this.state.diagram = JSON.parse(atob(window.location.hash.slice(1)))
+            } catch (err) {
+                alert('Invalid URL encoding')
+            }
+        }
+
         this.history = [{diagram: this.state.diagram, time: Date.now()}]
         this.historyPointer = 0
     }
@@ -77,6 +86,29 @@ export default class App extends Component {
             setTimeout(() => this.setState({confirmCopy: false}), 1000)
         } else {
             prompt('Copy code down below:', code.replace(/\n/g, ' '))
+        }
+    }
+
+    getLink = (event) => {
+
+        // This prevents the href="#" on this button from causing a hash change after we set the hash with replaceState below
+        event.preventDefault();
+
+        if (this.state.confirmLink) return
+
+        let encoded = btoa(JSON.stringify(this.state.diagram))
+        let base = window.location.href.split('#')[0]
+
+        let url = base + '#' + encoded
+        window.history.replaceState(null, null, '#' + encoded)
+
+        let success = copyText(url)
+
+        if (success) {
+            this.setState({confirmLink: true})
+            setTimeout(() => this.setState({confirmLink: false}), 1000)
+        } else {
+            prompt('Copy link down below:', encoded)
         }
     }
 
@@ -240,6 +272,12 @@ export default class App extends Component {
                     icon={`./img/tools/${this.state.confirmCopy ? 'tick' : 'code'}.svg`}
                     name="Copy Code"
                     onClick={this.copyCode}
+                />
+
+                <Button
+                    icon={`./img/tools/${this.state.confirmLink ? 'tick' : 'link'}.svg`}
+                    name="Get Link"
+                    onClick={this.getLink}
                 />
 
                 <Button
