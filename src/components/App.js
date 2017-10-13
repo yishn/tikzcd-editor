@@ -90,10 +90,7 @@ export default class App extends Component {
         }
     }
 
-    copyLink = (event) => {
-
-        // This prevents the href="#" on this button from causing a hash change after we set the hash with replaceState below
-        event.preventDefault();
+    copyLink = () => {
 
         if (this.state.confirmLink) return
 
