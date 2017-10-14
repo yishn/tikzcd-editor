@@ -12,7 +12,10 @@ export class Button extends Component {
     render() {
         let {checked, disabled, icon, name} = this.props
 
-        return <li class={classNames('button', this.props.class, {checked, disabled})} title={name}>
+        return <li 
+            class={classNames('button', this.props.class, {checked, disabled})} 
+            title={name}
+        >
             <a href="#" onClick={this.handleClick}>
                 <img
                     style={{backgroundImage: `url('${icon}')`}}
