@@ -2,12 +2,12 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -moz-user-select: none;
+    user-select: none;
 }
 
 body, html {
     height: 100%;
-    -moz-user-select: none;
-    user-select: none;
 }
 
 textarea {
@@ -156,7 +156,7 @@ a, img {
         cursor: default;
         transition: background .2s;
     }
-    .toolbox li.button a:hover {
+    .toolbox li.button a:hover, .toolbox li.button a:focus {
         background: #ccc;
         transition: none;
     }
@@ -241,7 +241,7 @@ a, img {
     #properties.show .toolbox {
         top: 1em;
     }
-    #properties li.button a:hover {
+    #properties li.button a:hover, #properties li.button a:focus {
         background: #0050C0;
     }
     #properties li.button a:active {
@@ -250,7 +250,7 @@ a, img {
     #properties li.button.checked a {
         background: #2272E2;
     }
-    #properties li.button.remove a:hover {
+    #properties li.button.remove a:hover, #properties li.button.remove a:focus {
         background: #E81123;
     }
     #properties li.button.remove a:active {
