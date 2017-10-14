@@ -14,12 +14,13 @@ export default class App extends Component {
             tool: 'pan',
             cellSize: 130,
             selectedEdge: null,
-            confirmCopy: false,
-            confirmLink: false,
+            confirmCodeCopy: false,
+            confirmLinkCopy: false,
             diagram: {nodes: [], edges: []}
         }
 
-        // Try to load a digram from the hash if given
+        // Try to load a diagram from the hash if given
+
         if (window.location.hash.length > 0) {
             try {
                 this.state.diagram = JSON.parse(atob(window.location.hash.slice(1)))
@@ -77,14 +78,14 @@ export default class App extends Component {
     }
 
     copyCode = () => {
-        if (this.state.confirmCopy) return
+        if (this.state.confirmCodeCopy) return
 
         let code = diagram.toTeX(this.state.diagram)
         let success = copyText(code)
 
         if (success) {
-            this.setState({confirmCopy: true})
-            setTimeout(() => this.setState({confirmCopy: false}), 1000)
+            this.setState({confirmCodeCopy: true})
+            setTimeout(() => this.setState({confirmCodeCopy: false}), 1000)
         } else {
             prompt('Copy code down below:', code.replace(/\n/g, ' '))
         }
@@ -92,7 +93,7 @@ export default class App extends Component {
 
     copyLink = () => {
 
-        if (this.state.confirmLink) return
+        if (this.state.confirmLinkCopy) return
 
         let encoded = btoa(JSON.stringify(this.state.diagram))
         let base = window.location.href.split('#')[0]
@@ -103,8 +104,8 @@ export default class App extends Component {
         let success = copyText(url)
 
         if (success) {
-            this.setState({confirmLink: true})
-            setTimeout(() => this.setState({confirmLink: false}), 1000)
+            this.setState({confirmLinkCopy: true})
+            setTimeout(() => this.setState({confirmLinkCopy: false}), 1000)
         } else {
             prompt('Copy link down below:', encoded)
         }
@@ -267,16 +268,18 @@ export default class App extends Component {
                 <Separator/>
 
                 <Button
-                    icon={`./img/tools/${this.state.confirmCopy ? 'tick' : 'code'}.svg`}
-                    name="Copy Code"
+                    icon={`./img/tools/${this.state.confirmCodeCopy ? 'tick' : 'code'}.svg`}
+                    name="Copy Diagram Code"
                     onClick={this.copyCode}
                 />
 
                 <Button
-                    icon={`./img/tools/${this.state.confirmLink ? 'tick' : 'link'}.svg`}
-                    name="Get Link"
+                    icon={`./img/tools/${this.state.confirmLinkCopy ? 'tick' : 'link'}.svg`}
+                    name="Copy Diagram Permalink"
                     onClick={this.copyLink}
                 />
+
+                <Separator/>
 
                 <Button
                     icon="./img/tools/about.svg"
