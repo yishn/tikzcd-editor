@@ -10,6 +10,9 @@ export default class App extends Component {
     constructor() {
         super()
 
+        window.tikzcdEditor = this
+        window.diagram = diagram
+
         this.state = {
             tool: 'pan',
             cellSize: 130,
@@ -23,7 +26,7 @@ export default class App extends Component {
 
         if (window.location.hash.length > 0) {
             try {
-                this.state.diagram = JSON.parse(atob(window.location.hash.slice(1)))
+                this.state.diagram = diagram.fromBase64(window.location.hash.slice(1))
             } catch (err) {
                 alert('Invalid URL encoding')
             }
@@ -92,10 +95,9 @@ export default class App extends Component {
     }
 
     copyLink = () => {
-
         if (this.state.confirmLinkCopy) return
 
-        let encoded = btoa(JSON.stringify(this.state.diagram))
+        let encoded = diagram.toBase64(this.state.diagram)
         let base = window.location.href.split('#')[0]
 
         let url = base + '#' + encoded
@@ -107,7 +109,7 @@ export default class App extends Component {
             this.setState({confirmLinkCopy: true})
             setTimeout(() => this.setState({confirmLinkCopy: false}), 1000)
         } else {
-            prompt('Copy link down below:', encoded)
+            prompt('Copy link down below:', url)
         }
     }
 
