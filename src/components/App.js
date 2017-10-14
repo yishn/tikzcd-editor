@@ -10,9 +10,6 @@ export default class App extends Component {
     constructor() {
         super()
 
-        window.tikzcdEditor = this
-        window.diagram = diagram
-
         this.state = {
             tool: 'pan',
             cellSize: 130,
