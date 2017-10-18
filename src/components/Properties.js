@@ -16,6 +16,28 @@ export default class Properties extends Component {
     }
 
     componentDidMount() {
+        let edgeControl = {
+            37: 'bendleft',     // Left arrow
+            39: 'bendright',    // Right arrow
+            82: 'reversearrow', // R
+            65: 'labelleft',    // A
+            83: 'labelinside',  // S
+            68: 'labelright',   // D
+        }
+
+        let edgeEdit = 13       // Enter
+
+        document.addEventListener('keydown', evt => {
+            if (this.props.show && edgeControl[evt.keyCode] != null) {
+                this.handleButtonClick(edgeControl[evt.keyCode])()
+            } else if (this.props.show && evt.keyCode == edgeEdit) {
+                // Prevents submitting the form directly afterward
+                evt.preventDefault()
+
+                this.handleEditButtonClick()
+            }
+        })
+
         document.addEventListener('keyup', evt => {
             if (!this.props.show) return
 

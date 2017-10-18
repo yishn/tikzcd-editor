@@ -36,22 +36,22 @@ export default class App extends Component {
     componentDidMount() {
         // Switch tool when holding Control and Space
 
-        let data = {
+        let toolControl = {
             17: 'arrow',    // Control
             32: 'pan'       // Space
         }
 
         document.addEventListener('keydown', evt => {
-            if (data[evt.keyCode] != null) {
+            if (toolControl[evt.keyCode] != null) {
                 if (this.prevTool != null) return
 
                 this.prevTool = this.state.tool
-                this.setState({tool: data[evt.keyCode]})
+                this.setState({tool: toolControl[evt.keyCode]})
             }
         })
 
         document.addEventListener('keyup', evt => {
-            if (Object.keys(data).includes(evt.keyCode.toString())) {
+            if (Object.keys(toolControl).includes(evt.keyCode.toString())) {
                 // Space or Control
 
                 if (this.prevTool == null) return
