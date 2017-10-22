@@ -195,7 +195,7 @@ export default class Properties extends Component {
                 <Button
                     checked={false}
                     icon="./img/properties/reverse.svg"
-                    name="Reverse Arrow"
+                    name="Reverse Arrow (R)"
                     onClick={this.handleButtonClick('reversearrow')}
                 />
 
@@ -226,7 +226,7 @@ export default class Properties extends Component {
 
                 <Button
                     icon="./img/properties/bendright.svg"
-                    name="Bend Right"
+                    name="Bend Right (Arrow Key Down)"
                     onClick={this.handleButtonClick('bendright')}
                 />
 
@@ -253,7 +253,7 @@ export default class Properties extends Component {
 
                 <Button
                     icon="./img/properties/bendleft.svg"
-                    name="Bend Left"
+                    name="Bend Left (Arrow Key Up)"
                     onClick={this.handleButtonClick('bendleft')}
                 />
 
@@ -285,28 +285,28 @@ export default class Properties extends Component {
                 <Button
                     checked={!data.labelPosition || data.labelPosition === 'left'}
                     icon="./img/properties/labelleft.svg"
-                    name="Left Label"
+                    name="Left Label (A)"
                     onClick={this.handleButtonClick('labelleft')}
                 />
 
                 <Button
                     checked={data.labelPosition === 'inside'}
                     icon="./img/properties/labelinside.svg"
-                    name="Inside Label"
+                    name="Inside Label (S)"
                     onClick={this.handleButtonClick('labelinside')}
                 />
 
                 <Button
                     checked={data.labelPosition === 'right'}
                     icon="./img/properties/labelright.svg"
-                    name="Right Label"
+                    name="Right Label (D)"
                     onClick={this.handleButtonClick('labelright')}
                 />
 
                 <Button
                     checked={this.state.edit}
                     icon="./img/properties/edit.svg"
-                    name="Edit Label"
+                    name="Edit Label (Enter)"
                     onClick={this.handleEditButtonClick}
                 />
 
