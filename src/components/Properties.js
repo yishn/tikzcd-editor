@@ -17,8 +17,8 @@ export default class Properties extends Component {
 
     componentDidMount() {
         let edgeControl = {
-            37: 'bendleft',     // Left arrow
-            39: 'bendright',    // Right arrow
+            38: 'bendleft',     // Up arrow
+            40: 'bendright',    // Down arrow
             82: 'reversearrow', // R
             65: 'labelleft',    // A
             83: 'labelinside',  // S
@@ -27,25 +27,27 @@ export default class Properties extends Component {
 
         let edgeEdit = 13       // Enter
 
-        document.addEventListener('keydown', evt => {
-            if (this.props.show && edgeControl[evt.keyCode] != null) {
-                this.handleButtonClick(edgeControl[evt.keyCode])()
-            } else if (this.props.show && evt.keyCode == edgeEdit) {
-                // Prevents submitting the form directly afterward
-                evt.preventDefault()
-
-                this.handleEditButtonClick()
-            }
-        })
+        let edgeDelete = 46     // Delete
 
         document.addEventListener('keyup', evt => {
-            if (!this.props.show) return
+            if (!this.props.show || this.state.edit) return
+            console.log(evt.keyCode)
 
-            if (evt.keyCode === 46) {
+            if (edgeControl[evt.keyCode] != null) {
+                this.handleButtonClick(edgeControl[evt.keyCode])()
+            } else if (evt.keyCode === edgeDelete) {
                 // Delete
 
                 let {onRemoveClick = () => {}} = this.props
                 onRemoveClick(evt)
+            }
+        })
+
+        document.addEventListener('keydown', evt => {
+            if (evt.keyCode == edgeEdit) {
+                // Prevents submitting the form directly afterward
+                evt.preventDefault()
+                this.handleEditButtonClick()
             }
         })
     }
@@ -150,6 +152,7 @@ export default class Properties extends Component {
     }
 
     handleFormSubmit = evt => {
+        console.log(evt.keyCode)
         evt.preventDefault()
         this.setState({edit: false})
     }
