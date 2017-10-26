@@ -17,17 +17,16 @@ export default class Properties extends Component {
 
     componentDidMount() {
         let edgeControl = {
-            38: 'bendleft',     // Up arrow
-            40: 'bendright',    // Down arrow
-            82: 'reversearrow', // R
-            65: 'labelleft',    // A
-            83: 'labelinside',  // S
-            68: 'labelright',   // D
+            38: 'bendleft',         // Up arrow
+            40: 'bendright',        // Down arrow
+            82: 'reversearrow',     // R
+            65: 'labelleft',        // A
+            83: 'labelinside',      // S
+            68: 'labelright',       // D
         }
 
-        let edgeEdit = 13       // Enter
-
-        let edgeDelete = 46     // Delete
+        let edgeEdit = 13           // Enter
+        let edgeDelete = [46, 8]    // Delete, Backspace
 
         document.addEventListener('keyup', evt => {
             if (!this.props.show || this.state.edit) return
@@ -35,7 +34,7 @@ export default class Properties extends Component {
 
             if (edgeControl[evt.keyCode] != null) {
                 this.handleButtonClick(edgeControl[evt.keyCode])()
-            } else if (evt.keyCode === edgeDelete) {
+            } else if (edgeDelete.includes(evt.keyCode)) {
                 // Delete
 
                 let {onRemoveClick = () => {}} = this.props
@@ -47,6 +46,7 @@ export default class Properties extends Component {
             if (evt.keyCode == edgeEdit) {
                 // Prevents submitting the form directly afterward
                 evt.preventDefault()
+
                 this.handleEditButtonClick()
             }
         })
