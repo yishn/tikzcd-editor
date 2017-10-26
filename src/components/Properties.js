@@ -16,14 +16,37 @@ export default class Properties extends Component {
     }
 
     componentDidMount() {
-        document.addEventListener('keyup', evt => {
-            if (!this.props.show) return
+        let edgeControl = {
+            38: 'bendleft',         // Up arrow
+            40: 'bendright',        // Down arrow
+            82: 'reversearrow',     // R
+            65: 'labelleft',        // A
+            83: 'labelinside',      // S
+            68: 'labelright',       // D
+        }
 
-            if (evt.keyCode === 46) {
+        let edgeEdit = 13           // Enter
+        let edgeDelete = [46, 8]    // Delete, Backspace
+
+        document.addEventListener('keyup', evt => {
+            if (!this.props.show || this.state.edit) return
+
+            if (edgeControl[evt.keyCode] != null) {
+                this.handleButtonClick(edgeControl[evt.keyCode])()
+            } else if (edgeDelete.includes(evt.keyCode)) {
                 // Delete
 
                 let {onRemoveClick = () => {}} = this.props
                 onRemoveClick(evt)
+            }
+        })
+
+        document.addEventListener('keydown', evt => {
+            if (evt.keyCode == edgeEdit) {
+                // Prevents submitting the form directly afterward
+                evt.preventDefault()
+
+                this.handleEditButtonClick()
             }
         })
     }
@@ -128,6 +151,7 @@ export default class Properties extends Component {
     }
 
     handleFormSubmit = evt => {
+        console.log(evt.keyCode)
         evt.preventDefault()
         this.setState({edit: false})
     }
@@ -170,7 +194,7 @@ export default class Properties extends Component {
                 <Button
                     checked={false}
                     icon="./img/properties/reverse.svg"
-                    name="Reverse Arrow"
+                    name="Reverse Arrow (R)"
                     onClick={this.handleButtonClick('reversearrow')}
                 />
 
@@ -201,7 +225,7 @@ export default class Properties extends Component {
 
                 <Button
                     icon="./img/properties/bendright.svg"
-                    name="Bend Right"
+                    name="Bend Right (Arrow Key Down)"
                     onClick={this.handleButtonClick('bendright')}
                 />
 
@@ -228,7 +252,7 @@ export default class Properties extends Component {
 
                 <Button
                     icon="./img/properties/bendleft.svg"
-                    name="Bend Left"
+                    name="Bend Left (Arrow Key Up)"
                     onClick={this.handleButtonClick('bendleft')}
                 />
 
@@ -260,28 +284,28 @@ export default class Properties extends Component {
                 <Button
                     checked={!data.labelPosition || data.labelPosition === 'left'}
                     icon="./img/properties/labelleft.svg"
-                    name="Left Label"
+                    name="Left Label (A)"
                     onClick={this.handleButtonClick('labelleft')}
                 />
 
                 <Button
                     checked={data.labelPosition === 'inside'}
                     icon="./img/properties/labelinside.svg"
-                    name="Inside Label"
+                    name="Inside Label (S)"
                     onClick={this.handleButtonClick('labelinside')}
                 />
 
                 <Button
                     checked={data.labelPosition === 'right'}
                     icon="./img/properties/labelright.svg"
-                    name="Right Label"
+                    name="Right Label (D)"
                     onClick={this.handleButtonClick('labelright')}
                 />
 
                 <Button
                     checked={this.state.edit}
                     icon="./img/properties/edit.svg"
-                    name="Edit Label"
+                    name="Edit Label (Enter)"
                     onClick={this.handleEditButtonClick}
                 />
 
