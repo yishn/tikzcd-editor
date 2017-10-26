@@ -22,7 +22,7 @@ export default class Properties extends Component {
             82: 'reversearrow',     // R
             65: 'labelleft',        // A
             83: 'labelinside',      // S
-            68: 'labelright',       // D
+            68: 'labelright'        // D
         }
 
         let edgeEdit = 13           // Enter
