@@ -30,7 +30,6 @@ export default class Properties extends Component {
 
         document.addEventListener('keyup', evt => {
             if (!this.props.show || this.state.edit) return
-            console.log(evt.keyCode)
 
             if (edgeControl[evt.keyCode] != null) {
                 this.handleButtonClick(edgeControl[evt.keyCode])()
