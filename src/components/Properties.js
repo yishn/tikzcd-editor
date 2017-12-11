@@ -28,22 +28,19 @@ export default class Properties extends Component {
         let edgeEdit = 13           // Enter
         let edgeDelete = [46, 8]    // Delete, Backspace
 
-        document.addEventListener('keyup', evt => {
+        document.addEventListener('keydown', evt => {
             if (!this.props.show || this.state.edit) return
 
             if (edgeControl[evt.keyCode] != null) {
+                evt.preventDefault()
+
                 this.handleButtonClick(edgeControl[evt.keyCode])()
             } else if (edgeDelete.includes(evt.keyCode)) {
-                // Delete
+                evt.preventDefault()
 
                 let {onRemoveClick = () => {}} = this.props
                 onRemoveClick(evt)
-            }
-        })
-
-        document.addEventListener('keydown', evt => {
-            if (evt.keyCode == edgeEdit) {
-                // Prevents submitting the form directly afterward
+            } else if (evt.keyCode == edgeEdit) {
                 evt.preventDefault()
 
                 this.handleEditButtonClick()
