@@ -35,6 +35,12 @@ Use the `watch` command for development:
 $ npm run watch
 ~~~
 
+## Contributing
+
+Bug reports and pull requests are always welcome! Please consult the [issues list](https://github.com/yishn/tikzcd-editor/issues) for existing issues beforehand.
+
+You can also support this project by [donating](https://paypal.me/yishn/4).
+
 ## Related
 
 * [jsx-tikzcd](https://github.com/yishn/jsx-tikzcd) - Render tikzcd diagrams with JSX.
