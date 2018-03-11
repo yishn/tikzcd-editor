@@ -2,7 +2,7 @@
 
 A simple visual editor for creating commutative diagrams.
 
-You can [download the latest release](https://github.com/yishn/tikzcd-editor/releases) to host it on your own or [try it out here](http://tikzcd.yichuanshen.de/).
+You can [download the latest release](https://github.com/yishn/tikzcd-editor/releases) to host it on your own or [try it out here](https://tikzcd.yichuanshen.de/).
 
 ![Screenshot](./screenshot.png)
 
