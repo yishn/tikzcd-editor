@@ -1,4 +1,3 @@
-const webpack = require('webpack')
 const path = require('path')
 
 module.exports = {
@@ -12,21 +11,21 @@ module.exports = {
     devtool: 'source-map',
 
     module: {
-        loaders: [
-            {
+        rules: [{
+            test: /\.js$/,
+            use: {
                 loader: 'babel-loader',
-                test: /\.js$/,
-                query: {
+                options: {
                     presets: [['env', {modules: false}], 'stage-1'],
                     plugins: [['transform-react-jsx', {pragma: 'h'}]]
                 }
-            }
-        ]
+            },
+        }]
     },
 
     resolve: {
         alias: {
-            'preact$': path.join(__dirname, 'node_modules/preact/dist/preact.min')
+            'preact': path.join(__dirname, 'node_modules/preact/dist/preact.min')
         }
     }
 }

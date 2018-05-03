@@ -24,22 +24,23 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "copy-text-to-clipboard": "^1.0.3",
+    "copy-text-to-clipboard": "^1.0.4",
     "jsx-tikzcd": "^0.2.2",
-    "preact": "^8.2.6"
+    "preact": "^8.2.9"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
-    "http-server": "^0.10.0",
-    "webpack": "^3.8.1"
+    "http-server": "^0.11.1",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.1.2"
   },
   "scripts": {
     "start": "http-server",
-    "build": "webpack --progress -p",
-    "watch": "webpack --progress --watch"
+    "build": "webpack --progress --mode production",
+    "watch": "webpack --progress --mode development --watch"
   }
 }
