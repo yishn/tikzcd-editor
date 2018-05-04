@@ -25,7 +25,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "copy-text-to-clipboard": "^1.0.4",
-    "jsx-tikzcd": "^0.2.2",
+    "jsx-tikzcd": "^0.3.0",
     "preact": "^8.2.9"
   },
   "devDependencies": {
