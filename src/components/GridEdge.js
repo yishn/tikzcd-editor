@@ -127,11 +127,11 @@ export default class GridEdge extends Component {
             this.setState({
                 labelX: `calc(50% + ${-width / 2 - 6.5}px)`,
                 labelY: ({
-                    left: this.props.bend > 0
+                    left: this.props.bend >= 0
                         ? bbox.y - height - heightDiff / 2 - 5
-                        : bbox.y + bbox.height - height - heightDiff / 2 - 5,
+                        : bbox.y + bbox.height - height - heightDiff / 2 - 11,
                     right: this.props.bend > 0
-                        ? bbox.y + heightDiff / 2 + 5
+                        ? bbox.y + heightDiff / 2 + 11
                         : bbox.y + bbox.height + heightDiff / 2 + 5,
                     inside: this.props.bend > 0
                         ? bbox.y - height / 2
