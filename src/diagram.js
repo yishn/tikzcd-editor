@@ -40,11 +40,11 @@ export function fromJSON(json) {
 }
 
 export function toBase64(diagram) {
-    return btoa(toJSON(diagram))
+    return helper.b64EncodeUnicode(toJSON(diagram))
 }
 
 export function fromBase64(base64) {
-    return fromJSON(atob(base64))
+    return fromJSON(helper.b64DecodeUnicode(base64))
 }
 
 export function toTeX(diagram) {
