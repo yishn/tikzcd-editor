@@ -40,7 +40,7 @@ export function fromJSON(json) {
 }
 
 export function toBase64(diagram) {
-    return btoa(toJSON(diagram))
+    return helper.b64EncodeUnicode(toJSON(diagram))
 }
 
 export function fromBase64(base64) {
