@@ -89,3 +89,190 @@ export function toTeX(diagram) {
         </Diagram>
     )
 }
+
+export function fromTeX(code) {
+    let nodes = []
+    let edges = []
+    let x = 0
+    let y = 0
+
+    let consumers = [
+        {string: '\\begin{tikzcd}'},
+        {string: '\\end{tikzcd}'},
+        {string: '&', callback: () => {
+            x++
+        }},
+        {string: '\\\\', callback: () => {
+            y++
+            x = 0
+        }},
+        {string: '\\arrow[', callback: () => {
+            // get arrow definition
+            let parts = code.split(']')
+            let definition = parts.shift()
+            code = parts.join(']')
+
+            parts = definition.split(',')
+            let dir = parts[0]
+
+            let to_x = x + (dir.split('r').length - 1) - (dir.split('l').length - 1)
+            let to_y = y + (dir.split('d').length - 1) - (dir.split('u').length - 1)
+
+            let from = [x, y]
+            let to = [to_x, to_y]
+
+            let edge = {
+                from,
+                to
+            }
+
+            // label
+            if (parts.length > 1 && parts[1].includes('"')) {
+                let valueMatcher
+                if (parts[1].includes('"{')) {
+                    valueMatcher = /"{(.*)}"/
+                } else {
+                    valueMatcher = /"(.*)"/
+                }
+                let match = parts[1].match(valueMatcher)
+                if (!match || match.length !== 2) {
+                    throw new Error('Could not match edge label')
+                }
+                edge.value = match[1]
+
+                // label position
+                if (parts[1].endsWith("'")) {
+                    edge.labelPosition = 'right'
+                }
+                if (parts[1].endsWith('description')) {
+                    edge.labelPosition = 'inside'
+                }
+            }
+
+            // head
+            if (definition.includes('harpoon')) {
+                edge.head = 'harpoon'
+            }
+            if (definition.includes("harpoon'")) {
+                edge.head = 'harpoonalt'
+            }
+            if (definition.includes('two heads')) {
+                edge.head = 'twoheads'
+            }
+            if (definition.includes('no head')) {
+                edge.head = 'none'
+            }
+
+            // tail
+            if (definition.includes('hook')) {
+                edge.tail = 'hook'
+            }
+            if (definition.includes("hook'")) {
+                edge.tail = 'hookalt'
+            }
+            if (definition.includes('maps to')) {
+                edge.tail = 'mapsto'
+            }
+
+            // line
+            if (definition.includes('dashed')) {
+                edge.line = 'dashed'
+            }
+            if (definition.includes('dotted')) {
+                edge.line = 'dotted'
+            }
+
+            // bend
+            if (definition.includes('bend left')) {
+                let match = definition.match(/bend left=(\d+)/)
+                if (match && match.length > 1) {
+                    edge.bend = parseInt(match[1])
+                } else {
+                    edge.bend = 30
+                }
+            }
+            if (definition.includes('bend right')) {
+                let match = definition.match(/bend right=(\d+)/)
+                if (match && match.length > 1) {
+                    edge.bend = -parseInt(match[1])
+                } else {
+                    edge.bend = -30
+                }
+            }
+
+            edges.push(edge)
+        }},
+        {string: '', callback: () => {
+            let splitIndex = Math.min(...[code.indexOf('&'), code.indexOf('\n'), code.indexOf('\\\\'), code.indexOf('\\arrow')].filter(val => val > -1))
+            let value = code.substring(0, splitIndex)
+            value = value.trim()
+            code = code.substring(splitIndex)
+
+            if (value.startsWith('{') && value.endsWith('}')) {
+                value = value.substring(1, value.length - 1)
+            }
+
+            let node = {
+                position: [x, y],
+                value
+            }
+            nodes.push(node)
+        }}
+    ]
+
+    while (code.length !== 0) {
+        code = code.trim()
+        let consumed = false
+        for (let consumer of consumers) {
+            if (code.startsWith(consumer.string)) {
+                code = code.replace(consumer.string, '')
+                if (consumer.callback) {
+                    consumer.callback()
+                }
+                consumed = true
+                break
+            }
+        }
+        if (!consumed) {
+            throw new Error('Cannot parse the code further')
+        }
+    }
+
+    function convertPositionToIndex(edge) {
+        let from = edge.from
+        let to = edge.to
+
+        let fromIndex = -1
+        let toIndex = -1
+        for (let i = 0; i < nodes.length; i++) {
+            if (nodes[i].position[0] === from[0] && nodes[i].position[1] === from[1]) {
+                fromIndex = i
+            }
+            if (nodes[i].position[0] === to[0] && nodes[i].position[1] === to[1]) {
+                toIndex = i
+            }
+        }
+        if (fromIndex === -1) {
+            let node = {
+                position: from,
+                value: ''
+            }
+            nodes.push(node)
+            fromIndex = nodes.length - 1
+        }
+        if (toIndex === -1) {
+            let node = {
+                position: to,
+                value: ''
+            }
+            nodes.push(node)
+            toIndex = nodes.length - 1
+        }
+        edge.from = fromIndex
+        edge.to = toIndex
+    }
+
+    edges.forEach(convertPositionToIndex)
+
+    return fromJSON(JSON.stringify({nodes, edges}))
+}
