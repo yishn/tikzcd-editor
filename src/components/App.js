@@ -1,4 +1,5 @@
 import {h, render, Component} from 'preact'
+import classNames from 'classnames'
 import copyText from 'copy-text-to-clipboard'
 import * as diagram from '../diagram'
 
@@ -14,9 +15,9 @@ export default class App extends Component {
             tool: 'pan',
             cellSize: 130,
             selectedEdge: null,
-            confirmCodeCopy: false,
             confirmLinkCopy: false,
-            diagram: {nodes: [], edges: []}
+            diagram: {nodes: [], edges: []},
+            codePopupOpen: false
         }
 
         // Try to load a diagram from the hash if given
@@ -77,20 +78,6 @@ export default class App extends Component {
         })
     }
 
-    copyCode = () => {
-        if (this.state.confirmCodeCopy) return
-
-        let code = diagram.toTeX(this.state.diagram)
-        let success = copyText(code)
-
-        if (success) {
-            this.setState({confirmCodeCopy: true})
-            setTimeout(() => this.setState({confirmCodeCopy: false}), 1000)
-        } else {
-            prompt('Copy code down below:', code.replace(/\n/g, ' '))
-        }
-    }
-
     copyLink = () => {
         if (this.state.confirmLinkCopy) return
 
@@ -108,6 +95,37 @@ export default class App extends Component {
         } else {
             prompt('Copy link down below:', url)
         }
+    }
+
+    openCodePopup = () => {
+        let code = diagram.toTeX(this.state.diagram)
+        this.codePopup.value = code
+        this.codePopup.select()
+        this.codePopup.focus()
+        this.setState({
+            codePopupOpen: true,
+            selectedEdge: null
+        })
+    }
+
+    handleCodePopupBlur = () => {
+        if (document.activeElement === this.codePopup) return
+
+        let currentCode = diagram.toTeX(this.state.diagram)
+        let newCode = this.codePopup.value
+        if (currentCode !== newCode) {
+            try {
+                this.setState({
+                    diagram: diagram.fromTeX(newCode),
+                    selectedEdge: null
+                })
+            } catch (err) {
+                alert('Could not parse code. Reason: ' + err)
+            }
+        }
+
+        this.codePopup.value = ''
+        this.setState({codePopupOpen: false})
     }
 
     moveInHistory = step => {
@@ -213,7 +231,12 @@ export default class App extends Component {
     }
 
     render() {
-        return <div id="root">
+        return <div
+            id="root"
+            class={classNames({
+                "code-popup-open": this.state.codePopupOpen
+            })}
+        >
             <Grid
                 cellSize={this.state.cellSize}
                 data={this.state.diagram}
@@ -267,9 +290,10 @@ export default class App extends Component {
                 <Separator/>
 
                 <Button
-                    icon={`./img/tools/${this.state.confirmCodeCopy ? 'tick' : 'code'}.svg`}
-                    name="Copy Diagram Code"
-                    onClick={this.copyCode}
+                    checked={this.state.codePopupOpen}
+                    icon="./img/tools/code.svg"
+                    name="Open Popup with Code"
+                    onClick={this.openCodePopup}
                 />
 
                 <Button
@@ -286,6 +310,13 @@ export default class App extends Component {
                     onClick={this.handleAboutClick}
                 />
             </Toolbox>
+
+            <textarea
+                ref={el => this.codePopup = el}
+                class="code-popup"
+
+                onBlur={this.handleCodePopupBlur}
+            />
         </div>
     }
 }

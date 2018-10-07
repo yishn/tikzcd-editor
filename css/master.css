@@ -13,8 +13,10 @@ body, html {
 }
 
 textarea {
-    -moz-user-select: all;
-    user-select: all;
+    -ms-user-select: text;
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 a, img {
@@ -265,4 +267,26 @@ a, img {
     }
     #properties li.separator {
         background: rgba(255, 255, 255, .4);
+}
+
+#root .code-popup {
+        border-radius: 5px;
+        position: absolute;
+        width: 80%;
+        height: 80%;
+        left: 10%;
+        top: 10%;
+        background: rgba(57, 57, 57, .9);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
+        opacity: 0;
+        transform: scale(.7) translate(0, 10%);
+        transition: opacity .1s, transform .1s;
+        color: white;
+        font: 1em/1.5 Consolas, monospace;
+        pointer-events: none;
+    }
+    #root.code-popup-open .code-popup {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: all;
 }
