@@ -16,8 +16,13 @@ module.exports = {
             use: {
                 loader: 'babel-loader',
                 options: {
-                    presets: [['env', {modules: false}], 'stage-1'],
-                    plugins: [['transform-react-jsx', {pragma: 'h'}]]
+                    presets: [
+                        ['@babel/preset-env', {modules: false}]
+                    ],
+                    plugins: [
+                        ['@babel/plugin-proposal-class-properties', {loose: false}],
+                        ['@babel/transform-react-jsx', {pragma: 'h'}]
+                    ]
                 }
             },
         }]
