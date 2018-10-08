@@ -65,7 +65,7 @@ export function toTeX(diagram) {
                     value={edge.value}
                     labelPosition={edge.labelPosition}
                     args={[
-                        ...[edge.head, edge.line, edge.tail].map((id, i) => ({
+                        ...[edge.head, edge.line, edge.tail, edge.labelPositionLongitudinal].map((id, i) => ({
                             none: ['no head', null, null][i],
                             default: null,
                             harpoon: 'harpoon',
@@ -77,7 +77,12 @@ export function toTeX(diagram) {
                             twoheads: 'two heads',
                             dashed: 'dashed',
                             dotted: 'dotted',
-                            solid: null
+                            solid: null,
+                            center: null,
+                            nearstart: 'near start',
+                            nearend: 'near end',
+                            verynearstart: 'very near start',
+                            verynearend: 'very near end'
                         })[id]),
 
                         edge.bend > 0 ? `bend left=${edge.bend}`.replace('=30', '')
@@ -147,6 +152,20 @@ export function fromTeX(code) {
                 if (parts[1].endsWith('description')) {
                     edge.labelPosition = 'inside'
                 }
+            }
+
+            // label position longitudinal
+            if (definition.includes('near start')) {
+                edge.labelPositionLongitudinal = 'nearstart'
+            }
+            if (definition.includes('very near start')) {
+                edge.labelPositionLongitudinal = 'verynearstart'
+            }
+            if (definition.includes('near end')) {
+                edge.labelPositionLongitudinal = 'nearend'
+            }
+            if (definition.includes('very near end')) {
+                edge.labelPositionLongitudinal = 'verynearend'
             }
 
             // head
