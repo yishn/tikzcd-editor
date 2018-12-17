@@ -270,14 +270,17 @@ a, img {
 }
 
 #root .code-popup {
-        border-radius: 5px;
         position: absolute;
         width: 80%;
         height: 80%;
         left: 10%;
         top: 10%;
+        padding: 8pt 12pt;
         background: rgba(57, 57, 57, .9);
         box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
+        border: none;
+        outline: none;
+        resize: none;
         opacity: 0;
         transform: scale(.7) translate(0, 10%);
         transition: opacity .1s, transform .1s;
