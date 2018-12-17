@@ -236,7 +236,7 @@ export default class Properties extends Component {
 
                 <Button
                     icon="./img/properties/shiftright.svg"
-                    name="Shift Right (Arrow Key Right)"
+                    name="Shift Right (Right Arrow Key)"
                     onClick={this.handleButtonClick('shiftright')}
                 />
 
@@ -263,7 +263,7 @@ export default class Properties extends Component {
 
                 <Button
                     icon="./img/properties/shiftleft.svg"
-                    name="Shift Left (Arrow Key Left)"
+                    name="Shift Left (Left Arrow Key)"
                     onClick={this.handleButtonClick('shiftleft')}
                 />
 
