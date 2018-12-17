@@ -38,7 +38,7 @@ export default class App extends Component {
         // Switch tool when holding Control and Space
 
         let toolControl = {
-            17: 'arrow',    // Control
+            18: 'arrow',    // Alt
             32: 'pan'       // Space
         }
 
@@ -287,7 +287,7 @@ export default class App extends Component {
                 <Button
                     checked={this.state.tool === 'arrow'}
                     icon="./img/tools/arrow.svg"
-                    name="Arrow Tool (Ctrl)"
+                    name="Arrow Tool (Alt)"
                     onClick={this.handleToolClick('arrow')}
                 />
 
