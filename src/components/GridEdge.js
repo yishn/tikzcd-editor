@@ -122,13 +122,13 @@ export default class GridEdge extends Component {
             let bbox = this.edgePath.getBBox()
             let {width, height} = window.getComputedStyle(this.valueElement)
             let labelPosition = this.props.labelPosition || 'left'
-            let [, clockwise] = this.props.loop || [0, false]
+            let [loopAngle, clockwise] = this.props.loop || [0, false]
             if (clockwise)
                 labelPosition = { left: 'right', right: 'left' }[labelPosition] || labelPosition
 
             ;[width, height] = [width, height].map(parseFloat)
 
-            let {angle} = this.getLengthAngle()
+            let angle = this.getLengthAngle().angle + loopAngle * Math.PI / 180
             let newHeight = height * Math.abs(Math.cos(angle)) + width * Math.abs(Math.sin(angle))
             let heightDiff = newHeight - height
 
