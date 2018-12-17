@@ -313,6 +313,7 @@ export default class App extends Component {
 
                 <Button
                     checked={this.state.codePopupOpen}
+                    disabled={this.state.codePopupOpen}
                     icon="./img/tools/code.svg"
                     name="Open Popup with Code"
                     onClick={this.openCodePopup}
