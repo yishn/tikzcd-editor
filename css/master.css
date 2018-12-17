@@ -102,9 +102,19 @@ a, img {
         opacity: 0;
         pointer-events: none;
     }
-    .pan .grid-cell:hover .grabber {
+    .pan .grid-cell:hover .grabber, .arrow .grid-cell:hover .loop {
         opacity: 1;
         pointer-events: all;
+    }
+    .grid-cell .loop {
+        position: absolute;
+        right: 2px;
+        top: 2px;
+        width: 26px;
+        height: 26px;
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: none;
     }
     .grid-cell .value, .grid-cell .edit {
         margin: auto;

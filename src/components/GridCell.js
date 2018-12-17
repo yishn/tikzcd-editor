@@ -65,6 +65,12 @@ export default class GridCell extends Component {
         })
     }
 
+    handleAddLoop = evt => {
+        let {onAddLoop = () => {}} = this.props
+
+        onAddLoop(evt)
+    }
+
     render() {
         return <li
             class={classNames('grid-cell', {edit: this.props.edit})}
@@ -76,6 +82,15 @@ export default class GridCell extends Component {
 
                 onMouseDown={this.handleGrabberMouseDown}
                 onDragStart={this.handleGrabberDragStart}
+            />
+
+            <img
+                class="loop"
+                src="./img/loop.svg"
+
+                onClick={this.handleAddLoop}
+                onMouseDown={this.stopPropagation}
+                onMouseUp={this.stopPropagation}
             />
 
             <div class="value" ref={el => this.valueElement = el}>

@@ -40,7 +40,8 @@ export default class GridEdge extends Component {
             && nextProps.from === this.props.from
             && nextProps.to === this.props.to
             && nextProps.bend === this.props.bend
-            && nextProps.shift === this.props.shift) return
+            && nextProps.shift === this.props.shift
+            && nextProps.loop === this.props.loop) return
 
         if (nextProps == null) nextProps = this.props
 
@@ -112,6 +113,7 @@ export default class GridEdge extends Component {
                 && this.props.to === prevProps.to
                 && this.props.bend === prevProps.bend
                 && this.props.shift === prevProps.shift
+                && this.props.loop === prevProps.loop
                 && this.state.startPoint === prevState.startPoint
                 && this.state.endPoint === prevState.endPoint) return
 
@@ -119,6 +121,10 @@ export default class GridEdge extends Component {
 
             let bbox = this.edgePath.getBBox()
             let {width, height} = window.getComputedStyle(this.valueElement)
+            let labelPosition = this.props.labelPosition || 'left'
+            let [, clockwise] = this.props.loop || [0, false]
+            if (clockwise)
+                labelPosition = { left: 'right', right: 'left' }[labelPosition] || labelPosition
 
             ;[width, height] = [width, height].map(parseFloat)
 
@@ -127,7 +133,7 @@ export default class GridEdge extends Component {
             let heightDiff = newHeight - height
 
             this.setState({
-                labelX: `calc(50% + ${-width / 2 - 6.5}px)`,
+                labelX: `calc(50% + ${-width / 2 - (this.props.from !== this.props.to ? 6.5 : 0)}px)`,
                 labelY: ({
                     left: this.props.bend >= 0
                         ? bbox.y - height - heightDiff / 2 - 5
@@ -138,7 +144,7 @@ export default class GridEdge extends Component {
                     inside: this.props.bend > 0
                         ? bbox.y - height / 2
                         : bbox.y + bbox.height - height / 2
-                })[this.props.labelPosition || 'left']
+                })[labelPosition]
             })
         })
     }
@@ -154,19 +160,59 @@ export default class GridEdge extends Component {
     }
 
     render() {
-        if (helper.arrEquals(this.props.from, this.props.to)) return
+        let width, height, leftOffset, topOffset, tail, head, path, degree, mx, my
 
-        let {startPoint, endPoint} = this.state
-        let [mx, my] = helper.arrScale(0.5, helper.arrAdd(startPoint, endPoint))
+        if (!helper.arrEquals(this.props.from, this.props.to)) {
+            // Arrows
+            let {startPoint, endPoint} = this.state
+            ;[mx, my] = helper.arrScale(0.5, helper.arrAdd(startPoint, endPoint))
 
-        let {length, angle} = this.getLengthAngle()
-        let degree = angle * 180 / Math.PI
+            let {length, angle} = this.getLengthAngle()
+            degree = angle * 180 / Math.PI
 
-        let bend = this.props.bend || 0
-        let shift = this.props.shift || 0
-        let [cx, cy] = [length / 2, length * Math.tan(bend * Math.PI / 180) / 2]
-        let height = Math.max(Math.abs(cy) + 13, 13)
-        let path = `M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 - cy} ${length} ${height / 2}`
+            let bend = this.props.bend || 0
+            let shift = this.props.shift || 0
+            let [cx, cy] = [length / 2, length * Math.tan(bend * Math.PI / 180) / 2]
+            ;[width, height] = [length + 13, Math.max(Math.abs(cy) + 13, 13)]
+            path = `M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 - cy} ${length} ${height / 2}`
+
+            leftOffset = (length + 13) / 2
+            topOffset = 0
+            tail = { x: 0, y: height / 2 - 13 / 2, transform: `rotate(${-bend} ${9.764} ${height / 2})` }
+            head = { x: length - 9.764, y: height / 2 - 13 / 2, transform: `rotate(${bend} ${length} ${height / 2})` }
+        } else {
+            // Loops
+
+            if (this.props.phantom) return
+
+            ;[mx, my] = this.state.startPoint
+
+            let [angle, clockwise] = this.props.loop || [0, false]
+            let flip = clockwise ? -1 : 1
+            let [radius, labelRadius] = [24, 14]
+            ;[width, height] = [radius * 4 + 13, radius * 4 + 13]
+            degree = 360 - angle
+
+            path = `M ${width / 2 - labelRadius} ${height / 2} a ${radius} ${radius * 0.8} 0 1 0 ${labelRadius * 2} 0`
+
+            let offset = 16;
+            leftOffset = width / 2 + offset * Math.sin(degree * Math.PI / 180)
+            topOffset = offset * Math.cos(degree * Math.PI / 180)
+            let multiplier = flip * 180 / Math.PI
+            let baseAngle = Math.PI * clockwise * multiplier
+            let rotate = (Math.asin(labelRadius / radius) - Math.PI) * multiplier
+            let offsetLabel = labelRadius * flip
+            tail = {
+                x: width / 2 - offsetLabel,
+                y: height / 2,
+                transform: `rotate(${baseAngle - rotate} ${width / 2 - offsetLabel} ${height / 2}) translate(-9.764, -6.5)`,
+            }
+            head = {
+                x: width / 2 + offsetLabel,
+                y: height / 2,
+                transform: `rotate(${baseAngle + rotate} ${width / 2 + offsetLabel} ${height / 2}) translate(-9.764, -6.5)`,
+            }
+        }
 
         return <li
             data-id={this.props.id}
@@ -176,9 +222,9 @@ export default class GridEdge extends Component {
             })}
             style={{
                 height,
-                width: length + 13,
-                left: mx - (length + 13) / 2,
-                top: my - height / 2,
+                width,
+                left: mx - leftOffset,
+                top: my - height / 2 + topOffset,
                 transform: `rotate(${degree}deg) translateY(${shift * 7}px)`
             }}
 
@@ -186,7 +232,7 @@ export default class GridEdge extends Component {
         >
             <svg
                 ref={el => this.svgElement = el}
-                width={length + 13}
+                width={width}
                 height={height}
             >
                 <path
@@ -212,16 +258,16 @@ export default class GridEdge extends Component {
                 />
 
                 <image
-                    x="0" y={height / 2 - 13 / 2}
+                    x={tail.x} y={tail.y}
                     width="9.764" height="13"
-                    transform={`rotate(${-bend} ${9.764} ${height / 2})`}
+                    transform={tail.transform}
                     xlinkHref={`./img/arrow/${this.props.tail || 'none'}.svg`}
                 />
 
                 <image
-                    x={length - 9.764} y={height / 2 - 13 / 2}
+                    x={head.x} y={head.y}
                     width="9.764" height="13"
-                    transform={`rotate(${bend} ${length} ${height / 2})`}
+                    transform={head.transform}
                     xlinkHref={`./img/arrow/${this.props.head || 'default'}.svg`}
                 />
             </svg>

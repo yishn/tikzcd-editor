@@ -149,6 +149,33 @@ export default class Grid extends Component {
         }
     }
 
+    handleNodeAddLoop = evt => {
+        if (evt.button !== 0) return
+
+        evt.stopPropagation()
+
+        let {cellSize} = this.props
+        let {cameraPosition} = this.state
+        let newNodes = [...this.props.data.nodes]
+
+        let position = [evt.clientX, evt.clientY]
+            .map((x, i) => Math.floor((x + cameraPosition[i]) / cellSize))
+
+        let node = newNodes.find(n => helper.arrEquals(n.position, position))
+        if (node == null)
+            newNodes.push(node = {id: helper.getId(), position, value: ''})
+
+        let newEdges = [...this.props.data.edges, {
+            from: node.id,
+            to: node.id,
+            loop: [0, false],
+            labelPosition: 'right',
+        }]
+
+        let {onDataChange = () => {}} = this.props
+        onDataChange({data: {nodes: newNodes, edges: newEdges}})
+    }
+
     handleNodeMouseUp = evt => {
         if (this.mouseDown == null) return
 
@@ -254,6 +281,7 @@ export default class Grid extends Component {
                                 ))}
 
                                 onGrabberMouseDown={this.handleNodeGrabberMouseDown}
+                                onAddLoop={this.handleNodeAddLoop}
                                 onSubmit={this.handleNodeSubmit}
                                 onChange={this.handleNodeChange}
                             />
@@ -279,6 +307,7 @@ export default class Grid extends Component {
 
                         bend={edge.bend}
                         shift={edge.shift}
+                        loop={edge.loop}
                         tail={edge.tail}
                         line={edge.line}
                         head={edge.head}
