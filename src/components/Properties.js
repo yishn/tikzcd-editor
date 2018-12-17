@@ -145,7 +145,7 @@ export default class Properties extends Component {
                     if (data.shift != null) {
                         change.shift = -data.shift
                     }
-                    
+
                     // Invert loop direction
 
                     if (data.loop != null) {
@@ -267,30 +267,35 @@ export default class Properties extends Component {
                 <Button
                     icon="./img/properties/shiftright.svg"
                     name="Shift Right (Down Arrow)"
+                    disabled={data.from === data.to}
                     onClick={this.handleButtonClick('shiftright')}
                 />
 
                 <Button
                     icon="./img/properties/shiftleft.svg"
                     name="Shift Left (Up Arrow)"
+                    disabled={data.from === data.to}
                     onClick={this.handleButtonClick('shiftleft')}
                 />
 
                 <Button
                     icon="./img/properties/bendright.svg"
                     name="Bend Right (Shift+Down Arrow)"
+                    disabled={data.from === data.to}
                     onClick={this.handleButtonClick('bendright')}
                 />
 
                 <Button
                     icon="./img/properties/bendleft.svg"
                     name="Bend Left (Shift+Up Arrow)"
+                    disabled={data.from === data.to}
                     onClick={this.handleButtonClick('bendleft')}
                 />
 
                 <Button
                     icon="./img/properties/rotate.svg"
                     name="Rotate (E)"
+                    disabled={data.from !== data.to}
                     onClick={this.handleButtonClick('rotate')}
                 />
 
