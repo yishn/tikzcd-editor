@@ -42,12 +42,23 @@ export default class App extends Component {
             32: 'pan'       // Space
         }
 
+        let actions = {
+            27: 'close',    // Escape
+        }
+
         document.addEventListener('keydown', evt => {
             if (toolControl[evt.keyCode] != null) {
                 if (this.prevTool != null) return
 
                 this.prevTool = this.state.tool
                 this.setState({tool: toolControl[evt.keyCode]})
+            }
+
+            switch (actions[evt.keyCode]) {
+                case 'close':
+                    this.codePopup.value = ''
+                    this.setState({codePopupOpen: false})
+                    break
             }
         })
 
