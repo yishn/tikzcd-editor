@@ -44,6 +44,7 @@ export default class App extends Component {
 
         let actions = {
             27: 'close',    // Escape
+            90: 'history',  // Z
         }
 
         document.addEventListener('keydown', evt => {
@@ -58,6 +59,14 @@ export default class App extends Component {
                 case 'close':
                     this.codePopup.value = ''
                     this.setState({codePopupOpen: false})
+                    break
+                case 'history':
+                    if (evt.ctrlKey || evt.metaKey) {
+                        if (!evt.shiftKey)
+                            this.undo()
+                        else
+                            this.redo()
+                    }
                     break
             }
         })
@@ -287,14 +296,14 @@ export default class App extends Component {
                 <Button
                     disabled={this.history[this.historyPointer - 1] == null}
                     icon="./img/tools/undo.svg"
-                    name="Undo"
+                    name="Undo (Ctrl+Z or ⌘Z)"
                     onClick={this.undo}
                 />
 
                 <Button
                     disabled={this.history[this.historyPointer + 1] == null}
                     icon="./img/tools/redo.svg"
-                    name="Redo"
+                    name="Redo (Ctrl+Shift+Z or ⇧⌘Z)"
                     onClick={this.redo}
                 />
 
