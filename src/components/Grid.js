@@ -278,6 +278,7 @@ export default class Grid extends Component {
                         selected={this.props.selectedEdge === i}
 
                         bend={edge.bend}
+                        shift={edge.shift}
                         tail={edge.tail}
                         line={edge.line}
                         head={edge.head}
