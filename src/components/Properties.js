@@ -222,7 +222,7 @@ export default class Properties extends Component {
 
                 <Button
                     icon="./img/properties/bendright.svg"
-                    name="Bend Right (Arrow Key Down)"
+                    name="Bend Right (Down Arrow Key)"
                     onClick={this.handleButtonClick('bendright')}
                 />
 
@@ -249,7 +249,7 @@ export default class Properties extends Component {
 
                 <Button
                     icon="./img/properties/bendleft.svg"
-                    name="Bend Left (Arrow Key Up)"
+                    name="Bend Left (Up Arrow)"
                     onClick={this.handleButtonClick('bendleft')}
                 />
 
