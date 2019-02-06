@@ -29,7 +29,7 @@ export default class Properties extends Component {
         let edgeDelete = [46, 8]    // Delete, Backspace
 
         document.addEventListener('keydown', evt => {
-            if (evt.metaKey || !this.props.show || this.state.edit) return
+            if (evt.ctrlKey || evt.metaKey || !this.props.show || this.state.edit) return
 
             if (edgeControl[evt.keyCode] != null) {
                 evt.preventDefault()
