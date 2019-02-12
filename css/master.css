@@ -123,7 +123,7 @@ a, img {
         width: 100%;
         text-align: center;
         background: transparent;
-        font: 1em/1.5 Consolas, monospace;
+        font: 1rem/1.5 Consolas, monospace;
 }
 
 .grid-edge {
@@ -252,7 +252,7 @@ a, img {
         outline: none;
         background: transparent;
         color: white;
-        font: 1em/1.5 Consolas, monospace;
+        font: 1rem/1.5 Consolas, monospace;
         text-align: center;
     }
     #properties .toolbox {
@@ -322,10 +322,10 @@ a, img {
         display: block;
         padding: .5rem;
         resize: none;
-        width: 66vw;
+        width: 62vw;
         height: 50vh;
-        font: 14px/1.5 monospace;
-        background: rgba(57, 57, 57, .9);
+        font: 1rem/1.5 Consolas, monospace;
+        background: #393939;
         color: white;
     }
     .code-box textarea:focus {
