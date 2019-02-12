@@ -41,6 +41,13 @@ Bug reports and pull requests are always welcome! Please consult the [issues lis
 
 You can also support this project by [donating](https://paypal.me/yishn/4).
 
+## Donators
+
+A big thanks to these lovely people:
+
+- Steve Heim
+- Max New
+
 ## Related
 
 * [jsx-tikzcd](https://github.com/yishn/jsx-tikzcd) - Render tikzcd diagrams with JSX.
