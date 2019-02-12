@@ -289,7 +289,7 @@ a, img {
 }
 
 #modal-overlay {
-        display: none;
+        display: flex;
         justify-content: center;
         align-items: center;
         position: absolute;
@@ -297,15 +297,25 @@ a, img {
         right: 0;
         top: 0;
         bottom: 0;
-        background: rgba(255, 255, 255, .7);
+        background: rgba(255, 255, 255, 0);
+        visibility: hidden;
+        transition: background-color .2s;
     }
     #modal-overlay.show {
-        display: flex;
+        visibility: visible;
+        background: rgba(255, 255, 255, .5);
     }
     #modal-overlay .modal-box {
         background: rgba(221, 221, 221, .7);
         box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
         padding: 1rem;
+        opacity: 0;
+        transform: scale(.9) translateY(5rem);
+        transition: transform .2s, opacity .2s;
+    }
+    #modal-overlay.show .modal-box {
+        opacity: 1;
+        transform: none;
 }
 
 .code-box textarea {
