@@ -122,21 +122,22 @@ export default class App extends Component {
     handleParseCode = () => {
         let currentCode = diagram.toTeX(this.state.diagram)
         let newCode = this.state.codeValue
-        let diag = this.state.diagram
+        let data = this.state.diagram
 
         if (currentCode !== newCode) {
             try {
-                diag = diagram.fromTeX(newCode)
+                data = diagram.fromTeX(newCode)
             } catch (err) {
                 alert(`Could not parse code.\n\nReason: ${err.message}`)
             }
         }
 
         this.setState({
-            diagram: diag,
             selectedEdge: null,
             showCodeBox: false
         })
+
+        this.handleDataChange({data})
     }
 
     moveInHistory = step => {
@@ -162,9 +163,11 @@ export default class App extends Component {
         let edgeAdded = this.state.diagram.edges.length + 1 === evt.data.edges.length
         let historyEntry = {diagram: evt.data, time: Date.now()}
 
-        if ((this.historyPointer < this.history.length - 1
-        || Date.now() - this.history[this.historyPointer].time > 500)
-        && this.history[this.historyPointer].diagram !== evt.data) {
+        if (
+            (this.historyPointer < this.history.length - 1
+            || Date.now() - this.history[this.historyPointer].time > 500)
+            && this.history[this.historyPointer].diagram !== evt.data
+        ) {
             this.history.splice(this.historyPointer + 1, this.history.length, historyEntry)
             this.historyPointer = this.history.length - 1
         } else {
