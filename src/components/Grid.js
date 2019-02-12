@@ -57,9 +57,7 @@ export default class Grid extends Component {
         })
 
         document.addEventListener('keyup', evt => {
-            if (evt.keyCode === 27) {
-                // Escape
-
+            if (evt.key === 'Escape') {
                 evt.stopPropagation()
                 this.setState({editPosition: [null, null]})
             }

@@ -38,21 +38,21 @@ export default class App extends Component {
         // Switch tool when holding Control and Space
 
         let toolControl = {
-            17: 'arrow',    // Control
-            32: 'pan'       // Space
+            'Control': 'arrow',
+            ' ': 'pan'
         }
 
         document.addEventListener('keydown', evt => {
-            if (toolControl[evt.keyCode] != null) {
+            if (toolControl[evt.key] != null) {
                 if (this.prevTool != null) return
 
                 this.prevTool = this.state.tool
-                this.setState({tool: toolControl[evt.keyCode]})
+                this.setState({tool: toolControl[evt.key]})
             }
         })
 
         document.addEventListener('keyup', evt => {
-            if (Object.keys(toolControl).includes(evt.keyCode.toString())) {
+            if (Object.keys(toolControl).includes(evt.key.toString())) {
                 // Space or Control
 
                 if (this.prevTool == null) return
@@ -63,9 +63,7 @@ export default class App extends Component {
         })
 
         document.addEventListener('keyup', evt => {
-            if (evt.keyCode === 27) {
-                // Escape
-
+            if (evt.key === 'Escape') {
                 this.setState({selectedEdge: null})
             }
         })

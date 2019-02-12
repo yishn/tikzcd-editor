@@ -17,30 +17,30 @@ export default class Properties extends Component {
 
     componentDidMount() {
         let edgeControl = {
-            38: 'bendleft',         // Up arrow
-            40: 'bendright',        // Down arrow
-            82: 'reversearrow',     // R
-            65: 'labelleft',        // A
-            83: 'labelinside',      // S
-            68: 'labelright'        // D
+            'ArrowUp': 'bendleft',
+            'ArrowDown': 'bendright',
+            'r': 'reversearrow',
+            'a': 'labelleft',
+            's': 'labelinside',
+            'd': 'labelright'
         }
 
-        let edgeEdit = 13           // Enter
-        let edgeDelete = [46, 8]    // Delete, Backspace
+        let edgeEdit = 'Enter'
+        let edgeDelete = ['Delete', 'Backspace']    // Delete, Backspace
 
         document.addEventListener('keydown', evt => {
             if (evt.ctrlKey || evt.metaKey || !this.props.show || this.state.edit) return
 
-            if (edgeControl[evt.keyCode] != null) {
+            if (edgeControl[evt.key] != null) {
                 evt.preventDefault()
 
-                this.handleButtonClick(edgeControl[evt.keyCode])()
-            } else if (edgeDelete.includes(evt.keyCode)) {
+                this.handleButtonClick(edgeControl[evt.key])()
+            } else if (edgeDelete.includes(evt.key)) {
                 evt.preventDefault()
 
                 let {onRemoveClick = () => {}} = this.props
                 onRemoveClick(evt)
-            } else if (evt.keyCode == edgeEdit) {
+            } else if (evt.key == edgeEdit) {
                 evt.preventDefault()
 
                 this.handleEditButtonClick()
@@ -148,7 +148,6 @@ export default class Properties extends Component {
     }
 
     handleFormSubmit = evt => {
-        console.log(evt.keyCode)
         evt.preventDefault()
         this.setState({edit: false})
     }
@@ -169,9 +168,7 @@ export default class Properties extends Component {
     }
 
     handleInputKeyUp = evt => {
-        if (evt.keyCode === 27) {
-            // Escape
-
+        if (evt.key === 'Escape') {
             evt.stopPropagation()
             this.setState({edit: false})
         }
