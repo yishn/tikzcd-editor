@@ -35,10 +35,10 @@ export default class App extends Component {
     }
 
     componentDidMount() {
-        // Switch tool when holding Control and Space
+        // Switch tool when holding Shift and Space
 
         let toolControl = {
-            'Control': 'arrow',
+            'Shift': 'arrow',
             ' ': 'pan'
         }
 
@@ -279,7 +279,7 @@ export default class App extends Component {
                 <Button
                     checked={this.state.tool === 'arrow'}
                     icon="./img/tools/arrow.svg"
-                    name="Arrow Tool (Ctrl)"
+                    name="Arrow Tool (Shift)"
                     onClick={this.handleToolClick('arrow')}
                 />
 
