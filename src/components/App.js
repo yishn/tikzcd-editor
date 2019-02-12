@@ -1,5 +1,4 @@
 import {h, render, Component} from 'preact'
-import classNames from 'classnames'
 import copyText from 'copy-text-to-clipboard'
 import * as diagram from '../diagram'
 
@@ -293,7 +292,7 @@ export default class App extends Component {
                 <Button
                     checked={this.state.showCodeBox}
                     icon="./img/tools/code.svg"
-                    name="Open Popup with Code"
+                    name="Open Code"
                     onClick={this.openCodeBox}
                 />
 

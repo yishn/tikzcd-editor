@@ -1,5 +1,6 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
+import copyText from 'copy-text-to-clipboard'
 
 export default class CodeBox extends Component {
     constructor(props) {
@@ -13,7 +14,10 @@ export default class CodeBox extends Component {
     }
 
     handleCopyClick = () => {
+        copyText(this.props.code)
 
+        this.textareaElement.focus()
+        this.textareaElement.select()
     }
 
     handleCloseClick = () => {
@@ -30,7 +34,10 @@ export default class CodeBox extends Component {
             onClick={this.handleOverlayClick}
         >
             <section class="modal-box code-box">
-                <textarea value={code} />
+                <textarea
+                    ref={el => this.textareaElement = el}
+                    value={code}
+                />
 
                 <ul class="buttons">
                     <li><button onClick={this.handleCopyClick}>Copy</button></li>
