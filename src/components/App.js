@@ -69,10 +69,15 @@ export default class App extends Component {
         })
 
         window.addEventListener('beforeunload', evt => {
-            let message = 'Do you really want to leave?'
+            if (
+                this.state.diagram.nodes.length > 0
+                || this.state.diagram.edges.length > 0
+            ) {
+                let message = 'Do you really want to leave?'
 
-            evt.returnValue = message
-            return message
+                evt.returnValue = message
+                return message
+            }
         })
     }
 
