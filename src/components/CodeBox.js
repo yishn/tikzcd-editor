@@ -7,6 +7,13 @@ export default class CodeBox extends Component {
         super(props)
     }
 
+    componentDidUpdate(prevProps) {
+        if (!prevProps.show && this.props.show) {
+            this.textareaElement.focus()
+            this.textareaElement.select()
+        }
+    }
+
     handleOverlayClick = evt => {
         if (evt.target !== evt.currentTarget) return
 
@@ -37,6 +44,7 @@ export default class CodeBox extends Component {
                 <textarea
                     ref={el => this.textareaElement = el}
                     value={code}
+                    onInput={this.props.onCodeInput}
                 />
 
                 <ul class="buttons">

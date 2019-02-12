@@ -107,9 +107,15 @@ export default class App extends Component {
         })
     }
 
-    closeCodeBox = () => {
+    handleCloseCodeBox = () => {
         this.setState({
             showCodeBox: false
+        })
+    }
+
+    handleCodeInput = evt => {
+        this.setState({
+            codeValue: evt.currentTarget.value
         })
     }
 
@@ -314,7 +320,9 @@ export default class App extends Component {
             <CodeBox
                 code={this.state.codeValue}
                 show={this.state.showCodeBox}
-                onClose={this.closeCodeBox}
+
+                onCodeInput={this.handleCodeInput}
+                onClose={this.handleCloseCodeBox}
             />
         </div>
     }
