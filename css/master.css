@@ -12,11 +12,30 @@ body, html {
     height: 100%;
 }
 
+html, input, button {
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, Roboto, Helvetica, Arial, sans-serif;
+}
+
 textarea {
     -ms-user-select: text;
     -moz-user-select: text;
     -webkit-user-select: text;
     user-select: text;
+}
+
+button {
+        padding: .3rem 1rem;
+        background: #ccc;
+        border: 0;
+        transition: background-color .2s;
+    }
+    button:hover, button:focus {
+        background: #bbb;
+        transition: none;
+        outline: none;
+    }
+    button:active {
+        background: #aaa;
 }
 
 a, img {
@@ -68,7 +87,7 @@ a, img {
         border-left: none;
         overflow: hidden;
         white-space: nowrap;
-        transition: background .2s;
+        transition: background-color .2s;
     }
     .pan .grid-cell:hover, .grid-cell.edit {
         background: #eee;
@@ -158,7 +177,7 @@ a, img {
     }
     .toolbox li.button a {
         cursor: default;
-        transition: background .2s;
+        transition: background-color .2s;
     }
     .toolbox li.button a:hover, .toolbox li.button a:focus {
         background: #ccc;
@@ -269,24 +288,45 @@ a, img {
         background: rgba(255, 255, 255, .4);
 }
 
-#root .code-popup {
-        border-radius: 5px;
+#modal-overlay {
+        display: none;
+        justify-content: center;
+        align-items: center;
         position: absolute;
-        width: 80%;
-        height: 80%;
-        left: 10%;
-        top: 10%;
-        background: rgba(57, 57, 57, .9);
-        box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
-        opacity: 0;
-        transform: scale(.7) translate(0, 10%);
-        transition: opacity .1s, transform .1s;
-        color: white;
-        font: 1em/1.5 Consolas, monospace;
-        pointer-events: none;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, .7);
     }
-    #root.code-popup-open .code-popup {
-        opacity: 1;
-        transform: scale(1);
-        pointer-events: all;
+    #modal-overlay.show {
+        display: flex;
+    }
+    #modal-overlay .modal-box {
+        background: rgba(221, 221, 221, .7);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .5);
+        padding: 1rem;
+}
+
+.code-box textarea {
+        display: block;
+        padding: .5rem;
+        resize: none;
+        width: 66vw;
+        height: 50vh;
+        font: 14px/1.5 monospace;
+        background: rgba(57, 57, 57, .9);
+        color: white;
+    }
+    .code-box textarea:focus {
+        outline: 2px solid #4494F4;
+    }
+    .code-box .buttons {
+        display: flex;
+        justify-content: flex-end;
+        list-style: none;
+        margin-top: 1rem;
+    }
+    .code-box .buttons li {
+        margin-left: .5rem;
 }

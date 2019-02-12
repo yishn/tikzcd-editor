@@ -18,7 +18,7 @@ export default class App extends Component {
             selectedEdge: null,
             confirmLinkCopy: false,
             diagram: {nodes: [], edges: []},
-            codePopupOpen: false
+            showCodeBox: false
         }
 
         // Try to load a diagram from the hash if given
@@ -98,14 +98,19 @@ export default class App extends Component {
         }
     }
 
-    openCodePopup = () => {
+    openCodeBox = () => {
         let code = diagram.toTeX(this.state.diagram)
-        this.codePopup.value = code
-        this.codePopup.select()
-        this.codePopup.focus()
+
         this.setState({
-            codePopupOpen: true,
+            codeValue: code,
+            showCodeBox: true,
             selectedEdge: null
+        })
+    }
+
+    closeCodeBox = () => {
+        this.setState({
+            showCodeBox: false
         })
     }
 
@@ -126,7 +131,7 @@ export default class App extends Component {
         }
 
         this.codePopup.value = ''
-        this.setState({codePopupOpen: false})
+        this.setState({showCodeBox: false})
     }
 
     moveInHistory = step => {
@@ -232,12 +237,7 @@ export default class App extends Component {
     }
 
     render() {
-        return <div
-            id="root"
-            class={classNames({
-                "code-popup-open": this.state.codePopupOpen
-            })}
-        >
+        return <div id="root">
             <Grid
                 cellSize={this.state.cellSize}
                 data={this.state.diagram}
@@ -291,10 +291,10 @@ export default class App extends Component {
                 <Separator/>
 
                 <Button
-                    checked={this.state.codePopupOpen}
+                    checked={this.state.showCodeBox}
                     icon="./img/tools/code.svg"
                     name="Open Popup with Code"
-                    onClick={this.openCodePopup}
+                    onClick={this.openCodeBox}
                 />
 
                 <Button
@@ -312,11 +312,10 @@ export default class App extends Component {
                 />
             </Toolbox>
 
-            <textarea
-                ref={el => this.codePopup = el}
-                class="code-popup"
-
-                onBlur={this.handleCodePopupBlur}
+            <CodeBox
+                code={this.state.codeValue}
+                show={this.state.showCodeBox}
+                onClose={this.closeCodeBox}
             />
         </div>
     }
