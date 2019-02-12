@@ -6,6 +6,7 @@ import * as diagram from '../diagram'
 import Grid from './Grid'
 import Properties from './Properties'
 import Toolbox, {Button, Separator} from './Toolbox'
+import CodeBox from './CodeBox'
 
 export default class App extends Component {
     constructor() {
