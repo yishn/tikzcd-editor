@@ -119,24 +119,24 @@ export default class App extends Component {
         })
     }
 
-    handleCodePopupBlur = () => {
-        if (document.activeElement === this.codePopup) return
-
+    handleParseCode = () => {
         let currentCode = diagram.toTeX(this.state.diagram)
-        let newCode = this.codePopup.value
+        let newCode = this.state.codeValue
+        let diag = this.state.diagram
+
         if (currentCode !== newCode) {
             try {
-                this.setState({
-                    diagram: diagram.fromTeX(newCode),
-                    selectedEdge: null
-                })
+                diag = diagram.fromTeX(newCode)
             } catch (err) {
-                alert('Could not parse code. Reason: ' + err)
+                alert(`Could not parse code.\n\nReason: ${err.message}`)
             }
         }
 
-        this.codePopup.value = ''
-        this.setState({showCodeBox: false})
+        this.setState({
+            diagram: diag,
+            selectedEdge: null,
+            showCodeBox: false
+        })
     }
 
     moveInHistory = step => {
@@ -322,6 +322,7 @@ export default class App extends Component {
                 show={this.state.showCodeBox}
 
                 onCodeInput={this.handleCodeInput}
+                onParseButtonClick={this.handleParseCode}
                 onClose={this.handleCloseCodeBox}
             />
         </div>

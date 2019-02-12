@@ -17,7 +17,8 @@ export default class CodeBox extends Component {
     handleOverlayClick = evt => {
         if (evt.target !== evt.currentTarget) return
 
-        this.handleCloseClick()
+        let {onClose = () => {}} = this.props
+        onClose(evt)
     }
 
     handleCopyClick = () => {
@@ -25,11 +26,6 @@ export default class CodeBox extends Component {
 
         this.textareaElement.focus()
         this.textareaElement.select()
-    }
-
-    handleCloseClick = () => {
-        let {onClose = () => {}} = this.props
-        onClose()
     }
 
     render() {
@@ -49,7 +45,9 @@ export default class CodeBox extends Component {
 
                 <ul class="buttons">
                     <li><button onClick={this.handleCopyClick}>Copy</button></li>
-                    <li><button onClick={this.handleCloseClick}>Close</button></li>
+                    <li class="separator" />
+                    <li><button onClick={this.props.onParseButtonClick}>Parse</button></li>
+                    <li><button onClick={this.props.onClose}>Close</button></li>
                 </ul>
             </section>
         </section>

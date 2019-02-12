@@ -327,6 +327,9 @@ a, img {
         list-style: none;
         margin-top: 1rem;
     }
-    .code-box .buttons li {
+    .code-box .buttons li:not(:first-child) {
         margin-left: .5rem;
+    }
+    .code-box .buttons li.separator {
+        flex: 1;
 }

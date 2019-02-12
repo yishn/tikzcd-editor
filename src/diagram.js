@@ -141,7 +141,7 @@ export function fromTeX(code) {
                 }
                 let match = parts[1].match(valueMatcher)
                 if (!match || match.length !== 2) {
-                    throw new Error('Could not match edge label')
+                    throw new Error('Could not match edge label.')
                 }
                 edge.value = match[1]
 
@@ -253,7 +253,7 @@ export function fromTeX(code) {
             }
         }
         if (!consumed) {
-            throw new Error('Cannot parse the code further')
+            throw new Error('Cannot parse the code further.')
         }
     }
 
