@@ -91,7 +91,8 @@ export function toTeX(diagram) {
                     ].filter(x => x != null)}
                 />
             ])}
-        </Diagram>
+        </Diagram>,
+        {align: true}
     )
 }
 
