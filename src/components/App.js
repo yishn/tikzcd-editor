@@ -26,7 +26,7 @@ export default class App extends Component {
             try {
                 this.state.diagram = diagram.fromBase64(window.location.hash.slice(1))
             } catch (err) {
-                alert('Invalid URL encoding')
+                alert('Invalid diagram permalink')
             }
         }
 
