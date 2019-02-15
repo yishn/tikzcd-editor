@@ -141,6 +141,7 @@ export default class App extends Component {
         }
 
         this.setState({
+            cameraPosition: Array(2).fill(-Math.floor(this.state.cellSize / 2)),
             selectedEdge: null,
             showCodeBox: false
         })
