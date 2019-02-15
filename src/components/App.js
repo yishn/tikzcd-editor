@@ -14,6 +14,7 @@ export default class App extends Component {
         this.state = {
             tool: 'pan',
             cellSize: 130,
+            cameraPosition: [-65, -65],
             selectedEdge: null,
             confirmLinkCopy: false,
             diagram: {nodes: [], edges: []},
@@ -79,6 +80,10 @@ export default class App extends Component {
                 return message
             }
         })
+    }
+
+    handlePan = ({cameraPosition}) => {
+        this.setState({cameraPosition})
     }
 
     copyLink = () => {
@@ -251,10 +256,12 @@ export default class App extends Component {
         return <div id="root">
             <Grid
                 cellSize={this.state.cellSize}
+                cameraPosition={this.state.cameraPosition}
                 data={this.state.diagram}
                 mode={this.state.tool}
                 selectedEdge={this.state.selectedEdge}
 
+                onPan={this.handlePan}
                 onDataChange={this.handleDataChange}
                 onEdgeClick={this.handleEdgeClick}
             />

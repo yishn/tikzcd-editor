@@ -12,7 +12,6 @@ export default class Grid extends Component {
         this.state = {
             width: null,
             height: null,
-            cameraPosition: Array(2).fill(Math.round(-props.cellSize / 2)),
             editPosition: [null, null],
             phantomEdge: null
         }
@@ -68,15 +67,15 @@ export default class Grid extends Component {
 
             evt.preventDefault()
 
-            let {cellSize} = this.props
-            let {cameraPosition} = this.state
+            let {cellSize, cameraPosition} = this.props
             let newPosition = [evt.clientX, evt.clientY]
                 .map((x, i) => Math.floor((x + cameraPosition[i]) / cellSize))
 
             if (this.mouseDown.mode === 'pan') {
                 let {movementX, movementY} = evt
+                let {onPan = () => {}} = this.props
 
-                this.setState({
+                onPan({
                     cameraPosition: helper.arrSubtract(cameraPosition, [movementX, movementY])
                 })
             } else if (this.mouseDown.mode === 'move') {
@@ -121,8 +120,7 @@ export default class Grid extends Component {
     handleNodeMouseDown = evt => {
         if (evt.button !== 0) return
 
-        let {cellSize} = this.props
-        let {cameraPosition} = this.state
+        let {cellSize, cameraPosition} = this.props
         let position = [evt.clientX, evt.clientY]
             .map((x, i) => Math.floor((x + cameraPosition[i]) / cellSize))
         let nodeIndex = this.props.data.nodes
@@ -216,12 +214,12 @@ export default class Grid extends Component {
     render() {
         if (this.state.width == null) return <section ref={el => this.element = el} id="grid"/>
 
-        let {cellSize} = this.props
+        let {cellSize, cameraPosition} = this.props
         let size = [this.state.width, this.state.height]
-        let [xstart, ystart] = this.state.cameraPosition.map(x => Math.floor(x / cellSize))
-        let [xend, yend] = this.state.cameraPosition.map((x, i) => Math.floor((x + size[i]) / cellSize))
+        let [xstart, ystart] = cameraPosition.map(x => Math.floor(x / cellSize))
+        let [xend, yend] = cameraPosition.map((x, i) => Math.floor((x + size[i]) / cellSize))
         let [cols, rows] = [xend - xstart + 1, yend - ystart + 1]
-        let [tx, ty] = helper.arrSubtract(helper.arrScale(cellSize, [xstart, ystart]), this.state.cameraPosition)
+        let [tx, ty] = helper.arrSubtract(helper.arrScale(cellSize, [xstart, ystart]), cameraPosition)
 
         return <section
             ref={el => this.element = el}
@@ -266,8 +264,8 @@ export default class Grid extends Component {
 
             <ul
                 style={{
-                    left: -this.state.cameraPosition[0],
-                    top: -this.state.cameraPosition[1]
+                    left: -cameraPosition[0],
+                    top: -cameraPosition[1]
                 }}
             >
                 {this.props.data.edges.map((edge, i) =>
