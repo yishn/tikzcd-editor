@@ -90,7 +90,7 @@ export function toTeX(diagram) {
                         : null,
 
                         edge.shift < 0 ? `shift left=${-edge.shift}`.replace(/=1$/, '')
-                        : edge.shift > 1 ? `shift right=${edge.shift}`.replace(/=1$/, '')
+                        : edge.shift > 0 ? `shift right=${edge.shift}`.replace(/=1$/, '')
                         : null,
                     ].filter(x => x != null)}
                 />
