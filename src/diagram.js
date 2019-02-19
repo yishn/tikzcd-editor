@@ -85,9 +85,13 @@ export function toTeX(diagram) {
                             verynearend: 'very near end'
                         })[id]),
 
-                        edge.bend > 0 ? `bend left=${edge.bend}`.replace('=30', '')
-                        : edge.bend < 0 ? `bend right=${-edge.bend}`.replace('=30', '')
-                        : null
+                        edge.bend > 0 ? `bend left=${edge.bend}`.replace(/=30$/, '')
+                        : edge.bend < 0 ? `bend right=${-edge.bend}`.replace(/=30$/, '')
+                        : null,
+
+                        edge.shift < 0 ? `shift left=${-edge.shift}`.replace(/=1$/, '')
+                        : edge.shift > 0 ? `shift right=${edge.shift}`.replace(/=1$/, '')
+                        : null,
                     ].filter(x => x != null)}
                 />
             ])}
@@ -217,6 +221,24 @@ export function fromTeX(code) {
                     edge.bend = -parseInt(match[1])
                 } else {
                     edge.bend = -30
+                }
+            }
+
+            // shift
+            if (definition.includes('shift left')) {
+                let match = definition.match(/shift left=(\d+)/)
+                if (match && match.length > 1) {
+                    edge.shift = -parseInt(match[1])
+                } else {
+                    edge.shift = -1
+                }
+            }
+            if (definition.includes('shift right')) {
+                let match = definition.match(/shift right=(\d+)/)
+                if (match && match.length > 1) {
+                    edge.shift = parseInt(match[1])
+                } else {
+                    edge.shift = 1
                 }
             }
 

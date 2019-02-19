@@ -19,6 +19,8 @@ export default class Properties extends Component {
         let edgeControl = {
             'ArrowUp': 'bendleft',
             'ArrowDown': 'bendright',
+            'ArrowLeft': 'shiftleft',
+            'ArrowRight': 'shiftright',
             'r': 'reversearrow',
             'a': 'labelleft',
             's': 'labelinside',
@@ -111,6 +113,9 @@ export default class Properties extends Component {
                     let newBend = sign * steps[Math.min(index + (+increase * 2 - 1), steps.length - 1)]
 
                     change = {bend: helper.clamp(-80, 80, newBend)}
+                } else if (['shiftleft', 'shiftright'].includes(id)) {
+                    let {shift = 0} = data
+                    change = {shift: shift + (id === 'shiftright' ? 1 : -1)}
                 } else if (['reversearrow'].includes(id)) {
                     let {from, to, labelPosition = 'left'} = data
 
@@ -132,6 +137,12 @@ export default class Properties extends Component {
 
                     if (data.bend != null) {
                         change.bend = -data.bend
+                    }
+
+                    // Invert shift
+
+                    if (data.shift !== null) {
+                        change.shift = -data.shift;
                     }
                 }
 
@@ -224,6 +235,12 @@ export default class Properties extends Component {
                 />
 
                 <Button
+                    icon="./img/properties/shiftright.svg"
+                    name="Shift Right (Right Arrow Key)"
+                    onClick={this.handleButtonClick('shiftright')}
+                />
+
+                <Button
                     checked={data.line === 'dotted'}
                     icon="./img/properties/dotted.svg"
                     name="Dotted"
@@ -242,6 +259,12 @@ export default class Properties extends Component {
                     icon="./img/properties/solid.svg"
                     name="Solid"
                     onClick={this.handleButtonClick('solid')}
+                />
+
+                <Button
+                    icon="./img/properties/shiftleft.svg"
+                    name="Shift Left (Left Arrow Key)"
+                    onClick={this.handleButtonClick('shiftleft')}
                 />
 
                 <Button

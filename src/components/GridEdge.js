@@ -39,7 +39,8 @@ export default class GridEdge extends Component {
         if (nextProps != null
             && nextProps.from === this.props.from
             && nextProps.to === this.props.to
-            && nextProps.bend === this.props.bend) return
+            && nextProps.bend === this.props.bend
+            && nextProps.shift === this.props.shift) return
 
         if (nextProps == null) nextProps = this.props
 
@@ -110,6 +111,7 @@ export default class GridEdge extends Component {
                 && this.props.from === prevProps.from
                 && this.props.to === prevProps.to
                 && this.props.bend === prevProps.bend
+                && this.props.shift === prevProps.shift
                 && this.state.startPoint === prevState.startPoint
                 && this.state.endPoint === prevState.endPoint) return
 
@@ -161,6 +163,7 @@ export default class GridEdge extends Component {
         let degree = angle * 180 / Math.PI
 
         let bend = this.props.bend || 0
+        let shift = this.props.shift || 0
         let [cx, cy] = [length / 2, length * Math.tan(bend * Math.PI / 180) / 2]
         let height = Math.max(Math.abs(cy) + 13, 13)
         let path = `M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 - cy} ${length} ${height / 2}`
@@ -176,7 +179,7 @@ export default class GridEdge extends Component {
                 width: length + 13,
                 left: mx - (length + 13) / 2,
                 top: my - height / 2,
-                transform: `rotate(${degree}deg)`
+                transform: `rotate(${degree}deg) translateY(${shift * 7}px)`
             }}
 
             onClick={this.props.onClick}
