@@ -85,12 +85,12 @@ export function toTeX(diagram) {
                             verynearend: 'very near end'
                         })[id]),
 
-                        edge.bend > 0 ? `bend left=${edge.bend}`.replace('=30', '')
-                        : edge.bend < 0 ? `bend right=${-edge.bend}`.replace('=30', '')
+                        edge.bend > 0 ? `bend left=${edge.bend}`.replace(/=30$/, '')
+                        : edge.bend < 0 ? `bend right=${-edge.bend}`.replace(/=30$/, '')
                         : null,
 
-                        edge.shift < 0 ? `shift left=${-edge.shift}`.replace('=1', '')
-                        : edge.shift > 1 ? `shift right=${edge.shift}`.replace('=1', '')
+                        edge.shift < 0 ? `shift left=${-edge.shift}`.replace(/=1$/, '')
+                        : edge.shift > 1 ? `shift right=${edge.shift}`.replace(/=1$/, '')
                         : null,
                     ].filter(x => x != null)}
                 />
