@@ -327,6 +327,7 @@ a, img {
         font: 1rem/1.5 Consolas, monospace;
         background: #393939;
         color: white;
+        white-space: pre;
     }
     .code-box textarea:focus {
         outline: 2px solid #4494F4;
