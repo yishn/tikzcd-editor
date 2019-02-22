@@ -16,22 +16,20 @@ export default class Properties extends Component {
     }
 
     componentDidMount() {
-        let edgeControl = {
-            'ArrowUp': 'bendleft',
-            'ArrowDown': 'bendright',
-            'ArrowLeft': 'shiftleft',
-            'ArrowRight': 'shiftright',
-            'r': 'reversearrow',
-            'a': 'labelleft',
-            's': 'labelinside',
-            'd': 'labelright'
-        }
-
-        let edgeEdit = 'Enter'
-        let edgeDelete = ['Delete', 'Backspace']    // Delete, Backspace
 
         document.addEventListener('keydown', evt => {
             if (evt.ctrlKey || evt.metaKey || !this.props.show || this.state.edit) return
+
+            let edgeEdit = 'Enter'
+            let edgeDelete = ['Delete', 'Backspace']
+            let edgeControl = {
+                'ArrowUp': evt.shiftKey ? 'bendleft' : 'shiftleft',
+                'ArrowDown': evt.shiftKey ? 'bendright' : 'shiftright',
+                'r': 'reversearrow',
+                'a': 'labelleft',
+                's': 'labelinside',
+                'd': 'labelright'
+            }
 
             if (edgeControl[evt.key] != null) {
                 evt.preventDefault()
@@ -253,25 +251,25 @@ export default class Properties extends Component {
 
                 <Button
                     icon="./img/properties/shiftright.svg"
-                    name="Shift Right (Right Arrow Key)"
+                    name="Shift Right (Down Arrow)"
                     onClick={this.handleButtonClick('shiftright')}
                 />
 
                 <Button
                     icon="./img/properties/shiftleft.svg"
-                    name="Shift Left (Left Arrow Key)"
+                    name="Shift Left (Up Arrow)"
                     onClick={this.handleButtonClick('shiftleft')}
                 />
 
                 <Button
                     icon="./img/properties/bendright.svg"
-                    name="Bend Right (Down Arrow)"
+                    name="Bend Right (Shift+Down Arrow)"
                     onClick={this.handleButtonClick('bendright')}
                 />
 
                 <Button
                     icon="./img/properties/bendleft.svg"
-                    name="Bend Left (Up Arrow)"
+                    name="Bend Left (Shift+Up Arrow)"
                     onClick={this.handleButtonClick('bendleft')}
                 />
 
