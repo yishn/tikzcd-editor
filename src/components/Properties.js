@@ -229,18 +229,6 @@ export default class Properties extends Component {
                 <Separator/>
 
                 <Button
-                    icon="./img/properties/bendright.svg"
-                    name="Bend Right (Down Arrow)"
-                    onClick={this.handleButtonClick('bendright')}
-                />
-
-                <Button
-                    icon="./img/properties/shiftright.svg"
-                    name="Shift Right (Right Arrow Key)"
-                    onClick={this.handleButtonClick('shiftright')}
-                />
-
-                <Button
                     checked={data.line === 'dotted'}
                     icon="./img/properties/dotted.svg"
                     name="Dotted"
@@ -261,10 +249,24 @@ export default class Properties extends Component {
                     onClick={this.handleButtonClick('solid')}
                 />
 
+                <Separator/>
+
+                <Button
+                    icon="./img/properties/shiftright.svg"
+                    name="Shift Right (Right Arrow Key)"
+                    onClick={this.handleButtonClick('shiftright')}
+                />
+
                 <Button
                     icon="./img/properties/shiftleft.svg"
                     name="Shift Left (Left Arrow Key)"
                     onClick={this.handleButtonClick('shiftleft')}
+                />
+
+                <Button
+                    icon="./img/properties/bendright.svg"
+                    name="Bend Right (Down Arrow)"
+                    onClick={this.handleButtonClick('bendright')}
                 />
 
                 <Button
