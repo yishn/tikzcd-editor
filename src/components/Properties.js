@@ -115,21 +115,23 @@ export default class Properties extends Component {
                     let {shift = 0} = data
                     change = {shift: shift + (id === 'shiftright' ? 1 : -1)}
                 } else if (['reversearrow'].includes(id)) {
-                    let {from, to, labelPosition = 'left'} = data
+                    let {from, to, labelPosition} = data
 
                     change = {to: from, from: to}
 
                     // Invert label position
 
-                    let newLabelPos = labelPosition
+                    if (labelPosition != null) {
+                        let newLabelPos = labelPosition
 
-                    if (labelPosition === 'left') {
-                        newLabelPos = 'right'
-                    } else if (labelPosition === 'right') {
-                        newLabelPos = 'left'
+                        if (labelPosition === 'left') {
+                            newLabelPos = 'right'
+                        } else if (labelPosition === 'right') {
+                            newLabelPos = 'left'
+                        }
+
+                        change.labelPosition = newLabelPos
                     }
-
-                    change.labelPosition = newLabelPos
 
                     // Invert bend
 
