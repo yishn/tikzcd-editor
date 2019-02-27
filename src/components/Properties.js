@@ -142,7 +142,7 @@ export default class Properties extends Component {
                     // Invert shift
 
                     if (data.shift != null) {
-                        change.shift = -data.shift;
+                        change.shift = -data.shift
                     }
                 }
 
