@@ -154,8 +154,7 @@ export default class Grid extends Component {
 
         evt.stopPropagation()
 
-        let {cellSize} = this.props
-        let {cameraPosition} = this.state
+        let {cellSize, cameraPosition} = this.props
         let newNodes = [...this.props.data.nodes]
 
         let position = [evt.clientX, evt.clientY]

@@ -160,7 +160,7 @@ export default class GridEdge extends Component {
     }
 
     render() {
-        let width, height, leftOffset, topOffset, tail, head, path, degree, mx, my
+        let width, height, leftOffset, topOffset, shift, tail, head, path, degree, mx, my
 
         if (!helper.arrEquals(this.props.from, this.props.to)) {
             // Arrows
@@ -171,7 +171,7 @@ export default class GridEdge extends Component {
             degree = angle * 180 / Math.PI
 
             let bend = this.props.bend || 0
-            let shift = this.props.shift || 0
+            shift = this.props.shift || 0
             let [cx, cy] = [length / 2, length * Math.tan(bend * Math.PI / 180) / 2]
             ;[width, height] = [length + 13, Math.max(Math.abs(cy) + 13, 13)]
             path = `M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 - cy} ${length} ${height / 2}`
@@ -193,6 +193,7 @@ export default class GridEdge extends Component {
             ;[width, height] = [radius * 4 + 13, radius * 4 + 13]
             degree = 360 - angle
 
+            shift = 0
             path = `M ${width / 2 - labelRadius} ${height / 2} a ${radius} ${radius * 0.8} 0 1 0 ${labelRadius * 2} 0`
 
             let offset = 16;
