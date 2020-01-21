@@ -87,6 +87,8 @@ export default class GridCell extends Component {
             <img
                 class="loop"
                 src="./img/loop.svg"
+                title="Create Loop"
+                alt="Create Loop"
 
                 onClick={this.handleAddLoop}
                 onMouseDown={this.stopPropagation}
