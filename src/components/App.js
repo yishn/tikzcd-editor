@@ -60,6 +60,10 @@ export default class App extends Component {
       }
     })
 
+    window.addEventListener('popstate', evt => {
+      this.handleDataChange({data: this.parseDiagramFromUrl()})
+    })
+
     window.addEventListener('beforeunload', evt => {
       if (
         this.state.diagram.nodes.length > 0 ||
@@ -100,7 +104,7 @@ export default class App extends Component {
     let base = window.location.href.split('#')[0]
 
     let url = base + '#' + encoded
-    window.history.replaceState(null, null, '#' + encoded)
+    window.history.pushState(null, null, '#' + encoded)
 
     let success = copyText(url)
 
