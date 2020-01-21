@@ -201,7 +201,7 @@ export default class GridEdge extends Component {
             shift = 0
             path = `M ${width / 2 - labelRadius} ${height / 2} a ${radius} ${radius * 0.8} 0 1 0 ${labelRadius * 2} 0`
 
-            let offset = 16;
+            let offset = 16
             leftOffset = width / 2 + offset * Math.sin(degree * Math.PI / 180)
             topOffset = offset * Math.cos(degree * Math.PI / 180)
             let multiplier = flip * 180 / Math.PI

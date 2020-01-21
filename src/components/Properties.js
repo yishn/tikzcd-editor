@@ -100,6 +100,8 @@ export default class Properties extends Component {
 
                     change = {[prop]: ids[index]}
                 } else if (['bendleft', 'bendright'].includes(id)) {
+                    if (data.loop != null) return
+
                     let {bend = 0} = data
                     let increase = bend === 0 || (id === 'bendleft' ? bend > 0 : bend < 0)
                     let sign = bend !== 0 ? Math.sign(bend) : id === 'bendleft' ? 1 : -1
@@ -112,6 +114,8 @@ export default class Properties extends Component {
 
                     change = {bend: helper.clamp(-80, 80, newBend)}
                 } else if (['shiftleft', 'shiftright'].includes(id)) {
+                    if (data.loop != null) return
+
                     let {shift = 0} = data
                     change = {shift: shift + (id === 'shiftright' ? 1 : -1)}
                 } else if (['reversearrow'].includes(id)) {
@@ -148,14 +152,14 @@ export default class Properties extends Component {
                     // Invert loop direction
 
                     if (data.loop != null) {
-                        let [angle, clockwise] = data.loop;
-                        change.loop = [angle, !clockwise];
+                        let [angle, clockwise] = data.loop
+                        change.loop = [angle, !clockwise]
                     }
                 } else if (['rotate'].includes(id)) {
-                    if (data.loop != null) {
-                        let [angle, clockwise] = data.loop;
-                        change.loop = [(angle + 90 * (!clockwise ? 1 : -1)) % 360, clockwise];
-                    }
+                    if (data.loop == null) return
+
+                    let [angle, clockwise] = data.loop
+                    change.loop = [(angle + 90 * (!clockwise ? 1 : -1)) % 360, clockwise]
                 }
 
                 onChange({data: {...data, ...change}})
@@ -263,7 +267,7 @@ export default class Properties extends Component {
 
                 <Separator/>
 
-                {data.from !== data.to ? <>
+                {data.loop == null ? <>
                     <Button
                         key="shiftright"
                         icon="./img/properties/shiftright.svg"

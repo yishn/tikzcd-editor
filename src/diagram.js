@@ -104,7 +104,7 @@ export function toTeX(diagram) {
 
                         ...(edge.from === edge.to ? (() => {
                             let [angle, clockwise] = edge.loop || [0, false]
-                            let [inAngle, outAngle] = [(235 + angle + 360) % 360, (305 + angle + 360) % 360];
+                            let [inAngle, outAngle] = [(235 + angle + 360) % 360, (305 + angle + 360) % 360]
                             if (!clockwise) {
                                 [inAngle, outAngle] = [outAngle, inAngle]
                             }
@@ -141,7 +141,7 @@ export function fromTeX(code) {
             code = parts.join(']')
 
             parts = definition.split(',')
-            let dir = '';
+            let dir = ''
             if (/^[dlru]+$/.test(parts[0]))
                 dir = parts[0]
 
@@ -322,12 +322,14 @@ export function fromTeX(code) {
 
         let fromIndex = -1
         let toIndex = -1
-        for (let i = 0; i < nodes.length; i++) {
-            if (helper.arrEquals(nodes[i].position, from))
+
+        for (let node of nodes) {
+            if (helper.arrEquals(node.position, from))
                 fromIndex = i
-            if (helper.arrEquals(nodes[i].position, to))
+            if (helper.arrEquals(node.position, to))
                 toIndex = i
         }
+
         if (fromIndex === -1) {
             let node = {
                 position: from,
@@ -340,6 +342,7 @@ export function fromTeX(code) {
             if (helper.arrEquals(from, to))
                 toIndex = fromIndex
         }
+
         if (toIndex === -1) {
             let node = {
                 position: to,
@@ -348,6 +351,7 @@ export function fromTeX(code) {
             nodes.push(node)
             toIndex = nodes.length - 1
         }
+
         edge.from = fromIndex
         edge.to = toIndex
     }
