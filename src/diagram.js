@@ -92,6 +92,15 @@ export function toTeX(diagram) {
                         edge.shift < 0 ? `shift left=${-edge.shift}`.replace(/=1$/, '')
                         : edge.shift > 0 ? `shift right=${edge.shift}`.replace(/=1$/, '')
                         : null,
+
+                        ...(edge.from === edge.to ? (() => {
+                            let [angle, clockwise] = edge.loop || [0, false]
+                            let [inAngle, outAngle] = [(235 + angle + 360) % 360, (305 + angle + 360) % 360];
+                            if (!clockwise) {
+                                [inAngle, outAngle] = [outAngle, inAngle]
+                            }
+                            return ['loop', 'distance=2em', `in=${inAngle}`, `out=${outAngle}`]
+                        })() : []),
                     ].filter(x => x != null)}
                 />
             ])}
@@ -123,7 +132,9 @@ export function fromTeX(code) {
             code = parts.join(']')
 
             parts = definition.split(',')
-            let dir = parts[0]
+            let dir = '';
+            if (/^[dlru]+$/.test(parts[0]))
+                dir = parts[0]
 
             let to_x = x + (dir.split('r').length - 1) - (dir.split('l').length - 1)
             let to_y = y + (dir.split('d').length - 1) - (dir.split('u').length - 1)
@@ -242,6 +253,22 @@ export function fromTeX(code) {
                 }
             }
 
+            // loop
+            if (definition.includes('loop')) {
+                let [inAngle, outAngle] = [definition.match(/in=(-?\d+)/), definition.match(/out=(-?\d+)/)]
+                if (inAngle && outAngle && inAngle.length > 1 && outAngle.length > 1) {
+                    [inAngle, outAngle] = [parseInt(inAngle[1]), parseInt(outAngle[1])]
+                    let angle = ((inAngle + outAngle) / 2 + 90) % 360
+                    if ((outAngle - inAngle + 360) % 360 < 180) {
+                        edge.loop = [angle, true]
+                    } else {
+                        edge.loop = [angle, false]
+                    }
+                } else {
+                    edge.loop = [0, false]
+                }
+            }
+
             edges.push(edge)
         }},
         {string: '', callback: () => {
@@ -287,12 +314,10 @@ export function fromTeX(code) {
         let fromIndex = -1
         let toIndex = -1
         for (let i = 0; i < nodes.length; i++) {
-            if (nodes[i].position[0] === from[0] && nodes[i].position[1] === from[1]) {
+            if (helper.arrEquals(nodes[i].position, from))
                 fromIndex = i
-            }
-            if (nodes[i].position[0] === to[0] && nodes[i].position[1] === to[1]) {
+            if (helper.arrEquals(nodes[i].position, to))
                 toIndex = i
-            }
         }
         if (fromIndex === -1) {
             let node = {
@@ -301,6 +326,10 @@ export function fromTeX(code) {
             }
             nodes.push(node)
             fromIndex = nodes.length - 1
+
+            // Account for loops.
+            if (helper.arrEquals(from, to))
+                toIndex = fromIndex
         }
         if (toIndex === -1) {
             let node = {

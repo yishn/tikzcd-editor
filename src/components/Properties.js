@@ -27,7 +27,8 @@ export default class Properties extends Component {
                 'r': 'reversearrow',
                 'a': 'labelleft',
                 's': 'labelinside',
-                'd': 'labelright'
+                'd': 'labelright',
+                'e': 'rotate'
             }
 
             if (edgeControl[evt.key] != null) {
@@ -143,6 +144,18 @@ export default class Properties extends Component {
                     if (data.shift != null) {
                         change.shift = -data.shift
                     }
+
+                    // Invert loop direction
+
+                    if (data.loop != null) {
+                        let [angle, clockwise] = data.loop;
+                        change.loop = [angle, !clockwise];
+                    }
+                } else if (['rotate'].includes(id)) {
+                    if (data.loop != null) {
+                        let [angle, clockwise] = data.loop;
+                        change.loop = [(angle + 90 * (!clockwise ? 1 : -1)) % 360, clockwise];
+                    }
                 }
 
                 onChange({data: {...data, ...change}})
@@ -253,25 +266,36 @@ export default class Properties extends Component {
                 <Button
                     icon="./img/properties/shiftright.svg"
                     name="Shift Right (Down Arrow)"
+                    disabled={data.from === data.to}
                     onClick={this.handleButtonClick('shiftright')}
                 />
 
                 <Button
                     icon="./img/properties/shiftleft.svg"
                     name="Shift Left (Up Arrow)"
+                    disabled={data.from === data.to}
                     onClick={this.handleButtonClick('shiftleft')}
                 />
 
                 <Button
                     icon="./img/properties/bendright.svg"
                     name="Bend Right (Shift+Down Arrow)"
+                    disabled={data.from === data.to}
                     onClick={this.handleButtonClick('bendright')}
                 />
 
                 <Button
                     icon="./img/properties/bendleft.svg"
                     name="Bend Left (Shift+Up Arrow)"
+                    disabled={data.from === data.to}
                     onClick={this.handleButtonClick('bendleft')}
+                />
+
+                <Button
+                    icon="./img/properties/rotate.svg"
+                    name="Rotate (E)"
+                    disabled={data.from !== data.to}
+                    onClick={this.handleButtonClick('rotate')}
                 />
 
                 <Separator/>
