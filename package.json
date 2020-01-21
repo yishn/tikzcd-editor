@@ -36,12 +36,14 @@
     "@babel/preset-react": "^7.8.3",
     "babel-loader": "^8.0.6",
     "http-server": "^0.12.1",
+    "prettier": "1.19.1",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
   "scripts": {
     "start": "http-server",
     "build": "webpack --progress --mode production",
-    "watch": "webpack --progress --mode development --watch"
+    "watch": "webpack --progress --mode development --watch",
+    "format": "prettier --write --no-semi --single-quote --no-bracket-spacing \"src/**/*.js\""
   }
 }

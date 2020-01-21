@@ -7,12 +7,12 @@ MathJax.Hub.processSectionDelay = 0
 MathJax.Hub.processUpdateDelay = 0
 
 MathJax.Hub.Config({
-    messageStyle: 'none',
-    skipStartupTypeset: true,
-    showMathMenu: false,
-    errorSettings: {message: ['']}
+  messageStyle: 'none',
+  skipStartupTypeset: true,
+  showMathMenu: false,
+  errorSettings: {message: ['']}
 })
 
 // Render
 
-render(<App/>, document.body)
+render(<App />, document.body)
