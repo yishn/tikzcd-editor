@@ -16,7 +16,6 @@ export default class Properties extends Component {
     }
 
     componentDidMount() {
-
         document.addEventListener('keydown', evt => {
             if (evt.ctrlKey || evt.metaKey || !this.props.show || this.state.edit) return
 
