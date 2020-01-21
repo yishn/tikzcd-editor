@@ -21,16 +21,7 @@ export default class App extends Component {
             showCodeBox: false
         }
 
-        // Try to load a diagram from the hash if given
-
-        if (window.location.hash.length > 0) {
-            try {
-                this.state.diagram = diagram.fromBase64(window.location.hash.slice(1))
-            } catch (err) {
-                alert('Invalid diagram permalink')
-            }
-        }
-
+        this.state.diagram = this.parseDiagramFromUrl()
         this.history = [{diagram: this.state.diagram, time: Date.now()}]
         this.historyPointer = 0
     }
@@ -82,6 +73,22 @@ export default class App extends Component {
         })
     }
 
+    parseDiagramFromUrl = () => {
+        if (window.location.hash.length > 0) {
+            try {
+                return diagram.fromCompressedBase64(window.location.hash.slice(1))
+            } catch (err) {}
+
+            try {
+                return diagram.fromBase64(window.location.hash.slice(1))
+            } catch (err) {
+                alert('Invalid diagram permalink.')
+            }
+        }
+
+        return {nodes: [], edges: []}
+    }
+
     handlePan = ({cameraPosition}) => {
         this.setState({cameraPosition})
     }
@@ -89,7 +96,7 @@ export default class App extends Component {
     copyLink = () => {
         if (this.state.confirmLinkCopy) return
 
-        let encoded = diagram.toBase64(this.state.diagram)
+        let encoded = diagram.toCompressedBase64(this.state.diagram)
         let base = window.location.href.split('#')[0]
 
         let url = base + '#' + encoded

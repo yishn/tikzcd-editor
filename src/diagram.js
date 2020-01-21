@@ -1,4 +1,5 @@
 import {h, render, Diagram, Node, Edge} from 'jsx-tikzcd'
+import {compressToEncodedURIComponent, decompressFromEncodedURIComponent} from 'lz-string'
 import * as helper from './helper'
 
 export function toJSON(diagram) {
@@ -45,6 +46,14 @@ export function toBase64(diagram) {
 
 export function fromBase64(base64) {
     return fromJSON(helper.b64DecodeUnicode(base64))
+}
+
+export function toCompressedBase64(diagram) {
+    return compressToEncodedURIComponent(toJSON(diagram))
+}
+
+export function fromCompressedBase64(compressed) {
+    return fromJSON(decompressFromEncodedURIComponent(compressed))
 }
 
 export function toTeX(diagram) {
