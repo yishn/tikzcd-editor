@@ -47,6 +47,7 @@ A big thanks to these lovely people:
 
 - Steve Heim
 - Max New
+- Bingyu Zhang
 
 ## Related
 

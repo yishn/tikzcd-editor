@@ -116,16 +116,19 @@ a, img {
         opacity: 0;
         pointer-events: none;
     }
-    .grid-cell .value, .grid-cell .edit {
+    .grid-cell .value {
         margin: auto;
     }
     .grid-cell.edit .value {
-        position: absolute;
         opacity: 0;
         pointer-events: none;
     }
     .grid-cell .edit {
+        display: flex;
+        align-items: center;
+        position: absolute;
         width: 100%;
+        height: 100%;
     }
     .grid-cell .edit input {
         border: none;

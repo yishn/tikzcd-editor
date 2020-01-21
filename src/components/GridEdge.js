@@ -47,10 +47,15 @@ export default class GridEdge extends Component {
 
         MathJax.Hub.Queue(() => {
             let {cellSize} = nextProps
-            let query = position => `.grid-cell[data-position="${position.join(',')}"] .value`
+            let query = position => document.querySelector([
+                `.grid-cell[data-position="${position.join(',')}"]`,
+                '.value',
+                '.MathJax_Preview',
+                '+ span'
+            ].join(' '))
 
-            let fromLatexElement = document.querySelector(query(nextProps.from))
-            let toLatexElement = document.querySelector(query(nextProps.to))
+            let fromLatexElement = query(nextProps.from)
+            let toLatexElement = query(nextProps.to)
 
             let [fromWidth, fromHeight, toWidth, toHeight] = [0, 0, 0, 0]
 
@@ -121,12 +126,12 @@ export default class GridEdge extends Component {
 
             let bbox = this.edgePath.getBBox()
             let {width, height} = window.getComputedStyle(this.valueElement)
-            let labelPosition = this.props.labelPosition || 'left'
-            let [loopAngle, clockwise] = this.props.loop || [0, false]
-            if (clockwise)
-                labelPosition = { left: 'right', right: 'left' }[labelPosition] || labelPosition
 
             ;[width, height] = [width, height].map(parseFloat)
+
+            let labelPosition = this.props.labelPosition || 'left'
+            let [loopAngle, clockwise] = this.props.loop || [0, false]
+            if (clockwise) labelPosition = {left: 'right', right: 'left'}[labelPosition] || labelPosition
 
             let angle = this.getLengthAngle().angle + loopAngle * Math.PI / 180
             let newHeight = height * Math.abs(Math.cos(angle)) + width * Math.abs(Math.sin(angle))

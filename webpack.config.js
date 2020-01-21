@@ -1,6 +1,6 @@
 const path = require('path')
 
-module.exports = {
+module.exports = (env, argv) => ({
     entry: './src/index.js',
 
     output: {
@@ -8,7 +8,7 @@ module.exports = {
         path: path.join(__dirname, 'dist')
     },
 
-    devtool: 'source-map',
+    devtool: argv.mode === 'production' ? false : 'cheap-module-eval-source-map',
 
     module: {
         rules: [{
@@ -17,7 +17,13 @@ module.exports = {
                 loader: 'babel-loader',
                 options: {
                     presets: [
-                        ['@babel/preset-env', {modules: false}]
+                        [
+                            '@babel/preset-env',
+                            {
+                                modules: false,
+                                targets: "defaults"
+                            }
+                        ]
                     ],
                     plugins: [
                         ['@babel/plugin-proposal-class-properties', {loose: false}],
@@ -33,4 +39,4 @@ module.exports = {
             'preact': path.join(__dirname, 'node_modules/preact/dist/preact.min')
         }
     }
-}
+})
