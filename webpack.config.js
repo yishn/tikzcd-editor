@@ -17,17 +17,19 @@ module.exports = (env, argv) => ({
                 loader: 'babel-loader',
                 options: {
                     presets: [
-                        [
-                            '@babel/preset-env',
-                            {
-                                modules: false,
-                                targets: "defaults"
-                            }
-                        ]
+                        ['@babel/preset-env', {
+                            modules: false,
+                            targets: "defaults"
+                        }]
                     ],
                     plugins: [
-                        ['@babel/plugin-proposal-class-properties', {loose: false}],
-                        ['@babel/transform-react-jsx', {pragma: 'h'}]
+                        ['@babel/plugin-proposal-class-properties', {
+                            loose: true
+                        }],
+                        ['@babel/transform-react-jsx', {
+                            pragma: 'h',
+                            pragmaFrag: 'Fragment'
+                        }]
                     ]
                 }
             },

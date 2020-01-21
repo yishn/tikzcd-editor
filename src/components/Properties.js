@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {h, Fragment, Component} from 'preact'
 import classNames from 'classnames'
 import * as helper from '../helper'
 
@@ -263,40 +263,42 @@ export default class Properties extends Component {
 
                 <Separator/>
 
-                <Button
-                    icon="./img/properties/shiftright.svg"
-                    name="Shift Right (Down Arrow)"
-                    disabled={data.from === data.to}
-                    onClick={this.handleButtonClick('shiftright')}
-                />
+                {data.from !== data.to ? <>
+                    <Button
+                        key="shiftright"
+                        icon="./img/properties/shiftright.svg"
+                        name="Shift Right (Down Arrow)"
+                        onClick={this.handleButtonClick('shiftright')}
+                    />
 
-                <Button
-                    icon="./img/properties/shiftleft.svg"
-                    name="Shift Left (Up Arrow)"
-                    disabled={data.from === data.to}
-                    onClick={this.handleButtonClick('shiftleft')}
-                />
+                    <Button
+                        key="shiftleft"
+                        icon="./img/properties/shiftleft.svg"
+                        name="Shift Left (Up Arrow)"
+                        onClick={this.handleButtonClick('shiftleft')}
+                    />
 
-                <Button
-                    icon="./img/properties/bendright.svg"
-                    name="Bend Right (Shift+Down Arrow)"
-                    disabled={data.from === data.to}
-                    onClick={this.handleButtonClick('bendright')}
-                />
+                    <Button
+                        key="bendright"
+                        icon="./img/properties/bendright.svg"
+                        name="Bend Right (Shift+Down Arrow)"
+                        onClick={this.handleButtonClick('bendright')}
+                    />
 
-                <Button
-                    icon="./img/properties/bendleft.svg"
-                    name="Bend Left (Shift+Up Arrow)"
-                    disabled={data.from === data.to}
-                    onClick={this.handleButtonClick('bendleft')}
-                />
-
-                <Button
-                    icon="./img/properties/rotate.svg"
-                    name="Rotate (E)"
-                    disabled={data.from !== data.to}
-                    onClick={this.handleButtonClick('rotate')}
-                />
+                    <Button
+                        key="bendleft"
+                        icon="./img/properties/bendleft.svg"
+                        name="Bend Left (Shift+Up Arrow)"
+                        onClick={this.handleButtonClick('bendleft')}
+                    />
+                </> : <>
+                    <Button
+                        key="rotate"
+                        icon="./img/properties/rotate.svg"
+                        name="Rotate (E)"
+                        onClick={this.handleButtonClick('rotate')}
+                    />
+                </>}
 
                 <Separator/>
 
