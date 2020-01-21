@@ -46,10 +46,15 @@ export default class GridEdge extends Component {
 
         MathJax.Hub.Queue(() => {
             let {cellSize} = nextProps
-            let query = position => `.grid-cell[data-position="${position.join(',')}"] .value`
+            let query = position => document.querySelector([
+                `.grid-cell[data-position="${position.join(',')}"]`,
+                '.value',
+                '.MathJax_Preview',
+                '+ span'
+            ].join(' '))
 
-            let fromLatexElement = document.querySelector(query(nextProps.from))
-            let toLatexElement = document.querySelector(query(nextProps.to))
+            let fromLatexElement = query(nextProps.from)
+            let toLatexElement = query(nextProps.to)
 
             let [fromWidth, fromHeight, toWidth, toHeight] = [0, 0, 0, 0]
 
