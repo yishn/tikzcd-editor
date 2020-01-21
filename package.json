@@ -35,15 +35,23 @@
     "@babel/preset-env": "^7.8.3",
     "@babel/preset-react": "^7.8.3",
     "babel-loader": "^8.0.6",
+    "concurrently": "^5.0.2",
     "http-server": "^0.12.1",
+    "onchange": "^6.1.0",
     "prettier": "1.19.1",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "bracketSpacing": false
+  },
   "scripts": {
     "start": "http-server",
-    "build": "webpack --progress --mode production",
-    "watch": "webpack --progress --mode development --watch",
-    "format": "prettier --write --no-semi --single-quote --no-bracket-spacing \"src/**/*.js\""
+    "build": "npm run format && webpack --progress --mode production",
+    "watch": "concurrently \"webpack --mode development --watch\" \"npm run watch-format\"",
+    "format": "prettier --write \"src/**/*.js\"",
+    "watch-format": "onchange \"src/**/*.js\" -- prettier --write {{changed}}"
   }
 }
