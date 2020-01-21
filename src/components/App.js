@@ -222,13 +222,19 @@ export default class App extends Component {
   }
 
   handleAboutClick = () => {
-    let a = render(
-      <a href="https://github.com/yishn/tikzcd-editor" target="_blank" />,
-      document.body
-    )
+    render(
+      <a
+        ref={el => {
+          if (!el) return
 
-    a.click()
-    a.remove()
+          el.click()
+          el.remove()
+        }}
+        href="https://github.com/yishn/tikzcd-editor"
+        target="_blank"
+      />,
+      document.createElement('div')
+    )
   }
 
   handleEdgeChange = evt => {
