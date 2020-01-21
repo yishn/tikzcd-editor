@@ -8,7 +8,9 @@ module.exports = (env, argv) => ({
     path: path.join(__dirname, 'dist')
   },
 
-  devtool: argv.mode === 'production' ? false : 'cheap-module-eval-source-map',
+  devtool: argv.mode === 'production'
+    ? 'source-map'
+    : 'cheap-module-eval-source-map',
 
   module: {
     rules: [{
