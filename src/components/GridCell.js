@@ -43,6 +43,11 @@ export default class GridCell extends Component {
     }
   }
 
+  submit = () => {
+    let {onSubmit = () => {}} = this.props
+    onSubmit({position: this.props.position})
+  }
+
   handleGrabberMouseDown = evt => {
     let {onGrabberMouseDown = () => {}} = this.props
 
@@ -61,14 +66,12 @@ export default class GridCell extends Component {
   handleEditKeyDown = evt => {
     if (evt.key === 'Enter') {
       evt.stopPropagation()
-
-      let {onSubmit = () => {}} = this.props
-      onSubmit({position: this.props.position})
+      this.submit()
     }
   }
 
   handleInputBlur = evt => {
-    this.handleEditSubmit(evt)
+    this.submit()
   }
 
   stopPropagation = evt => {
