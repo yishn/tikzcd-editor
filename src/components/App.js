@@ -169,21 +169,21 @@ export default class App extends Component {
     let newCode = this.state.codeValue
     let data = this.state.diagram
 
-    if (currentCode !== newCode) {
-      try {
-        data = diagram.fromTeX(newCode)
-      } catch (err) {
-        alert(`Could not parse code.\n\nReason: ${err.message}`)
-      }
+    if (currentCode === newCode) return
+
+    try {
+      data = diagram.fromTeX(newCode)
+
+      this.setState({
+        cameraPosition: Array(2).fill(-Math.floor(this.state.cellSize / 2)),
+        selectedEdge: null,
+        showCodeBox: false
+      })
+
+      this.handleDataChange({data})
+    } catch (err) {
+      alert(`Could not parse code.\n\nReason: ${err.message}`)
     }
-
-    this.setState({
-      cameraPosition: Array(2).fill(-Math.floor(this.state.cellSize / 2)),
-      selectedEdge: null,
-      showCodeBox: false
-    })
-
-    this.handleDataChange({data})
   }
 
   moveInHistory = step => {
