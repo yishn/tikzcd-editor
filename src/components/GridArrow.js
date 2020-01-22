@@ -9,7 +9,7 @@ import {
   getRectSegmentIntersections
 } from '../geometry'
 
-export default class GridEdge extends Component {
+export default class GridArrow extends Component {
   constructor(props) {
     super()
 

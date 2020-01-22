@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import * as helper from '../helper'
 
 import GridCell from './GridCell'
-import GridEdge from './GridEdge'
+import GridArrow from './GridArrow'
 
 export default class Grid extends Component {
   constructor(props) {
@@ -376,7 +376,7 @@ export default class Grid extends Component {
             let toPosition = nodes.find(n => n.id === edge.to).position
 
             return (
-              <GridEdge
+              <GridArrow
                 cellSize={cellSize}
                 id={i.toString()}
                 from={fromPosition}
@@ -398,7 +398,7 @@ export default class Grid extends Component {
           })}
 
           {this.state.phantomEdge && (
-            <GridEdge
+            <GridArrow
               cellSize={cellSize}
               phantom
               from={this.state.phantomEdge.from}
