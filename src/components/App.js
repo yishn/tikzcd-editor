@@ -17,7 +17,7 @@ export default class App extends Component {
       cellSize: 130,
       cameraPosition: [-65, -65],
       selectedCell: [0, 0],
-      selectedEdge: null,
+      selectedArrow: null,
       cellEditMode: false,
       confirmLinkCopy: false,
       diagram: {nodes: [], edges: []},
@@ -54,13 +54,13 @@ export default class App extends Component {
         // Arrow keys
 
         this.setState(state =>
-          state.cellEditMode || state.selectedEdge != null
+          state.cellEditMode || state.selectedArrow != null
             ? null
             : {selectedCell: arrAdd(state.selectedCell, arrowControl[evt.key])}
         )
       } else if (evt.key === 'Enter') {
         this.setState(state =>
-          state.cellEditMode || state.selectedEdge != null
+          state.cellEditMode || state.selectedArrow != null
             ? null
             : {cellEditMode: true}
         )
@@ -77,8 +77,8 @@ export default class App extends Component {
         this.prevTool = null
       } else if (evt.key === 'Escape') {
         this.setState(state =>
-          state.selectedEdge != null
-            ? {selectedEdge: null}
+          state.selectedArrow != null
+            ? {selectedArrow: null}
             : state.cellEditMode
             ? {cellEditMode: false}
             : null
@@ -148,7 +148,7 @@ export default class App extends Component {
     this.setState({
       codeValue: code,
       showCodeBox: true,
-      selectedEdge: null
+      selectedArrow: null
     })
   }
 
@@ -176,7 +176,7 @@ export default class App extends Component {
 
       this.setState({
         cameraPosition: Array(2).fill(-Math.floor(this.state.cellSize / 2)),
-        selectedEdge: null,
+        selectedArrow: null,
         showCodeBox: false
       })
 
@@ -193,7 +193,7 @@ export default class App extends Component {
 
     this.setState({
       diagram: this.history[this.historyPointer].diagram,
-      selectedEdge: null
+      selectedArrow: null
     })
   }
 
@@ -225,18 +225,24 @@ export default class App extends Component {
       this.history[this.historyPointer] = historyEntry
     }
 
-    this.setState({
+    this.setState(state => ({
       diagram: evt.data,
-      ...(evt.selectedCell != null ? {selectedCell: evt.selectedCell} : {}),
-      selectedEdge: edgeAdded
+      selectedArrow: edgeAdded
         ? evt.data.edges.length - 1
-        : this.state.selectedEdge
-    })
+        : state.selectedArrow,
+      ...(evt.selectedCell != null
+        ? {
+            selectedCell: evt.selectedCell,
+            selectedArrow: null
+          }
+        : {})
+    }))
   }
 
   handleCellClick = evt => {
     this.setState({
       selectedCell: evt.position,
+      selectedArrow: null,
       cellEditMode: true
     })
   }
@@ -249,7 +255,7 @@ export default class App extends Component {
 
   handleEdgeClick = evt => {
     this.setState({
-      selectedEdge: this.state.selectedEdge === evt.edge ? null : evt.edge
+      selectedArrow: this.state.selectedArrow === evt.edge ? null : evt.edge
     })
   }
 
@@ -258,7 +264,7 @@ export default class App extends Component {
 
     if (this.toolClickHandlersCache[tool] == null) {
       this.toolClickHandlersCache[tool] = evt => {
-        this.setState({tool, selectedEdge: null})
+        this.setState({tool, selectedArrow: null})
       }
     }
 
@@ -284,13 +290,13 @@ export default class App extends Component {
   handleEdgeChange = evt => {
     let newEdges = [...this.state.diagram.edges]
 
-    newEdges[this.state.selectedEdge] = {
-      ...newEdges[this.state.selectedEdge],
+    newEdges[this.state.selectedArrow] = {
+      ...newEdges[this.state.selectedArrow],
       ...evt.data
     }
 
     if (evt.data.value != null && evt.data.value.trim() === '') {
-      delete newEdges[this.state.selectedEdge].value
+      delete newEdges[this.state.selectedArrow].value
     }
 
     this.handleDataChange({
@@ -303,7 +309,7 @@ export default class App extends Component {
 
   handleEdgeRemoveClick = () => {
     let newEdges = this.state.diagram.edges.filter(
-      (_, i) => i !== this.state.selectedEdge
+      (_, i) => i !== this.state.selectedArrow
     )
 
     let newNodes = this.state.diagram.nodes.filter(
@@ -319,7 +325,7 @@ export default class App extends Component {
       }
     })
 
-    this.setState({selectedEdge: null})
+    this.setState({selectedArrow: null})
   }
 
   render() {
@@ -331,9 +337,9 @@ export default class App extends Component {
           data={this.state.diagram}
           mode={this.state.tool}
           selectedCell={
-            this.state.selectedEdge == null ? this.state.selectedCell : null
+            this.state.selectedArrow == null ? this.state.selectedCell : null
           }
-          selectedEdge={this.state.selectedEdge}
+          selectedArrow={this.state.selectedArrow}
           cellEditMode={this.state.cellEditMode}
           onPan={this.handlePan}
           onDataChange={this.handleDataChange}
@@ -343,9 +349,9 @@ export default class App extends Component {
         />
 
         <Properties
-          edgeId={this.state.selectedEdge}
-          show={this.state.selectedEdge != null}
-          data={this.state.diagram.edges[this.state.selectedEdge]}
+          edgeId={this.state.selectedArrow}
+          show={this.state.selectedArrow != null}
+          data={this.state.diagram.edges[this.state.selectedArrow]}
           onChange={this.handleEdgeChange}
           onRemoveClick={this.handleEdgeRemoveClick}
         />
