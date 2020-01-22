@@ -15,7 +15,9 @@ export default class App extends Component {
       tool: 'pan',
       cellSize: 130,
       cameraPosition: [-65, -65],
+      selectedCell: null,
       selectedEdge: null,
+      cellEditMode: false,
       confirmLinkCopy: false,
       diagram: {nodes: [], edges: []},
       showCodeBox: false
@@ -56,7 +58,15 @@ export default class App extends Component {
 
     document.addEventListener('keyup', evt => {
       if (evt.key === 'Escape') {
-        this.setState({selectedEdge: null})
+        this.setState(state =>
+          state.cellEditMode
+            ? {cellEditMode: false}
+            : state.selectedCell != null
+            ? {selectedCell: null}
+            : state.selectedEdge != null
+            ? {selectedEdge: null}
+            : null
+        )
       }
     })
 
@@ -207,6 +217,25 @@ export default class App extends Component {
     })
   }
 
+  handleCellSelect = evt => {
+    this.setState({
+      selectedCell: evt.position
+    })
+  }
+
+  handleCellClick = evt => {
+    this.setState({
+      selectedCell: evt.position,
+      cellEditMode: true
+    })
+  }
+
+  handleCellSubmit = evt => {
+    this.setState({
+      cellEditMode: false
+    })
+  }
+
   handleEdgeClick = evt => {
     this.setState({
       selectedEdge: this.state.selectedEdge === evt.edge ? null : evt.edge
@@ -290,9 +319,14 @@ export default class App extends Component {
           cameraPosition={this.state.cameraPosition}
           data={this.state.diagram}
           mode={this.state.tool}
+          selectedCell={this.state.selectedCell}
           selectedEdge={this.state.selectedEdge}
+          cellEditMode={this.state.cellEditMode}
           onPan={this.handlePan}
           onDataChange={this.handleDataChange}
+          onCellSelect={this.handleCellSelect}
+          onCellClick={this.handleCellClick}
+          onCellSubmit={this.handleCellSubmit}
           onEdgeClick={this.handleEdgeClick}
         />
 

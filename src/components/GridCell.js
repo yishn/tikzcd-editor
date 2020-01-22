@@ -59,7 +59,7 @@ export default class GridCell extends Component {
     evt.preventDefault()
 
     let {onSubmit = () => {}} = this.props
-    onSubmit(evt)
+    onSubmit({position: this.props.position})
   }
 
   handleInputBlur = evt => {

@@ -12,8 +12,6 @@ export default class Grid extends Component {
     this.state = {
       width: null,
       height: null,
-      selectedCellPosition: null,
-      editCell: false,
       phantomEdge: null,
       cellTypesetSizes: {}
     }
@@ -73,20 +71,6 @@ export default class Grid extends Component {
         }
 
         this.setState({phantomEdge: null})
-      }
-    })
-
-    document.addEventListener('keyup', evt => {
-      if (evt.key === 'Escape') {
-        evt.stopPropagation()
-
-        this.setState(state => {
-          if (state.editCell) {
-            return {editCell: false}
-          } else {
-            return {selectedCellPosition: null}
-          }
-        })
       }
     })
 
@@ -227,15 +211,14 @@ export default class Grid extends Component {
     if (evt.clientX !== oldEvt.clientX || evt.clientY !== oldEvt.clientY) return
 
     let {position} = this.mouseDown
+    let {onCellClick = () => {}} = this.props
 
-    this.setState({
-      selectedCellPosition: position,
-      editCell: true
-    })
+    onCellClick({position})
   }
 
-  handleNodeSubmit = () => {
-    this.setState({editCell: false})
+  handleNodeSubmit = evt => {
+    let {onCellSubmit = () => {}} = this.props
+    onCellSubmit(evt)
   }
 
   handleNodeChange = evt => {
@@ -347,8 +330,8 @@ export default class Grid extends Component {
                 .map((_, i) => [i + xstart, j + ystart])
                 .map(position => {
                   let selected =
-                    this.state.selectedCellPosition != null &&
-                    arrEquals(position, this.state.selectedCellPosition)
+                    this.props.selectedCell != null &&
+                    arrEquals(position, this.props.selectedCell)
 
                   let node = this.props.data.nodes.find(n =>
                     arrEquals(n.position, position)
@@ -360,7 +343,7 @@ export default class Grid extends Component {
                       position={position}
                       size={cellSize}
                       selected={selected}
-                      edit={selected && this.state.editCell}
+                      edit={selected && this.props.cellEditMode}
                       value={node && node.value}
                       onGrabberMouseDown={this.handleNodeGrabberMouseDown}
                       onAddLoopClick={this.handleNodeAddLoopClick}
