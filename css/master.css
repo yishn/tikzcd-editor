@@ -89,8 +89,12 @@ a, img {
         white-space: nowrap;
         transition: background-color .2s;
     }
-    .pan .grid-cell:hover, .grid-cell.edit {
+    .pan .grid-cell:hover, .grid-cell.selected {
         background: #eee;
+        outline: none;
+    }
+    .grid-cell.edit, .pan .grid-cell.edit {
+        background: #e4e4e4;
     }
     .grid-cell .grabber {
         position: absolute;
