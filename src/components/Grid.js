@@ -1,6 +1,6 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
-import * as helper from '../helper'
+import {getId, arrEquals, arrSubtract, arrScale} from '../helper'
 
 import GridCell from './GridCell'
 import GridArrow from './GridArrow'
@@ -29,7 +29,7 @@ export default class Grid extends Component {
       let {phantomEdge} = this.state
 
       if (phantomEdge != null) {
-        if (!helper.arrEquals(phantomEdge.from, phantomEdge.to)) {
+        if (!arrEquals(phantomEdge.from, phantomEdge.to)) {
           // Add edge
 
           let newNodes = [...this.props.data.nodes]
@@ -37,14 +37,12 @@ export default class Grid extends Component {
           let [fromNode, toNode] = [
             phantomEdge.from,
             phantomEdge.to
-          ].map(position =>
-            newNodes.find(n => helper.arrEquals(n.position, position))
-          )
+          ].map(position => newNodes.find(n => arrEquals(n.position, position)))
 
           if (fromNode == null) {
             newNodes.push(
               (fromNode = {
-                id: helper.getId(),
+                id: getId(),
                 position: phantomEdge.from,
                 value: ''
               })
@@ -54,7 +52,7 @@ export default class Grid extends Component {
           if (toNode == null) {
             newNodes.push(
               (toNode = {
-                id: helper.getId(),
+                id: getId(),
                 position: phantomEdge.to,
                 value: ''
               })
@@ -99,17 +97,14 @@ export default class Grid extends Component {
         let {onPan = () => {}} = this.props
 
         onPan({
-          cameraPosition: helper.arrSubtract(cameraPosition, [
-            movementX,
-            movementY
-          ])
+          cameraPosition: arrSubtract(cameraPosition, [movementX, movementY])
         })
       } else if (this.mouseDown.mode === 'move') {
         let {nodeIndex} = this.mouseDown
         if (nodeIndex < 0) return
 
         let existingNode = this.props.data.nodes.find(n =>
-          helper.arrEquals(n.position, newPosition)
+          arrEquals(n.position, newPosition)
         )
         if (existingNode != null) return
 
@@ -130,8 +125,8 @@ export default class Grid extends Component {
 
         if (
           this.state.phantomEdge != null &&
-          helper.arrEquals(from, this.state.phantomEdge.from) &&
-          helper.arrEquals(to, this.state.phantomEdge.to)
+          arrEquals(from, this.state.phantomEdge.from) &&
+          arrEquals(to, this.state.phantomEdge.to)
         )
           return
 
@@ -155,7 +150,7 @@ export default class Grid extends Component {
       Math.floor((x + cameraPosition[i]) / cellSize)
     )
     let nodeIndex = this.props.data.nodes.findIndex(n =>
-      helper.arrEquals(n.position, position)
+      arrEquals(n.position, position)
     )
     let node = this.props.data.nodes[nodeIndex]
 
@@ -175,7 +170,7 @@ export default class Grid extends Component {
 
     let {position} = evt
     let nodeIndex = this.props.data.nodes.findIndex(n =>
-      helper.arrEquals(n.position, position)
+      arrEquals(n.position, position)
     )
     let node = this.props.data.nodes[nodeIndex]
 
@@ -188,7 +183,7 @@ export default class Grid extends Component {
     }
   }
 
-  handleNodeAddLoop = evt => {
+  handleNodeAddLoopClick = evt => {
     if (evt.button !== 0) return
 
     evt.stopPropagation()
@@ -200,9 +195,8 @@ export default class Grid extends Component {
       Math.floor((x + cameraPosition[i]) / cellSize)
     )
 
-    let node = newNodes.find(n => helper.arrEquals(n.position, position))
-    if (node == null)
-      newNodes.push((node = {id: helper.getId(), position, value: ''}))
+    let node = newNodes.find(n => arrEquals(n.position, position))
+    if (node == null) newNodes.push((node = {id: getId(), position, value: ''}))
 
     let newEdges = [
       ...this.props.data.edges,
@@ -239,12 +233,12 @@ export default class Grid extends Component {
     let {onDataChange = () => {}} = this.props
 
     let nodes = [...this.props.data.nodes]
-    let index = nodes.findIndex(n => helper.arrEquals(n.position, evt.position))
+    let index = nodes.findIndex(n => arrEquals(n.position, evt.position))
 
     if (index < 0) {
       if (evt.value.trim() !== '') {
         nodes.push({
-          id: helper.getId(),
+          id: getId(),
           position: evt.position,
           value: evt.value
         })
@@ -271,7 +265,7 @@ export default class Grid extends Component {
     })
   }
 
-  handleTypesetFinished = evt => {
+  handleTypesetFinish = evt => {
     if (evt.element == null) {
       delete this.state.cellTypesetSizes[evt.position.join(',')]
       return
@@ -312,8 +306,8 @@ export default class Grid extends Component {
       Math.floor((x + size[i]) / cellSize)
     )
     let [cols, rows] = [xend - xstart + 1, yend - ystart + 1]
-    let [tx, ty] = helper.arrSubtract(
-      helper.arrScale(cellSize, [xstart, ystart]),
+    let [tx, ty] = arrSubtract(
+      arrScale(cellSize, [xstart, ystart]),
       cameraPosition
     )
 
@@ -343,7 +337,7 @@ export default class Grid extends Component {
                 .map((_, i) => [i + xstart, j + ystart])
                 .map(position => {
                   let node = this.props.data.nodes.find(n =>
-                    helper.arrEquals(n.position, position)
+                    arrEquals(n.position, position)
                   )
 
                   return (
@@ -351,13 +345,13 @@ export default class Grid extends Component {
                       key={position.join(',')}
                       position={position}
                       size={cellSize}
-                      edit={helper.arrEquals(position, this.state.editPosition)}
+                      edit={arrEquals(position, this.state.editPosition)}
                       value={node && node.value}
                       onGrabberMouseDown={this.handleNodeGrabberMouseDown}
-                      onAddLoop={this.handleNodeAddLoop}
+                      onAddLoopClick={this.handleNodeAddLoopClick}
                       onSubmit={this.handleNodeSubmit}
                       onChange={this.handleNodeChange}
-                      onTypesetFinished={this.handleTypesetFinished}
+                      onTypesetFinish={this.handleTypesetFinish}
                     />
                   )
                 })

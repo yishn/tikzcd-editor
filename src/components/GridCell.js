@@ -13,7 +13,7 @@ export default class GridCell extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    let {onTypesetFinished = () => {}} = this.props
+    let {onTypesetFinish = () => {}} = this.props
 
     for (let el of this.valueElement.querySelectorAll(
       ['span[id^="MathJax"]', '.MathJax_Preview', 'script'].join(', ')
@@ -24,13 +24,13 @@ export default class GridCell extends Component {
     if (this.props.value) {
       MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
       MathJax.Hub.Queue(() => {
-        onTypesetFinished({
+        onTypesetFinish({
           position: this.props.position,
           element: this.valueElement.querySelector('.MathJax_Preview + span')
         })
       })
     } else {
-      onTypesetFinished({
+      onTypesetFinish({
         position: this.props.position,
         element: null
       })
@@ -78,9 +78,9 @@ export default class GridCell extends Component {
   }
 
   handleAddLoop = evt => {
-    let {onAddLoop = () => {}} = this.props
+    let {onAddLoopClick = () => {}} = this.props
 
-    onAddLoop(evt)
+    onAddLoopClick(evt)
   }
 
   render() {

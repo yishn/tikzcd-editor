@@ -1,6 +1,6 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
-import * as helper from '../helper'
+import {arrSubtract, arrEquals, arrScale, arrAdd} from '../helper'
 import {
   norm,
   normalize,
@@ -34,7 +34,7 @@ export default class GridArrow extends Component {
     for (let key in nextState) {
       if (
         (nextState[key] instanceof Array &&
-          !helper.arrEquals(nextState[key], this.state[key])) ||
+          !arrEquals(nextState[key], this.state[key])) ||
         (!(nextState[key] instanceof Array) &&
           nextState[key] !== this.state[key])
       )
@@ -75,13 +75,13 @@ export default class GridArrow extends Component {
       let [fromCenter, toCenter] = [nextProps.from, nextProps.to].map(x =>
         x.map(y => y * cellSize + cellSize / 2)
       )
-      let m = helper.arrScale(0.5, helper.arrAdd(fromCenter, toCenter))
-      let d = helper.arrSubtract(toCenter, fromCenter)
+      let m = arrScale(0.5, arrAdd(fromCenter, toCenter))
+      let d = arrSubtract(toCenter, fromCenter)
       let {length} = this.getLengthAngle()
 
-      let controlPoint = helper.arrAdd(
+      let controlPoint = arrAdd(
         m,
-        helper.arrScale(
+        arrScale(
           (length * Math.tan((-(nextProps.bend || 0) * Math.PI) / 180)) / 2,
           normalize(getPerpendicularLeftVector(d))
         )
@@ -109,7 +109,7 @@ export default class GridArrow extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    let {onTypesetFinished = () => {}} = this.props
+    let {onTypesetFinish = () => {}} = this.props
 
     for (let el of this.valueElement.querySelectorAll(
       ['span[id^="MathJax"]', '.MathJax_Preview', 'script'].join(', ')
@@ -120,13 +120,13 @@ export default class GridArrow extends Component {
     if (this.props.value) {
       MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
       MathJax.Hub.Queue(() => {
-        onTypesetFinished({
+        onTypesetFinish({
           id: this.props.id,
           element: this.valueElement.querySelector('.MathJax_Preview + span')
         })
       })
     } else {
-      onTypesetFinished({
+      onTypesetFinish({
         id: this.props.id,
         element: null
       })
@@ -182,7 +182,7 @@ export default class GridArrow extends Component {
 
   getLengthAngle() {
     let {startPoint, endPoint} = this.state
-    let [dx, dy] = helper.arrSubtract(endPoint, startPoint)
+    let [dx, dy] = arrSubtract(endPoint, startPoint)
 
     return {
       length: norm([dx, dy]),
@@ -203,10 +203,10 @@ export default class GridArrow extends Component {
       mx,
       my
 
-    if (!helper.arrEquals(this.props.from, this.props.to)) {
+    if (!arrEquals(this.props.from, this.props.to)) {
       // Arrows
       let {startPoint, endPoint} = this.state
-      ;[mx, my] = helper.arrScale(0.5, helper.arrAdd(startPoint, endPoint))
+      ;[mx, my] = arrScale(0.5, arrAdd(startPoint, endPoint))
 
       let {length, angle} = this.getLengthAngle()
       degree = (angle * 180) / Math.PI
