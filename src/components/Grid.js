@@ -274,10 +274,10 @@ export default class Grid extends Component {
 
     if (this.edgeClickHandlersCache[index] == null) {
       this.edgeClickHandlersCache[index] = evt => {
-        let {onEdgeClick = () => {}} = this.props
+        let {onArrowClick = () => {}} = this.props
 
         evt.edge = index
-        onEdgeClick(evt)
+        onArrowClick(evt)
       }
     }
 
@@ -372,7 +372,7 @@ export default class Grid extends Component {
                 to={toPosition}
                 fromSize={cellTypesetSizes[fromPosition.join(',')]}
                 toSize={cellTypesetSizes[toPosition.join(',')]}
-                selected={this.props.selectedEdge === i}
+                selected={this.props.selectedArrow === i}
                 bend={edge.bend}
                 shift={edge.shift}
                 loop={edge.loop}

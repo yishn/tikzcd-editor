@@ -144,7 +144,7 @@ export default class GridArrow extends Component {
 
       if (prevProps == null) prevProps = this.props
 
-      let bbox = this.edgePath.getBBox()
+      let bbox = this.pathElement.getBBox()
       let {width, height} = window.getComputedStyle(this.valueElement)
 
       ;[width, height] = [width, height].map(parseFloat)
@@ -305,7 +305,7 @@ export default class GridArrow extends Component {
           />
 
           <path
-            ref={el => (this.edgePath = el)}
+            ref={el => (this.pathElement = el)}
             fill="none"
             stroke-width="1"
             stroke="black"

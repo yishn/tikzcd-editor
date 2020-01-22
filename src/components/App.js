@@ -253,7 +253,7 @@ export default class App extends Component {
     })
   }
 
-  handleEdgeClick = evt => {
+  handleArrowClick = evt => {
     this.setState({
       selectedArrow: this.state.selectedArrow === evt.edge ? null : evt.edge
     })
@@ -345,7 +345,7 @@ export default class App extends Component {
           onDataChange={this.handleDataChange}
           onCellClick={this.handleCellClick}
           onCellSubmit={this.handleCellSubmit}
-          onEdgeClick={this.handleEdgeClick}
+          onArrowClick={this.handleArrowClick}
         />
 
         <Properties
