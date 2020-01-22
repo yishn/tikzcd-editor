@@ -405,7 +405,7 @@ export default class Properties extends Component {
           <input
             ref={el => (this.inputElement = el)}
             type="text"
-            value={data.value}
+            value={data.value || ''}
             onBlur={this.handleInputBlur}
             onInput={this.handleInputChange}
             onKeyDown={this.handleInputKeyDown}
