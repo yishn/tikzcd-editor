@@ -143,30 +143,30 @@ a, img {
     font: 1rem/1.5 Consolas, monospace;
 }
 
-.grid-edge {
+.grid-arrow {
     position: absolute;
     pointer-events: none;
   }
-  .grid-edge svg {
+  .grid-arrow svg {
     display: block;
   }
-  .grid-edge svg .mouse {
+  .grid-arrow svg .mouse {
     transition: stroke .1s;
   }
-  .arrow .grid-edge:not(.phantom) svg .mouse {
+  .arrow .grid-arrow:not(.phantom) svg .mouse {
     pointer-events: all;
   }
-  .arrow .grid-edge svg .mouse:hover {
+  .arrow .grid-arrow svg .mouse:hover {
     stroke: rgba(204, 204, 204, .6);
   }
-  .grid-edge.selected svg .mouse.mouse {
+  .grid-arrow.selected svg .mouse.mouse {
     stroke: rgb(204, 204, 204);
   }
-  .grid-edge .value {
+  .grid-arrow .value {
     position: absolute;
     white-space: nowrap;
   }
-  .grid-edge .value.inside {
+  .grid-arrow .value.inside {
     padding: 0 5px;
     background: white;
 }

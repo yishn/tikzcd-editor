@@ -281,7 +281,7 @@ export default class GridArrow extends Component {
     return (
       <li
         data-id={this.props.id}
-        class={classNames('grid-edge', {
+        class={classNames('grid-arrow', {
           selected: this.props.selected,
           phantom: this.props.phantom
         })}

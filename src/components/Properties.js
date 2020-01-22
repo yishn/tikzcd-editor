@@ -69,7 +69,7 @@ export default class Properties extends Component {
 
   updateEditPosition() {
     let valueElement = document.querySelector(
-      `.grid-edge[data-id="${this.props.edgeId}"] .value`
+      `.grid-arrow[data-id="${this.props.edgeId}"] .value`
     )
     let {left, top, width} = valueElement.getBoundingClientRect()
     let {width: editWidth, height: editHeight} = window.getComputedStyle(
