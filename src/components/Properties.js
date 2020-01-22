@@ -1,6 +1,6 @@
 import {h, Fragment, Component} from 'preact'
 import classNames from 'classnames'
-import * as helper from '../helper'
+import {clamp} from '../helper'
 
 import Toolbox, {Button, Separator} from './Toolbox'
 
@@ -129,7 +129,7 @@ export default class Properties extends Component {
             sign *
             steps[Math.min(index + (+increase * 2 - 1), steps.length - 1)]
 
-          change = {bend: helper.clamp(-80, 80, newBend)}
+          change = {bend: clamp(-80, 80, newBend)}
         } else if (['shiftleft', 'shiftright'].includes(id)) {
           if (data.loop != null) return
 

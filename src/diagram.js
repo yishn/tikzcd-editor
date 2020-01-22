@@ -3,7 +3,8 @@ import {
   compressToEncodedURIComponent,
   decompressFromEncodedURIComponent
 } from 'lz-string'
-import * as helper from './helper'
+
+import {getId, arrEquals, b64DecodeUnicode, b64EncodeUnicode} from './helper'
 
 export function toJSON(diagram) {
   let leftTop = [0, 1].map(i =>
@@ -32,7 +33,7 @@ export function fromJSON(json) {
   let obj = JSON.parse(json)
   let nodes = obj.nodes.map(node => ({
     ...node,
-    id: helper.getId()
+    id: getId()
   }))
 
   return {
@@ -46,11 +47,11 @@ export function fromJSON(json) {
 }
 
 export function toBase64(diagram) {
-  return helper.b64EncodeUnicode(toJSON(diagram))
+  return b64EncodeUnicode(toJSON(diagram))
 }
 
 export function fromBase64(base64) {
-  return fromJSON(helper.b64DecodeUnicode(base64))
+  return fromJSON(b64DecodeUnicode(base64))
 }
 
 export function toCompressedBase64(diagram) {
@@ -373,8 +374,8 @@ export function fromTeX(code) {
     let toIndex = -1
 
     for (let node of nodes) {
-      if (helper.arrEquals(node.position, from)) fromIndex = i
-      if (helper.arrEquals(node.position, to)) toIndex = i
+      if (arrEquals(node.position, from)) fromIndex = i
+      if (arrEquals(node.position, to)) toIndex = i
     }
 
     if (fromIndex === -1) {
@@ -386,7 +387,7 @@ export function fromTeX(code) {
       fromIndex = nodes.length - 1
 
       // Account for loops.
-      if (helper.arrEquals(from, to)) toIndex = fromIndex
+      if (arrEquals(from, to)) toIndex = fromIndex
     }
 
     if (toIndex === -1) {
