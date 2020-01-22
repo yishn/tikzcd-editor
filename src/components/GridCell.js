@@ -47,7 +47,6 @@ export default class GridCell extends Component {
     let {onGrabberMouseDown = () => {}} = this.props
 
     evt.position = this.props.position
-
     onGrabberMouseDown(evt)
   }
 
@@ -57,9 +56,15 @@ export default class GridCell extends Component {
 
   handleEditSubmit = evt => {
     evt.preventDefault()
+  }
 
-    let {onSubmit = () => {}} = this.props
-    onSubmit({position: this.props.position})
+  handleEditKeyDown = evt => {
+    if (evt.key === 'Enter') {
+      evt.stopPropagation()
+
+      let {onSubmit = () => {}} = this.props
+      onSubmit({position: this.props.position})
+    }
   }
 
   handleInputBlur = evt => {
@@ -94,21 +99,6 @@ export default class GridCell extends Component {
         })}
         data-position={this.props.position.join(',')}
       >
-        <img
-          class="grabber"
-          src="./img/grabber.svg"
-          onMouseDown={this.handleGrabberMouseDown}
-          onDragStart={this.handleGrabberDragStart}
-        />
-
-        <img
-          class="loop"
-          src="./img/loop.svg"
-          title="Create Loop"
-          alt="Create Loop"
-          onClick={this.handleAddLoop}
-        />
-
         <div class="value" ref={el => (this.valueElement = el)}>
           {this.props.value ? (
             `\\(${this.props.value}\\)`
@@ -126,10 +116,25 @@ export default class GridCell extends Component {
               onBlur={this.handleInputBlur}
               onInput={this.handleInputChange}
               onMouseDown={this.stopPropagation}
-              onKeyDown={this.stopPropagation}
+              onKeyDown={this.handleEditKeyDown}
             />
           </form>
         )}
+
+        <img
+          class="grabber"
+          src="./img/grabber.svg"
+          onMouseDown={this.handleGrabberMouseDown}
+          onDragStart={this.handleGrabberDragStart}
+        />
+
+        <img
+          class="loop"
+          src="./img/loop.svg"
+          title="Create Loop"
+          alt="Create Loop"
+          onClick={this.handleAddLoop}
+        />
       </li>
     )
   }

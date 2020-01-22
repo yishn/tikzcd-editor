@@ -1,6 +1,7 @@
 import {h, render, Component} from 'preact'
 import copyText from 'copy-text-to-clipboard'
 import * as diagram from '../diagram'
+import {arrAdd} from '../helper'
 
 import Grid from './Grid'
 import Properties from './Properties'
@@ -15,7 +16,7 @@ export default class App extends Component {
       tool: 'pan',
       cellSize: 130,
       cameraPosition: [-65, -65],
-      selectedCell: null,
+      selectedCell: [0, 0],
       selectedEdge: null,
       cellEditMode: false,
       confirmLinkCopy: false,
@@ -36,35 +37,50 @@ export default class App extends Component {
       ' ': 'pan'
     }
 
+    let arrowControl = {
+      ArrowLeft: [-1, 0],
+      ArrowRight: [1, 0],
+      ArrowUp: [0, -1],
+      ArrowDown: [0, 1]
+    }
+
     document.addEventListener('keydown', evt => {
       if (toolControl[evt.key] != null) {
         if (this.prevTool != null) return
 
         this.prevTool = this.state.tool
         this.setState({tool: toolControl[evt.key]})
+      } else if (Object.keys(arrowControl).includes(evt.key)) {
+        // Arrow keys
+
+        this.setState(state =>
+          state.cellEditMode || state.selectedEdge != null
+            ? null
+            : {selectedCell: arrAdd(state.selectedCell, arrowControl[evt.key])}
+        )
+      } else if (evt.key === 'Enter') {
+        this.setState(state =>
+          state.cellEditMode || state.selectedEdge != null
+            ? null
+            : {cellEditMode: true}
+        )
       }
     })
 
     document.addEventListener('keyup', evt => {
-      if (Object.keys(toolControl).includes(evt.key.toString())) {
+      if (Object.keys(toolControl).includes(evt.key)) {
         // Space or Control
 
         if (this.prevTool == null) return
 
         this.setState({tool: this.prevTool})
         this.prevTool = null
-      }
-    })
-
-    document.addEventListener('keyup', evt => {
-      if (evt.key === 'Escape') {
+      } else if (evt.key === 'Escape') {
         this.setState(state =>
-          state.cellEditMode
-            ? {cellEditMode: false}
-            : state.selectedCell != null
-            ? {selectedCell: null}
-            : state.selectedEdge != null
+          state.selectedEdge != null
             ? {selectedEdge: null}
+            : state.cellEditMode
+            ? {cellEditMode: false}
             : null
         )
       }
@@ -211,15 +227,10 @@ export default class App extends Component {
 
     this.setState({
       diagram: evt.data,
+      ...(evt.selectedCell != null ? {selectedCell: evt.selectedCell} : {}),
       selectedEdge: edgeAdded
         ? evt.data.edges.length - 1
         : this.state.selectedEdge
-    })
-  }
-
-  handleCellSelect = evt => {
-    this.setState({
-      selectedCell: evt.position
     })
   }
 
@@ -319,12 +330,13 @@ export default class App extends Component {
           cameraPosition={this.state.cameraPosition}
           data={this.state.diagram}
           mode={this.state.tool}
-          selectedCell={this.state.selectedCell}
+          selectedCell={
+            this.state.selectedEdge == null ? this.state.selectedCell : null
+          }
           selectedEdge={this.state.selectedEdge}
           cellEditMode={this.state.cellEditMode}
           onPan={this.handlePan}
           onDataChange={this.handleDataChange}
-          onCellSelect={this.handleCellSelect}
           onCellClick={this.handleCellClick}
           onCellSubmit={this.handleCellSubmit}
           onEdgeClick={this.handleEdgeClick}

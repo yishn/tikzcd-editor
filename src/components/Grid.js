@@ -103,6 +103,7 @@ export default class Grid extends Component {
         let {onDataChange = () => {}} = this.props
 
         onDataChange({
+          selectedCell: newPosition,
           data: {
             nodes: this.props.data.nodes.map((x, i) =>
               i !== nodeIndex ? x : {...x, position: newPosition}
@@ -155,7 +156,7 @@ export default class Grid extends Component {
     }
   }
 
-  handleNodeGrabberMouseDown = evt => {
+  handleCellGrabberMouseDown = evt => {
     if (evt.button !== 0) return
 
     evt.stopPropagation()
@@ -175,7 +176,7 @@ export default class Grid extends Component {
     }
   }
 
-  handleNodeAddLoopClick = evt => {
+  handleCellAddLoopClick = evt => {
     if (evt.button !== 0) return
 
     evt.stopPropagation()
@@ -216,12 +217,7 @@ export default class Grid extends Component {
     onCellClick({position})
   }
 
-  handleNodeSubmit = evt => {
-    let {onCellSubmit = () => {}} = this.props
-    onCellSubmit(evt)
-  }
-
-  handleNodeChange = evt => {
+  handleCellChange = evt => {
     let {onDataChange = () => {}} = this.props
 
     let nodes = [...this.props.data.nodes]
@@ -345,10 +341,10 @@ export default class Grid extends Component {
                       selected={selected}
                       edit={selected && this.props.cellEditMode}
                       value={node && node.value}
-                      onGrabberMouseDown={this.handleNodeGrabberMouseDown}
-                      onAddLoopClick={this.handleNodeAddLoopClick}
-                      onSubmit={this.handleNodeSubmit}
-                      onChange={this.handleNodeChange}
+                      onGrabberMouseDown={this.handleCellGrabberMouseDown}
+                      onAddLoopClick={this.handleCellAddLoopClick}
+                      onSubmit={this.props.onCellSubmit}
+                      onChange={this.handleCellChange}
                       onTypesetFinish={this.handleTypesetFinish}
                     />
                   )
