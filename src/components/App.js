@@ -16,11 +16,13 @@ export default class App extends Component {
       tool: 'pan',
       cellSize: 130,
       cameraPosition: [-65, -65],
+      diagram: {nodes: [], edges: []},
+
       selectedCell: [0, 0],
       selectedArrow: null,
       cellEditMode: false,
+
       confirmLinkCopy: false,
-      diagram: {nodes: [], edges: []},
       showCodeBox: false
     }
 
@@ -77,7 +79,9 @@ export default class App extends Component {
         this.prevTool = null
       } else if (evt.key === 'Escape') {
         this.setState(state =>
-          state.selectedArrow != null
+          state.showCodeBox
+            ? {showCodeBox: false}
+            : state.selectedArrow != null
             ? {selectedArrow: null}
             : state.cellEditMode
             ? {cellEditMode: false}

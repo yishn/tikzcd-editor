@@ -14,13 +14,6 @@ export default class CodeBox extends Component {
     }
   }
 
-  handleOverlayKeyUp = evt => {
-    if (evt.key === 'Escape') {
-      let {onClose = () => {}} = this.props
-      onClose(evt)
-    }
-  }
-
   handleOverlayClick = evt => {
     if (evt.target !== evt.currentTarget) return
 
@@ -43,7 +36,6 @@ export default class CodeBox extends Component {
         id="modal-overlay"
         class={classNames({show})}
         onClick={this.handleOverlayClick}
-        onKeyUp={this.handleOverlayKeyUp}
       >
         <section class="modal-box code-box">
           <textarea
