@@ -107,8 +107,6 @@ export default class GridCell extends Component {
           title="Create Loop"
           alt="Create Loop"
           onClick={this.handleAddLoop}
-          onMouseDown={this.stopPropagation}
-          onMouseUp={this.stopPropagation}
         />
 
         <div class="value" ref={el => (this.valueElement = el)}>
