@@ -139,14 +139,7 @@ export default class GridEdge extends Component {
 
     MathJax.Hub.Queue(() => {
       if (
-        prevProps != null &&
-        this.props.value === prevProps.value &&
-        this.props.labelPosition === prevProps.labelPosition &&
-        this.props.from === prevProps.from &&
-        this.props.to === prevProps.to &&
-        this.props.bend === prevProps.bend &&
-        this.props.shift === prevProps.shift &&
-        this.props.loop === prevProps.loop &&
+        this.props === prevProps &&
         this.state.startPoint === prevState.startPoint &&
         this.state.endPoint === prevState.endPoint
       )
