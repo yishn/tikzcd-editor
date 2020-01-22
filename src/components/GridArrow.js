@@ -22,7 +22,6 @@ export default class GridArrow extends Component {
   }
 
   componentDidMount() {
-    this.componentDidUpdate()
     this.componentWillReceiveProps()
   }
 
@@ -109,6 +108,8 @@ export default class GridArrow extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.valueElement == null) return
+
     let {onTypesetFinish = () => {}} = this.props
 
     for (let el of this.valueElement.querySelectorAll(
