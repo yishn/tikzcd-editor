@@ -8,7 +8,9 @@ export default class GridCell extends Component {
 
   shouldComponentUpdate(nextProps) {
     return (
-      nextProps.value !== this.props.value || nextProps.edit !== this.props.edit
+      nextProps.value !== this.props.value ||
+      nextProps.edit !== this.props.edit ||
+      nextProps.selected !== this.props.selected
     )
   }
 
@@ -86,7 +88,10 @@ export default class GridCell extends Component {
   render() {
     return (
       <li
-        class={classNames('grid-cell', {edit: this.props.edit})}
+        class={classNames('grid-cell', {
+          edit: this.props.edit,
+          selected: this.props.selected
+        })}
         data-position={this.props.position.join(',')}
       >
         <img

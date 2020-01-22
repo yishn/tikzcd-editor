@@ -12,7 +12,8 @@ export default class Grid extends Component {
     this.state = {
       width: null,
       height: null,
-      editPosition: [null, null],
+      selectedCellPosition: null,
+      editCell: false,
       phantomEdge: null,
       cellTypesetSizes: {}
     }
@@ -78,7 +79,14 @@ export default class Grid extends Component {
     document.addEventListener('keyup', evt => {
       if (evt.key === 'Escape') {
         evt.stopPropagation()
-        this.setState({editPosition: [null, null]})
+
+        this.setState(state => {
+          if (state.editCell) {
+            return {editCell: false}
+          } else {
+            return {selectedCellPosition: null}
+          }
+        })
       }
     })
 
@@ -221,12 +229,13 @@ export default class Grid extends Component {
     let {position} = this.mouseDown
 
     this.setState({
-      editPosition: position
+      selectedCellPosition: position,
+      editCell: true
     })
   }
 
   handleNodeSubmit = () => {
-    this.setState({editPosition: [null, null]})
+    this.setState({editCell: false})
   }
 
   handleNodeChange = evt => {
@@ -245,7 +254,6 @@ export default class Grid extends Component {
       }
     } else {
       let {id} = nodes[index]
-      nodes[index] = {id, position: [...evt.position], value: evt.value}
 
       if (evt.value.trim() === '') {
         // Cleanup if necessary
@@ -254,6 +262,8 @@ export default class Grid extends Component {
           e => e.from === id || e.to === id
         )
         if (!existingEdge) nodes[index] = null
+      } else {
+        nodes[index] = {id, position: [...evt.position], value: evt.value}
       }
     }
 
@@ -315,7 +325,7 @@ export default class Grid extends Component {
       <section
         ref={el => (this.element = el)}
         id="grid"
-        class={classNames({[this.props.mode]: true})}
+        class={this.props.mode}
       >
         <ol
           style={{
@@ -336,6 +346,10 @@ export default class Grid extends Component {
                 .fill()
                 .map((_, i) => [i + xstart, j + ystart])
                 .map(position => {
+                  let selected =
+                    this.state.selectedCellPosition != null &&
+                    arrEquals(position, this.state.selectedCellPosition)
+
                   let node = this.props.data.nodes.find(n =>
                     arrEquals(n.position, position)
                   )
@@ -345,7 +359,8 @@ export default class Grid extends Component {
                       key={position.join(',')}
                       position={position}
                       size={cellSize}
-                      edit={arrEquals(position, this.state.editPosition)}
+                      selected={selected}
+                      edit={selected && this.state.editCell}
                       value={node && node.value}
                       onGrabberMouseDown={this.handleNodeGrabberMouseDown}
                       onAddLoopClick={this.handleNodeAddLoopClick}
