@@ -1,7 +1,13 @@
 import {h, Component} from 'preact'
 import classNames from 'classnames'
 import * as helper from '../helper'
-import * as geometry from '../geometry'
+import {
+  norm,
+  normalize,
+  getPerpendicularLeftVector,
+  getRectCenteredAround,
+  getRectSegmentIntersections
+} from '../geometry'
 
 export default class GridEdge extends Component {
   constructor(props) {
@@ -40,9 +46,12 @@ export default class GridEdge extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (
+      // Conditions on when we don't need to update arrow rendering itself
       nextProps != null &&
       nextProps.from === this.props.from &&
       nextProps.to === this.props.to &&
+      nextProps.fromSize === this.props.fromSize &&
+      nextProps.toSize === this.props.toSize &&
       nextProps.bend === this.props.bend &&
       nextProps.shift === this.props.shift &&
       nextProps.loop === this.props.loop
@@ -52,31 +61,9 @@ export default class GridEdge extends Component {
     if (nextProps == null) nextProps = this.props
 
     MathJax.Hub.Queue(() => {
-      let {cellSize} = nextProps
-      let query = position =>
-        document.querySelector(
-          [
-            `.grid-cell[data-position="${position.join(',')}"]`,
-            '.value',
-            '.MathJax_Preview',
-            '+ span'
-          ].join(' ')
-        )
-
-      let fromLatexElement = query(nextProps.from)
-      let toLatexElement = query(nextProps.to)
-
-      let [fromWidth, fromHeight, toWidth, toHeight] = [0, 0, 0, 0]
-
-      if (fromLatexElement != null) {
-        let {width, height} = fromLatexElement.getBoundingClientRect()
-        ;[fromWidth, fromHeight] = [width, height]
-      }
-
-      if (toLatexElement != null) {
-        let {width, height} = toLatexElement.getBoundingClientRect()
-        ;[toWidth, toHeight] = [width, height]
-      }
+      let {cellSize, fromSize, toSize} = nextProps
+      let [fromWidth, fromHeight] = fromSize || [0, 0]
+      let [toWidth, toHeight] = toSize || [0, 0]
 
       ;[toWidth, toHeight] = [toWidth, toHeight].map(x =>
         Math.min(cellSize, x + 20)
@@ -96,22 +83,19 @@ export default class GridEdge extends Component {
         m,
         helper.arrScale(
           (length * Math.tan((-(nextProps.bend || 0) * Math.PI) / 180)) / 2,
-          geometry.normalize(geometry.getPerpendicularLeftVector(d))
+          normalize(getPerpendicularLeftVector(d))
         )
       )
 
-      let fromRect = geometry.getRectCenteredAround(
-        fromCenter,
-        fromWidth,
-        fromHeight
-      )
-      let toRect = geometry.getRectCenteredAround(toCenter, toWidth, toHeight)
-      let fromIntersection = geometry.getRectSegmentIntersections(
+      let fromRect = getRectCenteredAround(fromCenter, fromWidth, fromHeight)
+      let toRect = getRectCenteredAround(toCenter, toWidth, toHeight)
+
+      let fromIntersection = getRectSegmentIntersections(
         fromRect,
         fromCenter,
         controlPoint
       )[0]
-      let toIntersection = geometry.getRectSegmentIntersections(
+      let toIntersection = getRectSegmentIntersections(
         toRect,
         controlPoint,
         toCenter
@@ -125,7 +109,7 @@ export default class GridEdge extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.valueElement == null) return
+    let {onTypesetFinished = () => {}} = this.props
 
     for (let el of this.valueElement.querySelectorAll(
       ['span[id^="MathJax"]', '.MathJax_Preview', 'script'].join(', ')
@@ -135,10 +119,22 @@ export default class GridEdge extends Component {
 
     if (this.props.value) {
       MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
+      MathJax.Hub.Queue(() => {
+        onTypesetFinished({
+          id: this.props.id,
+          element: this.valueElement.querySelector('.MathJax_Preview + span')
+        })
+      })
+    } else {
+      onTypesetFinished({
+        id: this.props.id,
+        element: null
+      })
     }
 
     MathJax.Hub.Queue(() => {
       if (
+        // Conditions on when we don't need to update label positioning
         this.props === prevProps &&
         this.state.startPoint === prevState.startPoint &&
         this.state.endPoint === prevState.endPoint
@@ -189,7 +185,7 @@ export default class GridEdge extends Component {
     let [dx, dy] = helper.arrSubtract(endPoint, startPoint)
 
     return {
-      length: geometry.norm([dx, dy]),
+      length: norm([dx, dy]),
       angle: Math.atan2(dy, dx)
     }
   }

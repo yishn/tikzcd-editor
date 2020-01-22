@@ -13,7 +13,8 @@ export default class Grid extends Component {
       width: null,
       height: null,
       editPosition: [null, null],
-      phantomEdge: null
+      phantomEdge: null,
+      cellTypesetSizes: {}
     }
   }
 
@@ -40,7 +41,7 @@ export default class Grid extends Component {
             newNodes.find(n => helper.arrEquals(n.position, position))
           )
 
-          if (fromNode == null)
+          if (fromNode == null) {
             newNodes.push(
               (fromNode = {
                 id: helper.getId(),
@@ -48,7 +49,9 @@ export default class Grid extends Component {
                 value: ''
               })
             )
-          if (toNode == null)
+          }
+
+          if (toNode == null) {
             newNodes.push(
               (toNode = {
                 id: helper.getId(),
@@ -56,6 +59,7 @@ export default class Grid extends Component {
                 value: ''
               })
             )
+          }
 
           let newEdges = [
             ...this.props.data.edges,
@@ -267,6 +271,21 @@ export default class Grid extends Component {
     })
   }
 
+  handleTypesetFinished = evt => {
+    if (evt.element == null) {
+      delete this.state.cellTypesetSizes[evt.position.join(',')]
+      return
+    }
+
+    let rect = evt.element.getBoundingClientRect()
+
+    this.setState(state => ({
+      cellTypesetSizes: Object.assign(state.cellTypesetSizes, {
+        [evt.position.join(',')]: [rect.width, rect.height]
+      })
+    }))
+  }
+
   handleEdgeClick = index => {
     if (this.edgeClickHandlersCache == null) this.edgeClickHandlersCache = {}
 
@@ -321,25 +340,27 @@ export default class Grid extends Component {
             .map((_, j) =>
               Array(cols)
                 .fill()
-                .map((_, i) =>
-                  (position => (
+                .map((_, i) => [i + xstart, j + ystart])
+                .map(position => {
+                  let node = this.props.data.nodes.find(n =>
+                    helper.arrEquals(n.position, position)
+                  )
+
+                  return (
                     <GridCell
                       key={position.join(',')}
                       position={position}
                       size={cellSize}
                       edit={helper.arrEquals(position, this.state.editPosition)}
-                      value={(node => node && node.value)(
-                        this.props.data.nodes.find(n =>
-                          helper.arrEquals(n.position, position)
-                        )
-                      )}
+                      value={node && node.value}
                       onGrabberMouseDown={this.handleNodeGrabberMouseDown}
                       onAddLoop={this.handleNodeAddLoop}
                       onSubmit={this.handleNodeSubmit}
                       onChange={this.handleNodeChange}
+                      onTypesetFinished={this.handleTypesetFinished}
                     />
-                  ))([i + xstart, j + ystart])
-                )
+                  )
+                })
             )}
         </ol>
 
@@ -349,26 +370,32 @@ export default class Grid extends Component {
             top: -cameraPosition[1]
           }}
         >
-          {this.props.data.edges.map((edge, i) => (
-            <GridEdge
-              cellSize={cellSize}
-              id={i.toString()}
-              from={
-                this.props.data.nodes.find(n => n.id === edge.from).position
-              }
-              to={this.props.data.nodes.find(n => n.id === edge.to).position}
-              selected={this.props.selectedEdge === i}
-              bend={edge.bend}
-              shift={edge.shift}
-              loop={edge.loop}
-              tail={edge.tail}
-              line={edge.line}
-              head={edge.head}
-              value={edge.value}
-              labelPosition={edge.labelPosition}
-              onClick={this.handleEdgeClick(i)}
-            />
-          ))}
+          {this.props.data.edges.map((edge, i) => {
+            let {nodes} = this.props.data
+            let fromPosition = nodes.find(n => n.id === edge.from).position
+            let toPosition = nodes.find(n => n.id === edge.to).position
+
+            return (
+              <GridEdge
+                cellSize={cellSize}
+                id={i.toString()}
+                from={fromPosition}
+                to={toPosition}
+                fromSize={this.state.cellTypesetSizes[fromPosition.join(',')]}
+                toSize={this.state.cellTypesetSizes[toPosition.join(',')]}
+                selected={this.props.selectedEdge === i}
+                bend={edge.bend}
+                shift={edge.shift}
+                loop={edge.loop}
+                tail={edge.tail}
+                line={edge.line}
+                head={edge.head}
+                value={edge.value}
+                labelPosition={edge.labelPosition}
+                onClick={this.handleEdgeClick(i)}
+              />
+            )
+          })}
 
           {this.state.phantomEdge && (
             <GridEdge
