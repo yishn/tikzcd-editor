@@ -13,6 +13,8 @@ export default class GridCell extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    let {onTypesetFinished = () => {}} = this.props
+
     for (let el of this.valueElement.querySelectorAll(
       ['span[id^="MathJax"]', '.MathJax_Preview', 'script'].join(', ')
     )) {
@@ -21,6 +23,17 @@ export default class GridCell extends Component {
 
     if (this.props.value) {
       MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
+      MathJax.Hub.Queue(() => {
+        onTypesetFinished({
+          position: this.props.position,
+          element: this.valueElement.querySelector('.MathJax_Preview + span')
+        })
+      })
+    } else {
+      onTypesetFinished({
+        position: this.props.position,
+        element: null
+      })
     }
 
     if (this.inputElement != null && prevProps.edit !== this.props.edit) {
