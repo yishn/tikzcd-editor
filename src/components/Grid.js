@@ -12,7 +12,7 @@ export default class Grid extends Component {
     this.state = {
       width: null,
       height: null,
-      phantomEdge: null,
+      phantomArrow: null,
       cellTypesetSizes: {}
     }
   }
@@ -25,24 +25,24 @@ export default class Grid extends Component {
     document.addEventListener('mouseup', () => {
       this.mouseDown = null
 
-      let {phantomEdge} = this.state
+      let {phantomArrow} = this.state
 
-      if (phantomEdge != null) {
-        if (!arrEquals(phantomEdge.from, phantomEdge.to)) {
+      if (phantomArrow != null) {
+        if (!arrEquals(phantomArrow.from, phantomArrow.to)) {
           // Add edge
 
           let newNodes = [...this.props.data.nodes]
 
           let [fromNode, toNode] = [
-            phantomEdge.from,
-            phantomEdge.to
+            phantomArrow.from,
+            phantomArrow.to
           ].map(position => newNodes.find(n => arrEquals(n.position, position)))
 
           if (fromNode == null) {
             newNodes.push(
               (fromNode = {
                 id: getId(),
-                position: phantomEdge.from,
+                position: phantomArrow.from,
                 value: ''
               })
             )
@@ -52,7 +52,7 @@ export default class Grid extends Component {
             newNodes.push(
               (toNode = {
                 id: getId(),
-                position: phantomEdge.to,
+                position: phantomArrow.to,
                 value: ''
               })
             )
@@ -70,7 +70,7 @@ export default class Grid extends Component {
           onDataChange({data: {nodes: newNodes, edges: newEdges}})
         }
 
-        this.setState({phantomEdge: null})
+        this.setState({phantomArrow: null})
       }
     })
 
@@ -117,14 +117,14 @@ export default class Grid extends Component {
         let to = newPosition
 
         if (
-          this.state.phantomEdge != null &&
-          arrEquals(from, this.state.phantomEdge.from) &&
-          arrEquals(to, this.state.phantomEdge.to)
+          this.state.phantomArrow != null &&
+          arrEquals(from, this.state.phantomArrow.from) &&
+          arrEquals(to, this.state.phantomArrow.to)
         )
           return
 
         this.setState({
-          phantomEdge: {from, to}
+          phantomArrow: {from, to}
         })
       }
     })
@@ -289,6 +289,7 @@ export default class Grid extends Component {
       return <section ref={el => (this.element = el)} id="grid" />
 
     let {cellSize, cameraPosition} = this.props
+    let {cellTypesetSizes} = this.state
     let size = [this.state.width, this.state.height]
     let [xstart, ystart] = cameraPosition.map(x => Math.floor(x / cellSize))
     let [xend, yend] = cameraPosition.map((x, i) =>
@@ -369,8 +370,8 @@ export default class Grid extends Component {
                 id={i.toString()}
                 from={fromPosition}
                 to={toPosition}
-                fromSize={this.state.cellTypesetSizes[fromPosition.join(',')]}
-                toSize={this.state.cellTypesetSizes[toPosition.join(',')]}
+                fromSize={cellTypesetSizes[fromPosition.join(',')]}
+                toSize={cellTypesetSizes[toPosition.join(',')]}
                 selected={this.props.selectedEdge === i}
                 bend={edge.bend}
                 shift={edge.shift}
@@ -385,12 +386,16 @@ export default class Grid extends Component {
             )
           })}
 
-          {this.state.phantomEdge && (
+          {this.state.phantomArrow && (
             <GridArrow
               cellSize={cellSize}
               phantom
-              from={this.state.phantomEdge.from}
-              to={this.state.phantomEdge.to}
+              from={this.state.phantomArrow.from}
+              to={this.state.phantomArrow.to}
+              fromSize={
+                cellTypesetSizes[this.state.phantomArrow.from.join(',')]
+              }
+              toSize={cellTypesetSizes[this.state.phantomArrow.to.join(',')]}
             />
           )}
         </ul>
