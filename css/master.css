@@ -334,6 +334,7 @@ a, img {
 .code-box textarea {
         display: block;
         padding: .5rem;
+        border: none;
         resize: none;
         width: 62vw;
         height: 50vh;
