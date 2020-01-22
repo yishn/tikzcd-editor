@@ -15,9 +15,9 @@ export default class App extends Component {
     this.state = {
       tool: 'pan',
       cellSize: 130,
-      cameraPosition: [-65, -65],
       diagram: {nodes: [], edges: []},
 
+      cameraPosition: [-65, -65],
       selectedCell: [0, 0],
       selectedArrow: null,
       cellEditMode: false,
@@ -92,6 +92,7 @@ export default class App extends Component {
 
     window.addEventListener('popstate', evt => {
       this.handleDataChange({data: this.parseDiagramFromUrl()})
+      this.resetCamera()
     })
 
     window.addEventListener('beforeunload', evt => {
@@ -121,6 +122,14 @@ export default class App extends Component {
     }
 
     return {nodes: [], edges: []}
+  }
+
+  resetCamera = () => {
+    this.setState({
+      cameraPosition: Array(2).fill(-Math.floor(this.state.cellSize / 2)),
+      selectedCell: [0, 0],
+      selectedArrow: null
+    })
   }
 
   handlePan = ({cameraPosition}) => {
@@ -178,11 +187,8 @@ export default class App extends Component {
     try {
       data = diagram.fromTeX(newCode)
 
-      this.setState({
-        cameraPosition: Array(2).fill(-Math.floor(this.state.cellSize / 2)),
-        selectedArrow: null,
-        showCodeBox: false
-      })
+      this.resetCamera()
+      this.setState({showCodeBox: false})
 
       this.handleDataChange({data})
     } catch (err) {
