@@ -233,6 +233,7 @@ export default class Grid extends Component {
       }
     } else {
       let {id} = nodes[index]
+      nodes[index] = {id, position: [...evt.position], value: evt.value}
 
       if (evt.value.trim() === '') {
         // Cleanup if necessary
@@ -241,8 +242,6 @@ export default class Grid extends Component {
           e => e.from === id || e.to === id
         )
         if (!existingEdge) nodes[index] = null
-      } else {
-        nodes[index] = {id, position: [...evt.position], value: evt.value}
       }
     }
 
