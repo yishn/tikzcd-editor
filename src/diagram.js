@@ -370,13 +370,8 @@ export function fromTeX(code) {
     let from = edge.from
     let to = edge.to
 
-    let fromIndex = -1
-    let toIndex = -1
-
-    for (let node of nodes) {
-      if (arrEquals(node.position, from)) fromIndex = i
-      if (arrEquals(node.position, to)) toIndex = i
-    }
+    let fromIndex = nodes.findIndex(node => arrEquals(node.position, from))
+    let toIndex = nodes.findIndex(node => arrEquals(node.position, to))
 
     if (fromIndex === -1) {
       let node = {
