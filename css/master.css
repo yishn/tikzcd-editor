@@ -93,9 +93,6 @@ a, img {
     background: #eee;
     outline: none;
   }
-  .grid-cell.edit {
-    background: #e4e4e4;
-  }
   .grid-cell .grabber {
     position: absolute;
     left: 2px;
