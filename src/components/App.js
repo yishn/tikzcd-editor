@@ -1,7 +1,7 @@
 import {h, render, Component} from 'preact'
 import copyText from 'copy-text-to-clipboard'
 import * as diagram from '../diagram'
-import {arrAdd} from '../helper'
+import {arrAdd, lexicalCompare} from '../helper'
 
 import Grid from './Grid'
 import Properties from './Properties'
@@ -60,6 +60,41 @@ export default class App extends Component {
             ? null
             : {selectedCell: arrAdd(state.selectedCell, arrowControl[evt.key])}
         )
+      } else if (evt.key === 'Tab' && this.state.selectedArrow != null) {
+        // Neutralize browser focus mechanism and instead cycle through arrows
+
+        evt.preventDefault()
+        evt.stopPropagation()
+
+        let diff = evt.shiftKey ? -1 : 1
+
+        this.setState(state => {
+          if (state.selectedArrow == null) return
+
+          let {nodes, edges} = state.diagram
+          let length = edges.length
+          let findNodePositionById = id =>
+            nodes.find(node => node.id === id).position
+
+          // Constructing a natural tab order for edges
+
+          let indices = [...Array(length)]
+            .map((_, i) => [
+              i,
+              [edges[i].from, edges[i].to]
+                .map(findNodePositionById)
+                .reduce((sum, x) => arrAdd(sum, x), [0, 0])
+            ])
+            .sort(([_, arr1], [__, arr2]) => lexicalCompare(arr1, arr2))
+            .map(([i, _]) => i)
+
+          let metaIndex = indices.indexOf(state.selectedArrow)
+
+          return {
+            selectedArrow:
+              indices[(((metaIndex + diff) % length) + length) % length]
+          }
+        })
       } else if (evt.key === 'Enter') {
         this.setState(state =>
           state.cellEditMode || state.selectedArrow != null

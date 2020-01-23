@@ -8,6 +8,20 @@ export function clamp(min, max, x) {
   return Math.max(min, Math.min(max, x))
 }
 
+export function lexicalCompare(arr1, arr2) {
+  if (arr1.length != arr2.length) {
+    return arr1.length - arr2.length
+  } else if (arr1.length === 0) {
+    return 0
+  }
+
+  return arr1[0] < arr2[0]
+    ? -1
+    : arr1[0] > arr2[0]
+    ? 1
+    : lexicalCompare(arr1.slice(1), arr2.slice(1))
+}
+
 export function arrEquals(a, b) {
   return a.length === b.length && a.every((x, i) => x === b[i])
 }
