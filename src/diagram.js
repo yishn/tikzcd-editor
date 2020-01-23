@@ -4,7 +4,13 @@ import {
   decompressFromEncodedURIComponent
 } from 'lz-string'
 
-import {getId, arrEquals, b64DecodeUnicode, b64EncodeUnicode} from './helper'
+import {
+  getId,
+  arrEquals,
+  arrSubtract,
+  b64DecodeUnicode,
+  b64EncodeUnicode
+} from './helper'
 
 export function toJSON(diagram) {
   let leftTop = [0, 1].map(i =>
@@ -18,7 +24,7 @@ export function toJSON(diagram) {
     nodes: diagram.nodes.map(node => ({
       ...node,
       id: undefined,
-      position: node.position.map((x, i) => x - leftTop[i])
+      position: arrSubtract(node.position, leftTop)
     })),
 
     edges: diagram.edges.map(edge => ({
