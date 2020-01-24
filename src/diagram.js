@@ -154,6 +154,9 @@ export function fromTeX(code) {
   let x = 0
   let y = 0
 
+  // Remove comments
+  code = code.replace(/%.*/g, '')
+
   let consumers = [
     {string: '\\begin{tikzcd}'},
     {string: '\\end{tikzcd}'},

@@ -97,7 +97,7 @@ export default class App extends Component {
         })
       } else if (evt.key === 'Enter') {
         this.setState(state =>
-          state.cellEditMode || state.selectedArrow != null
+          state.showCodeBox || state.cellEditMode || state.selectedArrow != null
             ? null
             : {cellEditMode: true}
         )
@@ -171,14 +171,18 @@ export default class App extends Component {
     this.setState({cameraPosition})
   }
 
-  copyLink = () => {
-    if (this.state.confirmLinkCopy) return
-
+  generateLink = () => {
     let encoded = diagram.toCompressedBase64(this.state.diagram)
     let base = window.location.href.split('#')[0]
 
-    let url = base + '#' + encoded
-    window.history.pushState(null, null, '#' + encoded)
+    return base + '#' + encoded
+  }
+
+  copyLink = () => {
+    if (this.state.confirmLinkCopy) return
+
+    let url = this.generateLink()
+    window.history.pushState(null, null, url)
 
     let success = copyText(url)
 
@@ -191,7 +195,7 @@ export default class App extends Component {
   }
 
   openCodeBox = () => {
-    let code = diagram.toTeX(this.state.diagram)
+    let code = `% ${this.generateLink()}\n${diagram.toTeX(this.state.diagram)}`
 
     this.setState({
       codeValue: code,
