@@ -9,6 +9,9 @@ import {
   getRectSegmentIntersections
 } from '../geometry'
 
+const tailHeadWidth = 9.764
+const tailHeadHeight = 13
+
 export default class GridArrow extends Component {
   constructor(props) {
     super()
@@ -159,10 +162,11 @@ export default class GridArrow extends Component {
       let newHeight =
         height * Math.abs(Math.cos(angle)) + width * Math.abs(Math.sin(angle))
       let heightDiff = newHeight - height
+      let labelOffsetX =
+        -width / 2 - (!this.props.loop ? tailHeadHeight / 2 : 0)
 
       this.setState({
-        labelX: `calc(50% + ${-width / 2 -
-          (this.props.from !== this.props.to ? 6.5 : 0)}px)`,
+        labelX: `calc(50% + ${labelOffsetX}px)`,
         labelY: {
           left:
             this.props.bend >= 0
@@ -204,53 +208,7 @@ export default class GridArrow extends Component {
       mx,
       my
 
-    let tailHeadWidth = 9.764
-    let tailHeadHeight = 13
-
-    if (!this.props.loop) {
-      // Arrows
-
-      let {startPoint, endPoint} = this.state
-      ;[mx, my] = arrScale(0.5, arrAdd(startPoint, endPoint))
-
-      let {length, angle} = this.getLengthAngle()
-      degree = (angle * 180) / Math.PI
-      length -= 2 * tailHeadWidth
-
-      let bend = this.props.bend || 0
-      let bendAngle = (bend * Math.PI) / 180
-
-      shift = this.props.shift || 0
-
-      let [cx, cy] = [length / 2, -(length * Math.tan(bendAngle)) / 2]
-      ;[width, height] = [
-        length + 2 * tailHeadWidth + tailHeadHeight,
-        Math.max(Math.abs(cy) + tailHeadHeight, tailHeadHeight)
-      ]
-      ;[leftOffset, topOffset] = [-width / 2, 0]
-
-      let leftPoint = [tailHeadWidth, height / 2]
-      let rightPoint = [tailHeadWidth + length, height / 2]
-      let controlPoint = arrAdd(leftPoint, [cx, cy])
-
-      path = [
-        `M ${leftPoint.join(' ')}`,
-        `Q ${controlPoint.join(' ')}`,
-        rightPoint.join(' ')
-      ].join(' ')
-
-      tail = {
-        x: 0,
-        y: height / 2 - 13 / 2,
-        transform: `rotate(${-bend} ${tailHeadWidth} ${height / 2})`
-      }
-
-      head = {
-        x: length + tailHeadWidth,
-        y: height / 2 - 13 / 2,
-        transform: `rotate(${bend} ${length + tailHeadWidth} ${height / 2})`
-      }
-    } else {
+    if (this.props.loop) {
       // Loops
 
       if (this.props.phantom) return
@@ -263,8 +221,10 @@ export default class GridArrow extends Component {
       width = height = radius * 4 + tailHeadHeight
       degree = 360 - angle
       shift = 0
-      path = `M ${width / 2 - labelRadius} ${height / 2} a ${radius} ${radius *
-        0.8} 0 1 0 ${labelRadius * 2} 0`
+      path = `
+        M ${width / 2 - labelRadius} ${height / 2}
+        a ${radius} ${radius * 0.8} 0 1 0 ${labelRadius * 2} 0
+      `
 
       let offset = 16
 
@@ -294,6 +254,49 @@ export default class GridArrow extends Component {
           rotate(${baseDegree + rotate} ${headRotateAnchor.join(' ')})
           translate(0 ${-tailHeadHeight / 2})
         `
+      }
+    } else {
+      // Arrows
+
+      let {startPoint, endPoint} = this.state
+      ;[mx, my] = arrScale(0.5, arrAdd(startPoint, endPoint))
+
+      let {length, angle} = this.getLengthAngle()
+      degree = (angle * 180) / Math.PI
+      length -= 2 * tailHeadWidth
+
+      let bend = this.props.bend || 0
+      let bendAngle = (bend * Math.PI) / 180
+
+      shift = this.props.shift || 0
+
+      let [cx, cy] = [length / 2, -(length * Math.tan(bendAngle)) / 2]
+      ;[width, height] = [
+        length + 2 * tailHeadWidth + tailHeadHeight,
+        Math.max(Math.abs(cy) + tailHeadHeight, tailHeadHeight)
+      ]
+      ;[leftOffset, topOffset] = [-width / 2, 0]
+
+      let leftPoint = [tailHeadWidth, height / 2]
+      let rightPoint = [tailHeadWidth + length, height / 2]
+      let controlPoint = arrAdd(leftPoint, [cx, cy])
+
+      path = `
+        M ${leftPoint.join(' ')}
+        Q ${controlPoint.join(' ')}
+        ${rightPoint.join(' ')}
+      `
+
+      tail = {
+        x: 0,
+        y: height / 2 - 13 / 2,
+        transform: `rotate(${-bend} ${tailHeadWidth} ${height / 2})`
+      }
+
+      head = {
+        x: length + tailHeadWidth,
+        y: height / 2 - 13 / 2,
+        transform: `rotate(${bend} ${length + tailHeadWidth} ${height / 2})`
       }
     }
 
@@ -343,7 +346,10 @@ export default class GridArrow extends Component {
                 }[this.props.line]
               }
             />
+
             {this.props.line === 'double' && (
+              // Remove line interior for double struck arrows
+
               <mask
                 id={`hollowPath${this.props.id}`}
                 maskUnits="userSpaceOnUse"
