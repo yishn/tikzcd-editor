@@ -97,8 +97,16 @@ export default class Properties extends Component {
           change = {[prop]: data[prop] === id ? 'none' : id}
         } else if (id === 'head') {
           change = {head: data.head == null ? 'none' : null}
-        } else if (['solid', 'dashed', 'dotted', 'double'].includes(id)) {
+        } else if (['solid', 'dashed', 'dotted'].includes(id)) {
           change = {line: id}
+        } else if (id === 'double') {
+          change = {
+            line: id,
+            ...([null, 'none'].includes(data.head) ? {} : {head: null}),
+            ...([null, 'mapsto', 'none'].includes(data.tail)
+              ? {}
+              : {tail: 'none'})
+          }
         } else if (['labelleft', 'labelright', 'labelinside'].includes(id)) {
           change = {labelPosition: id.slice(5)}
         } else if (['hook', 'harpoon'].includes(id)) {
@@ -241,6 +249,7 @@ export default class Properties extends Component {
 
           <Button
             checked={data.tail === 'tail'}
+            disabled={data.line === 'double'}
             icon="./img/properties/tail.svg"
             name="Tail"
             onClick={this.handleButtonClick('tail')}
@@ -255,6 +264,7 @@ export default class Properties extends Component {
 
           <Button
             checked={['hook', 'hookalt'].includes(data.tail)}
+            disabled={data.line === 'double'}
             icon={`./img/properties/${
               data.tail === 'hookalt' ? 'hookalt' : 'hook'
             }.svg`}
@@ -339,6 +349,7 @@ export default class Properties extends Component {
 
           <Button
             checked={['harpoon', 'harpoonalt'].includes(data.head)}
+            disabled={data.line === 'double'}
             icon={`./img/properties/${
               data.head === 'harpoonalt' ? 'harpoonalt' : 'harpoon'
             }.svg`}
@@ -355,6 +366,7 @@ export default class Properties extends Component {
 
           <Button
             checked={data.head == 'twoheads'}
+            disabled={data.line === 'double'}
             icon="./img/properties/twoheads.svg"
             name="Two Heads"
             onClick={this.handleButtonClick('twoheads')}
