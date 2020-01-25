@@ -97,7 +97,7 @@ export default class Properties extends Component {
           change = {[prop]: data[prop] === id ? 'none' : id}
         } else if (id === 'head') {
           change = {head: data.head == null ? 'none' : null}
-        } else if (['solid', 'dashed', 'dotted'].includes(id)) {
+        } else if (['solid', 'dashed', 'dotted', 'double'].includes(id)) {
           change = {line: id}
         } else if (['labelleft', 'labelright', 'labelinside'].includes(id)) {
           change = {labelPosition: id.slice(5)}
@@ -283,6 +283,13 @@ export default class Properties extends Component {
             icon="./img/properties/solid.svg"
             name="Solid"
             onClick={this.handleButtonClick('solid')}
+          />
+
+          <Button
+            checked={data.line === 'double'}
+            icon="./img/properties/double.svg"
+            name="Double"
+            onClick={this.handleButtonClick('double')}
           />
 
           <Separator />

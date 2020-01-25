@@ -204,8 +204,12 @@ export default class GridArrow extends Component {
       mx,
       my
 
-    if (!arrEquals(this.props.from, this.props.to)) {
+    let tailHeadWidth = 9.764
+    let tailHeadHeight = 13
+
+    if (!this.props.loop) {
       // Arrows
+
       let {startPoint, endPoint} = this.state
       ;[mx, my] = arrScale(0.5, arrAdd(startPoint, endPoint))
 
@@ -213,29 +217,37 @@ export default class GridArrow extends Component {
       degree = (angle * 180) / Math.PI
 
       let bend = this.props.bend || 0
-      shift = this.props.shift || 0
+      let bendAngle = (bend * Math.PI) / 180
 
-      let [cx, cy] = [
-        length / 2,
-        (length * Math.tan((bend * Math.PI) / 180)) / 2
+      shift = this.props.shift || 0
+      ;[leftOffset, topOffset] = [-(length + tailHeadHeight) / 2, 0]
+
+      let [cx, cy] = [length / 2, -(length * Math.tan(bendAngle)) / 2]
+      ;[width, height] = [
+        length + tailHeadHeight,
+        Math.max(Math.abs(cy) + tailHeadHeight, tailHeadHeight)
       ]
 
-      ;[width, height] = [length + 13, Math.max(Math.abs(cy) + 13, 13)]
-      path = `M 9.764 ${height / 2} Q ${9.764 + cx} ${height / 2 -
-        cy} ${length} ${height / 2}`
-      leftOffset = (length + 13) / 2
-      topOffset = 0
+      let leftPoint = [tailHeadWidth, height / 2]
+      let rightPoint = [length - tailHeadWidth, height / 2]
+      let controlPoint = arrAdd(leftPoint, [cx, cy])
+
+      path = [
+        `M ${leftPoint.join(' ')}`,
+        `Q ${controlPoint.join(' ')}`,
+        rightPoint.join(' ')
+      ].join(' ')
 
       tail = {
         x: 0,
         y: height / 2 - 13 / 2,
-        transform: `rotate(${-bend} ${9.764} ${height / 2})`
+        transform: `rotate(${-bend} ${tailHeadWidth} ${height / 2})`
       }
 
       head = {
-        x: length - 9.764,
+        x: length - tailHeadWidth,
         y: height / 2 - 13 / 2,
-        transform: `rotate(${bend} ${length} ${height / 2})`
+        transform: `rotate(${bend} ${length - tailHeadWidth} ${height / 2})`
       }
     } else {
       // Loops
@@ -247,7 +259,7 @@ export default class GridArrow extends Component {
       let flip = clockwise ? -1 : 1
       let [radius, labelRadius] = [24, 14]
 
-      ;[width, height] = [radius * 4 + 13, radius * 4 + 13]
+      width = height = radius * 4 + tailHeadHeight
       degree = 360 - angle
       shift = 0
       path = `M ${width / 2 - labelRadius} ${height / 2} a ${radius} ${radius *
@@ -255,26 +267,32 @@ export default class GridArrow extends Component {
 
       let offset = 16
 
-      leftOffset = width / 2 + offset * Math.sin((degree * Math.PI) / 180)
+      leftOffset = -width / 2 - offset * Math.sin((degree * Math.PI) / 180)
       topOffset = offset * Math.cos((degree * Math.PI) / 180)
 
       let multiplier = (flip * 180) / Math.PI
-      let baseAngle = Math.PI * clockwise * multiplier
+      let baseDegree = Math.PI * clockwise * multiplier
       let rotate = (Math.asin(labelRadius / radius) - Math.PI) * multiplier
       let offsetLabel = labelRadius * flip
+      let tailRotateAnchor = [width / 2 - offsetLabel, height / 2]
+      let headRotateAnchor = [width / 2 + offsetLabel, height / 2]
 
       tail = {
         x: width / 2 - offsetLabel,
         y: height / 2,
-        transform: `rotate(${baseAngle - rotate} ${width / 2 -
-          offsetLabel} ${height / 2}) translate(-9.764, -6.5)`
+        transform: `
+          rotate(${baseDegree - rotate} ${tailRotateAnchor.join(' ')})
+          translate(${-tailHeadWidth} ${-tailHeadHeight / 2})
+        `
       }
 
       head = {
         x: width / 2 + offsetLabel,
         y: height / 2,
-        transform: `rotate(${baseAngle + rotate} ${width / 2 +
-          offsetLabel} ${height / 2}) translate(-9.764, -6.5)`
+        transform: `
+          rotate(${baseDegree + rotate} ${headRotateAnchor.join(' ')})
+          translate(0 ${-tailHeadHeight / 2})
+        `
       }
     }
 
@@ -288,7 +306,7 @@ export default class GridArrow extends Component {
         style={{
           height,
           width,
-          left: mx - leftOffset,
+          left: mx + leftOffset,
           top: my - height / 2 + topOffset,
           transform: `rotate(${degree}deg) translateY(${shift * 7}px)`
         }}
@@ -304,37 +322,64 @@ export default class GridArrow extends Component {
             d={path}
           />
 
-          <path
+          <g
             ref={el => (this.pathElement = el)}
             fill="none"
-            stroke-width="1"
-            stroke="black"
-            stroke-dasharray={
-              {
-                solid: null,
-                dashed: '7, 3',
-                dotted: '2, 4'
-              }[this.props.line]
+            mask={
+              this.props.line === 'double'
+                ? `url(#hollowPath${this.props.id})`
+                : null
             }
-            d={path}
-          />
+          >
+            <path
+              d={path}
+              stroke="black"
+              stroke-width={this.props.line === 'double' ? 6 : 1}
+              stroke-dasharray={
+                {
+                  dashed: '7, 3',
+                  dotted: '2, 4'
+                }[this.props.line]
+              }
+            />
+            {this.props.line === 'double' && (
+              <mask
+                id={`hollowPath${this.props.id}`}
+                maskUnits="userSpaceOnUse"
+              >
+                <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                <path
+                  d={path}
+                  stroke="black"
+                  stroke-width="4"
+                  stroke-linecap="square"
+                />
+              </mask>
+            )}
+          </g>
 
           <image
             x={tail.x}
             y={tail.y}
-            width="9.764"
-            height="13"
+            width={tailHeadWidth}
+            height={tailHeadHeight}
             transform={tail.transform}
-            xlinkHref={`./img/arrow/${this.props.tail || 'none'}.svg`}
+            xlinkHref={`./img/arrow/${[
+              this.props.line === 'double' ? 'double-' : '',
+              this.props.tail || 'none'
+            ].join('')}.svg`}
           />
 
           <image
             x={head.x}
             y={head.y}
-            width="9.764"
-            height="13"
+            width={tailHeadWidth}
+            height={tailHeadHeight}
             transform={head.transform}
-            xlinkHref={`./img/arrow/${this.props.head || 'default'}.svg`}
+            xlinkHref={`./img/arrow/${[
+              this.props.line === 'double' ? 'double-' : '',
+              this.props.head || 'default'
+            ].join('')}.svg`}
           />
         </svg>
 
