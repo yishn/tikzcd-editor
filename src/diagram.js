@@ -90,6 +90,10 @@ export function toTeX(diagram) {
             ].map(
               (id, i) =>
                 ({
+                  double: 'Rightarrow',
+                  solid: null,
+                  dashed: 'dashed',
+                  dotted: 'dotted',
                   none: ['no head', null, null][i],
                   default: null,
                   harpoon: 'harpoon',
@@ -99,9 +103,6 @@ export function toTeX(diagram) {
                   mapsto: 'maps to',
                   tail: 'tail',
                   twoheads: 'two heads',
-                  dashed: 'dashed',
-                  dotted: 'dotted',
-                  solid: null,
                   center: null,
                   nearstart: 'near start',
                   nearend: 'near end',
