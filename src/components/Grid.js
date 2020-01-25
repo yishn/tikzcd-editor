@@ -85,11 +85,14 @@ export default class Grid extends Component {
       )
 
       if (this.mouseDown.mode === 'pan') {
-        let {movementX, movementY} = evt
+        let oldEvt = this.mouseDown.evt
+        let oldMousePosition = [oldEvt.clientX, oldEvt.clientY]
+        let newMousePosition = [evt.clientX, evt.clientY]
+        let movement = arrSubtract(newMousePosition, oldMousePosition)
         let {onPan = () => {}} = this.props
 
         onPan({
-          cameraPosition: arrSubtract(cameraPosition, [movementX, movementY])
+          cameraPosition: arrSubtract(this.mouseDown.cameraPosition, movement)
         })
       } else if (this.mouseDown.mode === 'move') {
         let {nodeIndex} = this.mouseDown
@@ -149,6 +152,7 @@ export default class Grid extends Component {
 
     this.mouseDown = {
       evt,
+      cameraPosition,
       position,
       nodeIndex,
       node,
