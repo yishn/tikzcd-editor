@@ -337,7 +337,7 @@ export default class GridArrow extends Component {
           >
             <path
               d={path}
-              stroke="black"
+              stroke={this.props.line === 'none' ? 'transparent' : 'black'}
               stroke-width={this.props.line === 'double' ? 6 : 1}
               stroke-dasharray={
                 {

@@ -97,18 +97,29 @@ export default class Properties extends Component {
           change = {[prop]: data[prop] === id ? 'none' : id}
         } else if (id === 'head') {
           change = {head: data.head == null ? 'none' : null}
-        } else if (['solid', 'dashed', 'dotted'].includes(id)) {
-          change = {line: id}
-        } else if (id === 'double') {
-          change = {
-            line: id,
-            ...([null, 'none'].includes(data.head) ? {} : {head: null}),
-            ...([null, 'mapsto', 'none'].includes(data.tail)
-              ? {}
-              : {tail: 'none'})
+        } else if (['double', 'solid', 'dashed', 'dotted'].includes(id)) {
+          change = {line: (data.line || 'solid') === id ? 'none' : id}
+
+          if (change.line === 'double') {
+            change = {
+              ...change,
+              ...([null, 'none'].includes(data.head) ? {} : {head: null}),
+              ...([null, 'mapsto', 'none'].includes(data.tail)
+                ? {}
+                : {tail: 'none'})
+            }
+          } else if (change.line === 'none') {
+            change = {
+              ...change,
+              head: 'none',
+              tail: 'none',
+              labelPosition: 'inside'
+            }
           }
         } else if (['labelleft', 'labelright', 'labelinside'].includes(id)) {
-          change = {labelPosition: id.slice(5)}
+          change = {
+            labelPosition: data.line === 'none' ? 'inside' : id.slice(5)
+          }
         } else if (['hook', 'harpoon'].includes(id)) {
           let prop = id === 'hook' ? 'tail' : 'head'
           let ids = [id, `${id}alt`, 'none']
@@ -249,7 +260,7 @@ export default class Properties extends Component {
 
           <Button
             checked={data.tail === 'tail'}
-            disabled={data.line === 'double'}
+            disabled={['none', 'double'].includes(data.line)}
             icon="./img/properties/tail.svg"
             name="Tail"
             onClick={this.handleButtonClick('tail')}
@@ -257,6 +268,7 @@ export default class Properties extends Component {
 
           <Button
             checked={data.tail === 'mapsto'}
+            disabled={['none'].includes(data.line)}
             icon="./img/properties/mapsto.svg"
             name="Maps To"
             onClick={this.handleButtonClick('mapsto')}
@@ -264,7 +276,7 @@ export default class Properties extends Component {
 
           <Button
             checked={['hook', 'hookalt'].includes(data.tail)}
-            disabled={data.line === 'double'}
+            disabled={['none', 'double'].includes(data.line)}
             icon={`./img/properties/${
               data.tail === 'hookalt' ? 'hookalt' : 'hook'
             }.svg`}
@@ -349,7 +361,7 @@ export default class Properties extends Component {
 
           <Button
             checked={['harpoon', 'harpoonalt'].includes(data.head)}
-            disabled={data.line === 'double'}
+            disabled={['none', 'double'].includes(data.line)}
             icon={`./img/properties/${
               data.head === 'harpoonalt' ? 'harpoonalt' : 'harpoon'
             }.svg`}
@@ -359,6 +371,7 @@ export default class Properties extends Component {
 
           <Button
             checked={data.head == null}
+            disabled={['none'].includes(data.line)}
             icon="./img/properties/head.svg"
             name="Default Head"
             onClick={this.handleButtonClick('head')}
@@ -366,7 +379,7 @@ export default class Properties extends Component {
 
           <Button
             checked={data.head == 'twoheads'}
-            disabled={data.line === 'double'}
+            disabled={['none', 'double'].includes(data.line)}
             icon="./img/properties/twoheads.svg"
             name="Two Heads"
             onClick={this.handleButtonClick('twoheads')}
@@ -376,6 +389,7 @@ export default class Properties extends Component {
 
           <Button
             checked={!data.labelPosition || data.labelPosition === 'left'}
+            disabled={['none'].includes(data.line)}
             icon="./img/properties/labelleft.svg"
             name="Left Label (A)"
             onClick={this.handleButtonClick('labelleft')}
@@ -390,6 +404,7 @@ export default class Properties extends Component {
 
           <Button
             checked={data.labelPosition === 'right'}
+            disabled={['none'].includes(data.line)}
             icon="./img/properties/labelright.svg"
             name="Right Label (D)"
             onClick={this.handleButtonClick('labelright')}

@@ -80,7 +80,7 @@ export function toTeX(diagram) {
           from={edge.from}
           to={edge.to}
           value={edge.value}
-          labelPosition={edge.labelPosition}
+          labelPosition={edge.line === 'none' ? null : edge.labelPosition}
           args={[
             ...[
               edge.head,
@@ -94,7 +94,11 @@ export function toTeX(diagram) {
                   solid: null,
                   dashed: 'dashed',
                   dotted: 'dotted',
-                  none: ['no head', null, null][i],
+                  none: [
+                    edge.line === 'none' ? null : 'no head',
+                    'phantom',
+                    null
+                  ][i],
                   default: null,
                   harpoon: 'harpoon',
                   harpoonalt: "harpoon'",
@@ -126,10 +130,9 @@ export function toTeX(diagram) {
             ...(edge.loop != null
               ? (() => {
                   let [angle, clockwise] = edge.loop || [0, false]
-                  let [inAngle, outAngle] = [
-                    (235 + angle + 360) % 360,
-                    (305 + angle + 360) % 360
-                  ]
+                  let [inAngle, outAngle] = [235, 305].map(
+                    x => (x + angle + 360) % 360
+                  )
                   if (!clockwise) {
                     ;[inAngle, outAngle] = [outAngle, inAngle]
                   }
