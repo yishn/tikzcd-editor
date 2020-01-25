@@ -184,7 +184,7 @@ export default class Properties extends Component {
           if (data.loop == null) return
 
           let [angle, clockwise] = data.loop
-          change.loop = [(angle + 90 * (!clockwise ? 1 : -1)) % 360, clockwise]
+          change.loop = [(angle + 90) % 360, clockwise]
         }
 
         onChange({data: {...data, ...change}})

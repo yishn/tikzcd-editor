@@ -1,1 +1,6 @@
-<svg viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.29 5.688a2.736 2.736 0 114.573-1.085" stroke="#000" stroke-width=".625"/><path d="M4.84 5.825l.198-2.31L6.94 4.842l-2.1.983z" fill="#000"/></svg>
+<svg viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(7 0) scale(-1 1)">
+    <path d="M1.29 5.688a2.736 2.736 0 114.573-1.085" stroke="#000" stroke-width=".625"/>
+    <path d="M4.84 5.825l.198-2.31L6.94 4.842l-2.1.983z" fill="#000"/>
+  </g>
+</svg>
