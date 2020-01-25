@@ -124,7 +124,7 @@ export default class Grid extends Component {
           return
 
         this.setState({
-          phantomArrow: {from, to}
+          phantomArrow: arrEquals(from, to) ? null : {from, to}
         })
       }
     })

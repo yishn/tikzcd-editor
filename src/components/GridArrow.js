@@ -68,7 +68,7 @@ export default class GridArrow extends Component {
         Math.min(cellSize, x + 20)
       )
       ;[fromWidth, fromHeight] = [fromWidth, fromHeight].map(x =>
-        Math.min(cellSize, x + 40)
+        Math.min(cellSize, x + 20)
       )
 
       let [fromCenter, toCenter] = [nextProps.from, nextProps.to].map(x =>
@@ -215,21 +215,22 @@ export default class GridArrow extends Component {
 
       let {length, angle} = this.getLengthAngle()
       degree = (angle * 180) / Math.PI
+      length -= 2 * tailHeadWidth
 
       let bend = this.props.bend || 0
       let bendAngle = (bend * Math.PI) / 180
 
       shift = this.props.shift || 0
-      ;[leftOffset, topOffset] = [-(length + tailHeadHeight) / 2, 0]
 
       let [cx, cy] = [length / 2, -(length * Math.tan(bendAngle)) / 2]
       ;[width, height] = [
-        length + tailHeadHeight,
+        length + 2 * tailHeadWidth + tailHeadHeight,
         Math.max(Math.abs(cy) + tailHeadHeight, tailHeadHeight)
       ]
+      ;[leftOffset, topOffset] = [-width / 2, 0]
 
       let leftPoint = [tailHeadWidth, height / 2]
-      let rightPoint = [length - tailHeadWidth, height / 2]
+      let rightPoint = [tailHeadWidth + length, height / 2]
       let controlPoint = arrAdd(leftPoint, [cx, cy])
 
       path = [
@@ -245,9 +246,9 @@ export default class GridArrow extends Component {
       }
 
       head = {
-        x: length - tailHeadWidth,
+        x: length + tailHeadWidth,
         y: height / 2 - 13 / 2,
-        transform: `rotate(${bend} ${length - tailHeadWidth} ${height / 2})`
+        transform: `rotate(${bend} ${length + tailHeadWidth} ${height / 2})`
       }
     } else {
       // Loops
