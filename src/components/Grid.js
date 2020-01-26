@@ -1,5 +1,4 @@
 import {h, Component} from 'preact'
-import classNames from 'classnames'
 import {getId, arrEquals, arrSubtract, arrScale} from '../helper'
 
 import GridCell from './GridCell'
@@ -7,11 +6,11 @@ import GridArrow from './GridArrow'
 
 export default class Grid extends Component {
   constructor(props) {
-    super()
+    super(props)
 
     this.state = {
-      width: null,
-      height: null,
+      width: 0,
+      height: 0,
       phantomArrow: null,
       cellTypesetSizes: {}
     }
@@ -79,16 +78,13 @@ export default class Grid extends Component {
 
       evt.preventDefault()
 
-      let {cellSize, cameraPosition} = this.props
-      let newPosition = [evt.clientX, evt.clientY].map((x, i) =>
-        Math.floor((x + cameraPosition[i]) / cellSize)
-      )
+      let newPosition = this.coordsToPosition([evt.clientX, evt.clientY])
 
       if (this.mouseDown.mode === 'pan') {
         let oldEvt = this.mouseDown.evt
-        let oldMousePosition = [oldEvt.clientX, oldEvt.clientY]
-        let newMousePosition = [evt.clientX, evt.clientY]
-        let movement = arrSubtract(newMousePosition, oldMousePosition)
+        let oldMouseCoords = [oldEvt.clientX, oldEvt.clientY]
+        let newMouseCoords = [evt.clientX, evt.clientY]
+        let movement = arrSubtract(newMouseCoords, oldMouseCoords)
         let {onPan = () => {}} = this.props
 
         onPan({
@@ -133,18 +129,75 @@ export default class Grid extends Component {
     })
   }
 
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.selectedCell != null &&
+      (prevProps.selectedCell == null ||
+        !arrEquals(prevProps.selectedCell, this.props.selectedCell))
+    ) {
+      // Pan selected cell into view if needed
+
+      let {onPan = () => {}} = this.props
+      let cellRect = this.positionToRect(this.props.selectedCell)
+      let viewportRect = this.getViewportRect()
+      let [cx, cy] = this.props.cameraPosition
+
+      if (cellRect.left < viewportRect.left) {
+        cx = cellRect.left
+      } else if (
+        cellRect.left + cellRect.width >
+        viewportRect.left + viewportRect.width
+      ) {
+        cx = cellRect.left + cellRect.width - viewportRect.width
+      }
+
+      if (cellRect.top < viewportRect.top) {
+        cy = cellRect.top
+      } else if (
+        cellRect.top + cellRect.height >
+        viewportRect.top + viewportRect.height
+      ) {
+        cy = cellRect.top + cellRect.height - viewportRect.height
+      }
+
+      onPan({cameraPosition: [cx, cy]})
+    }
+  }
+
   updateSize() {
     let {width, height} = this.element.getBoundingClientRect()
     this.setState({width, height})
   }
 
+  getViewportRect() {
+    return {
+      width: this.state.width,
+      height: this.state.height,
+      left: this.props.cameraPosition[0],
+      top: this.props.cameraPosition[1]
+    }
+  }
+
+  coordsToPosition(mouseCoords) {
+    return mouseCoords.map((x, i) =>
+      Math.floor((x + this.props.cameraPosition[i]) / this.props.cellSize)
+    )
+  }
+
+  positionToRect([x, y]) {
+    return {
+      width: this.props.cellSize,
+      height: this.props.cellSize,
+      left: x * this.props.cellSize,
+      top: y * this.props.cellSize
+    }
+  }
+
   handleNodeMouseDown = evt => {
     if (evt.button !== 0) return
 
-    let {cellSize, cameraPosition} = this.props
-    let position = [evt.clientX, evt.clientY].map((x, i) =>
-      Math.floor((x + cameraPosition[i]) / cellSize)
-    )
+    let {cameraPosition} = this.props
+    let position = this.coordsToPosition([evt.clientX, evt.clientY])
     let nodeIndex = this.props.data.nodes.findIndex(n =>
       arrEquals(n.position, position)
     )
@@ -185,13 +238,8 @@ export default class Grid extends Component {
 
     evt.stopPropagation()
 
-    let {cellSize, cameraPosition} = this.props
     let newNodes = [...this.props.data.nodes]
-
-    let position = [evt.clientX, evt.clientY].map((x, i) =>
-      Math.floor((x + cameraPosition[i]) / cellSize)
-    )
-
+    let position = this.coordsToPosition([evt.clientX, evt.clientY])
     let node = newNodes.find(n => arrEquals(n.position, position))
     if (node == null) newNodes.push((node = {id: getId(), position, value: ''}))
 
