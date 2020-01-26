@@ -5,42 +5,52 @@ module.exports = (env, argv) => ({
 
   output: {
     filename: 'bundle.js',
-    path: path.join(__dirname, 'dist')
+    path: path.join(__dirname)
   },
 
-  devtool: argv.mode === 'production'
-    ? 'source-map'
-    : 'cheap-module-eval-source-map',
+  devtool:
+    argv.mode === 'production' ? 'source-map' : 'cheap-module-eval-source-map',
 
   module: {
-    rules: [{
-      test: /\.js$/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            ['@babel/preset-env', {
-              modules: false,
-              targets: "defaults"
-            }]
-          ],
-          plugins: [
-            ['@babel/plugin-proposal-class-properties', {
-              loose: true
-            }],
-            ['@babel/transform-react-jsx', {
-              pragma: 'h',
-              pragmaFrag: 'Fragment'
-            }]
-          ]
+    rules: [
+      {
+        test: /\.js$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  modules: false,
+                  targets: 'defaults'
+                }
+              ]
+            ],
+            plugins: [
+              [
+                '@babel/plugin-proposal-class-properties',
+                {
+                  loose: true
+                }
+              ],
+              [
+                '@babel/transform-react-jsx',
+                {
+                  pragma: 'h',
+                  pragmaFrag: 'Fragment'
+                }
+              ]
+            ]
+          }
         }
-      },
-    }]
+      }
+    ]
   },
 
   resolve: {
     alias: {
-      'preact': path.join(__dirname, 'node_modules/preact/dist/preact.min')
+      preact: path.join(__dirname, 'node_modules/preact/dist/preact.min')
     }
   }
 })

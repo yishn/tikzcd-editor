@@ -1,4 +1,6 @@
 .nyc_output/
 node_modules/
-dist/
-tex/
+dist/tikzcd-editor/
+dist/*.zip
+bundle.js
+bundle.js.map
