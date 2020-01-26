@@ -36,9 +36,12 @@
     "@babel/preset-react": "^7.8.3",
     "babel-loader": "^8.0.6",
     "concurrently": "^5.0.2",
+    "copy-dir": "^1.2.0",
+    "cross-zip": "^3.0.0",
     "http-server": "^0.12.1",
     "onchange": "^6.1.0",
     "prettier": "1.19.1",
+    "rimraf": "^3.0.0",
     "tap": "^14.10.6",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
@@ -55,6 +58,7 @@
     "watch": "concurrently \"webpack --mode development --watch\" \"npm run watch-format\"",
     "format-base": "prettier \"**/*.{js,html}\"",
     "format": "npm run format-base -- --write",
-    "watch-format": "onchange \"**/*.{js,html}\" -- prettier --write {{changed}}"
+    "watch-format": "onchange \"**/*.{js,html}\" -- prettier --write {{changed}}",
+    "create-artifact": "node ./dist/createArtifact.js"
   }
 }
