@@ -10,9 +10,7 @@ async function createArtifact() {
   let artifactFolder = path.resolve(__dirname, './tikzcd-editor')
 
   if (fs.existsSync(artifactFolder)) {
-    await new Promise(resolve => {
-      rimraf(artifactFolder, resolve)
-    })
+    rimraf.sync(artifactFolder)
   }
 
   fs.mkdirSync(artifactFolder)
