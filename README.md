@@ -1,4 +1,4 @@
-# tikzcd-editor
+# tikzcd-editor ![Node CI](https://github.com/yishn/tikzcd-editor/workflows/Node%20CI/badge.svg?event=push)
 
 A simple visual editor for creating commutative diagrams.
 
