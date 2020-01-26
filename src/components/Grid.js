@@ -1,5 +1,5 @@
 import {h, Component} from 'preact'
-import {getId, arrEquals, arrSubtract, arrScale} from '../helper'
+import {getId, arrEquals, arrSubtract, arrScale, arrAdd} from '../helper'
 
 import GridCell from './GridCell'
 import GridArrow from './GridArrow'
@@ -135,32 +135,19 @@ export default class Grid extends Component {
       (prevProps.selectedCell == null ||
         !arrEquals(prevProps.selectedCell, this.props.selectedCell))
     ) {
-      // Pan selected cell into view if needed
+      this.panCellIntoView(this.props.selectedCell)
+    } else if (
+      this.props.selectedArrow != null &&
+      (prevProps.selectedArrow == null ||
+        prevProps.selectedArrow !== this.props.selectedArrow)
+    ) {
+      let edge = this.props.data.edges[this.props.selectedArrow]
+      let position = [edge.from, edge.to]
+        .map(id => this.props.data.nodes.find(node => node.id === id).position)
+        .reduce((acc, p) => arrAdd(acc, p), [0, 0])
+        .map(x => Math.round(x / 2))
 
-      let {onPan = () => {}} = this.props
-      let cellRect = this.positionToRect(this.props.selectedCell)
-      let viewportRect = this.getViewportRect()
-      let [cx, cy] = this.props.cameraPosition
-
-      if (cellRect.left < viewportRect.left) {
-        cx = cellRect.left
-      } else if (
-        cellRect.left + cellRect.width >
-        viewportRect.left + viewportRect.width
-      ) {
-        cx = cellRect.left + cellRect.width - viewportRect.width
-      }
-
-      if (cellRect.top < viewportRect.top) {
-        cy = cellRect.top
-      } else if (
-        cellRect.top + cellRect.height >
-        viewportRect.top + viewportRect.height
-      ) {
-        cy = cellRect.top + cellRect.height - viewportRect.height
-      }
-
-      onPan({cameraPosition: [cx, cy]})
+      this.panCellIntoView(position)
     }
   }
 
@@ -191,6 +178,33 @@ export default class Grid extends Component {
       left: x * this.props.cellSize,
       top: y * this.props.cellSize
     }
+  }
+
+  panCellIntoView(position) {
+    let {onPan = () => {}} = this.props
+    let cellRect = this.positionToRect(position)
+    let viewportRect = this.getViewportRect()
+    let [cx, cy] = this.props.cameraPosition
+
+    if (cellRect.left < viewportRect.left) {
+      cx = cellRect.left
+    } else if (
+      cellRect.left + cellRect.width >
+      viewportRect.left + viewportRect.width
+    ) {
+      cx = cellRect.left + cellRect.width - viewportRect.width
+    }
+
+    if (cellRect.top < viewportRect.top) {
+      cy = cellRect.top
+    } else if (
+      cellRect.top + cellRect.height >
+      viewportRect.top + viewportRect.height
+    ) {
+      cy = cellRect.top + cellRect.height - viewportRect.height
+    }
+
+    onPan({cameraPosition: [cx, cy]})
   }
 
   handleNodeMouseDown = evt => {
