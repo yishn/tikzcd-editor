@@ -27,8 +27,7 @@
     "copy-text-to-clipboard": "^2.1.1",
     "jsx-tikzcd": "^0.5.1",
     "lz-string": "^1.4.4",
-    "preact": "^10.2.1",
-    "tap": "^14.10.6"
+    "preact": "^10.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
@@ -40,6 +39,7 @@
     "http-server": "^0.12.1",
     "onchange": "^6.1.0",
     "prettier": "1.19.1",
+    "tap": "^14.10.6",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
