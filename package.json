@@ -1,6 +1,6 @@
 {
   "name": "tikzcd-editor",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "A simple editor for creating commutative diagrams.",
   "main": "index.js",
   "repository": {
