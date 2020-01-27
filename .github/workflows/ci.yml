@@ -30,11 +30,10 @@ jobs:
     - uses: actions/setup-go@v1
       with:
         go-version: 1.13.x
-    - name: Extract tag name & ci path
+    - name: Extract info
       id: info
       run: |
-        node -e "console.log('::set-output name=tag::' + process.env.GITHUB_REF.replace('refs/tags/', ''))"
-        node -e "console.log('::set-output name=ci::' + require('path').resolve(process.cwd(), './ci'))"
+        node ./ci/extractInfo.js
       env:
         GITHUB_REF: ${{ github.ref }}
     - name: Create & upload artifact
