@@ -3,6 +3,7 @@ const path = require('path')
 
 const copydir = require('copy-dir')
 const zip = require('cross-zip')
+const mkdirp = require('mkdirp')
 const rimraf = require('rimraf')
 const {version} = require('../package.json')
 
@@ -13,7 +14,7 @@ async function createArtifact() {
     rimraf.sync(artifactFolder)
   }
 
-  fs.mkdirSync(artifactFolder)
+  mkdirp.sync(artifactFolder)
 
   copydir.sync(path.resolve(__dirname, '..'), artifactFolder, {
     filter: (_, filepath, __) => {
