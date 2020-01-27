@@ -2,7 +2,7 @@ name: Create artifact
 
 on:
   push:
-    branches: 
+    branches:
       - release
 
 jobs:
@@ -16,10 +16,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: npm install, test, and create artifact
+    - name: npm install and create artifact
       run: |
         npm ci
-        npm test
         npm run dist
       env:
         CI: true
