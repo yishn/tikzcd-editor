@@ -201,24 +201,30 @@ export function fromTeX(code) {
         }
 
         // label
-        if (parts.length > 1 && parts[1].includes('"')) {
+        if (definition.includes('"')) {
           let valueMatcher
-          if (parts[1].includes('"{')) {
+          if (definition.includes('"{')) {
             valueMatcher = /"{(.*)}"/
           } else {
             valueMatcher = /"(.*)"/
           }
-          let match = parts[1].match(valueMatcher)
+          let match = definition.match(valueMatcher)
           if (!match || match.length !== 2) {
-            throw new Error('Could not match edge label.')
+            throw new Error(
+              'Could not match edge label. Note: square brackets ("[" and "]") are not supported by the parser. Use "\\lbrack" and "\\rbrack" instead.'
+            )
           }
-          edge.value = match[1]
+          let label = match[1]
+          edge.value = label
 
           // label position
-          if (parts[1].endsWith("'")) {
+          if (
+            definition.includes(label + '"\'') ||
+            definition.includes(label + '}"\'')
+          ) {
             edge.labelPosition = 'right'
           }
-          if (parts[1].endsWith('description')) {
+          if (definition.includes('description')) {
             edge.labelPosition = 'inside'
           }
         }
