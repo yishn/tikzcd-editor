@@ -27,13 +27,21 @@ You can build by using the `build` command:
 $ npm run build
 ~~~
 
-This will create a minified bundle `dist/bundle.js` and its source map. To launch, simply open `index.html` in your favorite modern browser.
+This will create a minified bundle `bundle.js` and its source map. To launch, simply open `index.html` in your favorite modern browser.
 
 Use the `watch` command for development:
 
 ~~~
 $ npm run watch
 ~~~
+
+To create a self-contained archive file ready for distribution, run the following command:
+
+~~~
+$ npm run dist
+~~~
+
+This will create a folder and a `zip` file in the `dist` folder.
 
 ## Contributing
 
