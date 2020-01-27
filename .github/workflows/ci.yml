@@ -1,4 +1,4 @@
-name: Node CI
+name: CI
 
 on: [push, pull_request]
 
@@ -37,12 +37,10 @@ jobs:
         node -e "console.log('::set-output name=ci::' + require('path').resolve(process.cwd(), './ci'))"
       env:
         GITHUB_REF: ${{ github.ref }}
-    - name: Create artifact
+    - name: Create & upload artifact
       run: |
         npm ci
         npm run dist
-    - name: Upload artifact
-      run: |
         go get -u github.com/tcnksm/ghr
         ./ci/bin/ghr -n "tikzcd-editor ${{ steps.info.outputs.tag }}" -draft ${{ steps.info.outputs.tag }} ./dist
       env:
