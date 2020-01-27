@@ -7,7 +7,7 @@ const rimraf = require('rimraf')
 const {version} = require('../package.json')
 
 async function createArtifact() {
-  let artifactFolder = path.resolve(__dirname, './tikzcd-editor')
+  let artifactFolder = path.resolve(__dirname, '../dist/tikzcd-editor')
 
   if (fs.existsSync(artifactFolder)) {
     rimraf.sync(artifactFolder)
@@ -35,7 +35,7 @@ async function createArtifact() {
 
   zip.zipSync(
     artifactFolder,
-    path.resolve(__dirname, `tikzcd-editor-v${version}.zip`)
+    path.resolve(__dirname, `../dist/tikzcd-editor-v${version}.zip`)
   )
 }
 

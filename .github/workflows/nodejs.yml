@@ -19,3 +19,16 @@ jobs:
         npm test -- --reporter=base
       env:
         CI: true
+
+    - name: Create artifact
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        npm run dist
+      env:
+        CI: true
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        name: tikzcd-editor
+        path: ./dist
