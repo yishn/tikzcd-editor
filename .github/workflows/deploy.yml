@@ -1,6 +1,8 @@
-name: Deployment Dry Run
+name: Deployment
 
-on: push
+on:
+  release:
+    types: [published]
 
 jobs:
   deploy:
@@ -25,6 +27,6 @@ jobs:
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         METHOD: sftp
-        REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
         LOCAL_DIR: dist/tikzcd-editor
-        ARGS: --delete --dry-run
+        REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+        ARGS: --delete
