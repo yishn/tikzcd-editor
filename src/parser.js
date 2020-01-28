@@ -3,63 +3,69 @@ function regexRule(regex) {
     let match = regex.exec(contents)
     if (match == null) return null
 
-    return match[0]
+    return match[0].length
   }
 }
 
-function createTokenizer(rules) {
-  return contents => {
+function createTokenizer(rules, options = {}) {
+  return (contents, opts = {}) => {
+    opts = {...options, ...opts}
+
+    let {shouldCancel = token => false} = opts
     let tokens = []
     let [row, col, pos] = [0, 0, 0]
 
     while (contents.length > 0) {
-      let value = null
+      let token = null
 
-      for (let type in rules) {
-        value = rules[type](contents)
-        if (value == null) continue
+      for (let [type, rule] of rules) {
+        let length = rule(contents)
+        if (length == null) continue
 
-        if (type[0] !== '_') {
-          tokens.push({
-            type,
-            value,
-            row,
-            col,
-            pos
-          })
+        let value = contents.slice(0, length)
+
+        token = {
+          type,
+          value,
+          row,
+          col,
+          pos
         }
 
         break
       }
 
-      if (value == null) {
-        value = contents[0]
+      if (token == null) {
+        let value = contents[0]
 
-        tokens.push({
+        token = {
           type: 'invalid',
           value,
           row,
           col,
           pos
-        })
+        }
       }
+
+      if (token.type[0] !== '_') tokens.push(token)
+      if (shouldCancel(token)) break
 
       // Update source position
 
-      let newlineIndices = Array.from(value)
+      let newlineIndices = Array.from(token.value)
         .map((c, i) => (c === '\n' ? i : null))
         .filter(x => x != null)
 
       row += newlineIndices.length
 
       if (newlineIndices.length > 0) {
-        col = value.length - newlineIndices.slice(-1)[0] - 1
+        col = token.value.length - newlineIndices.slice(-1)[0] - 1
       } else {
-        col += value.length
+        col += token.value.length
       }
 
-      pos += value.length
-      contents = contents.slice(value.length)
+      pos += token.value.length
+      contents = contents.slice(token.value.length)
     }
 
     return tokens
@@ -96,20 +102,92 @@ export function parseLabel(contents) {
   }
 }
 
-export function tokenizeArrow(contents) {
-  return createTokenizer({
-    _whitespace: regexRule(/^\s+/),
-    _comma: regexRule(/^,/),
-    command: regexRule(/^\\arrow/),
-    bracket: regexRule(/^[\[\]]/),
-    alt: regexRule(/^'/),
-    argName: regexRule(/^([a-zA-Z]+ )*[a-zA-Z]+/),
-    argValue: regexRule(/^=\d+(em)?/),
-    label: contents => {
-      let label = parseLabel(contents)
-      if (label == null) return null
+export function parseNode(contents) {
+  let i = 0
 
-      return label.match
+  while (i < contents.length) {
+    let c = contents[i]
+
+    if (
+      ['&', '%'].includes(c) ||
+      ['\\\\', '\\arrow[', '\\end{tikzcd}'].some(
+        str => contents.slice(i, i + str.length) === str
+      )
+    ) {
+      break
     }
-  })(contents)
+
+    if (c === '\\') i++
+    i++
+  }
+
+  let match = contents.slice(0, i).trim()
+  if (match[match.length - 1] === '\\') match += contents[match.length]
+
+  let wrapped = match[0] === '{' && match[match.length - 1] === '}'
+
+  return {
+    match,
+    value: wrapped ? match.slice(1, -1) : match,
+    wrapped
+  }
 }
+
+export const tokenizeArrow = createTokenizer(
+  [
+    ['_whitespace', regexRule(/^\s+/)],
+    ['_comma', regexRule(/^,/)],
+    ['command', regexRule(/^\\arrow/)],
+    ['bracket', regexRule(/^[\[\]]/)],
+    ['alt', regexRule(/^'/)],
+    ['argName', regexRule(/^([a-zA-Z]+ )*[a-zA-Z]+/)],
+    ['argValue', regexRule(/^=\d+(em)?/)],
+    [
+      'label',
+      contents => {
+        let label = parseLabel(contents)
+        if (label == null) return null
+
+        return label.match.length
+      }
+    ]
+  ],
+  {
+    shouldCancel: token =>
+      token.type === 'invalid' ||
+      (token.type === 'bracket' && token.value === ']')
+  }
+)
+
+export const tokenize = createTokenizer(
+  [
+    ['_whitespace', regexRule(/^\s+/)],
+    ['_comment', regexRule(/^%.*/)],
+    ['begin', regexRule(/^\\begin{tikzcd}/)],
+    ['end', regexRule(/^\\end{tikzcd}/)],
+    [
+      'node',
+      contents => {
+        let {match} = parseNode(contents)
+        return match.length === 0 ? null : match.length
+      }
+    ],
+    [
+      'arrow',
+      contents => {
+        if (!contents.startsWith('\\arrow[')) return null
+
+        let tokens = tokenizeArrow(contents)
+        let lastToken = tokens[tokens.length - 1]
+        if (lastToken.type !== 'bracket' || lastToken.value !== ']') return null
+
+        return lastToken.pos + 1
+      }
+    ],
+    ['align', regexRule(/^&/)],
+    ['newrow', regexRule(/^\\\\/)]
+  ],
+  {
+    shouldCancel: token => ['invalid', 'end'].includes(token.type)
+  }
+)

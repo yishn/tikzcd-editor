@@ -132,3 +132,69 @@ t.test('tokenizeArrow', async t => {
     t.equal(invalidToken.value, '=')
   })
 })
+
+t.test('tokenize', async t => {
+  let tokens = parser.tokenize(
+    `% This is a comment
+    \\begin{tikzcd}
+    A \\ \\arrow[d, "\\overline{g}"'] &  & A\\times B \\arrow[rrdd, "g"]
+      \\arrow[rr, "\\pi_2"] \\arrow[ll, "\\pi_1"']
+      \\arrow[dd, "\\overline{g}\\times\\mathbf{1}_B" description, dashed] &
+      & B\\% \\arrow[d, "\\mathbf{1}_B"] \\\\
+    \\{C^B\\} &  &  &  & {B} % This is a comment
+      \\\\
+    &  & C^B\\times B \\arrow[llu, "\\pi'_1"] \\arrow[rru, "\\pi'_2"']
+      \\arrow[rr, "{\\mathrm{ev}_{B,C}}"'] &  & C
+    \\end{tikzcd}`
+  )
+
+  let tokenTypes = tokens.map(token => token.type)
+  let nodes = tokens
+    .filter(token => token.type === 'node')
+    .map(token => token.value)
+
+  t.strictDeepEqual(tokenTypes, [
+    'begin',
+    'node',
+    'arrow',
+    'align',
+    'align',
+    'node',
+    'arrow',
+    'arrow',
+    'arrow',
+    'arrow',
+    'align',
+    'align',
+    'node',
+    'arrow',
+    'newrow',
+    'node',
+    'align',
+    'align',
+    'align',
+    'align',
+    'node',
+    'newrow',
+    'align',
+    'align',
+    'node',
+    'arrow',
+    'arrow',
+    'arrow',
+    'align',
+    'align',
+    'node',
+    'end'
+  ])
+
+  t.strictDeepEqual(nodes, [
+    'A \\ ',
+    'A\\times B',
+    'B\\%',
+    '\\{C^B\\}',
+    '{B}',
+    'C^B\\times B',
+    'C'
+  ])
+})
