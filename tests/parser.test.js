@@ -60,7 +60,6 @@ t.test('tokenizeArrow', async t => {
 
     t.strictDeepEqual(tokenTypes, [
       'command',
-      'bracket',
       'argName',
       'label',
       'argName',
@@ -68,11 +67,10 @@ t.test('tokenizeArrow', async t => {
       'argName',
       'argName',
       'argValue',
-      'bracket'
+      'end'
     ])
     t.strictDeepEqual(tokenValues, [
-      '\\arrow',
-      '[',
+      '\\arrow[',
       'rr',
       '"hi"',
       'hook',
@@ -93,7 +91,6 @@ t.test('tokenizeArrow', async t => {
 
     t.strictDeepEqual(tokenTypes, [
       'command',
-      'bracket',
       'label',
       'alt',
       'argName',
@@ -103,11 +100,10 @@ t.test('tokenizeArrow', async t => {
       'argValue',
       'argName',
       'argValue',
-      'bracket'
+      'end'
     ])
     t.strictDeepEqual(tokenValues, [
-      '\\arrow',
-      '[',
+      '\\arrow[',
       '"f"',
       "'",
       'loop',

@@ -11,7 +11,7 @@ function createTokenizer(rules, options = {}) {
   return (contents, opts = {}) => {
     opts = {...options, ...opts}
 
-    let {shouldCancel = token => false} = opts
+    let {shouldStop = token => false} = opts
     let tokens = []
     let [row, col, pos] = [0, 0, 0]
 
@@ -48,7 +48,7 @@ function createTokenizer(rules, options = {}) {
       }
 
       if (token.type[0] !== '_') tokens.push(token)
-      if (shouldCancel(token)) break
+      if (shouldStop(token)) break
 
       // Update source position
 
@@ -137,8 +137,8 @@ export const tokenizeArrow = createTokenizer(
   [
     ['_whitespace', regexRule(/^\s+/)],
     ['_comma', regexRule(/^,/)],
-    ['command', regexRule(/^\\arrow/)],
-    ['bracket', regexRule(/^[\[\]]/)],
+    ['command', regexRule(/^\\arrow\[/)],
+    ['end', regexRule(/^\]/)],
     ['alt', regexRule(/^'/)],
     ['argName', regexRule(/^([a-zA-Z]+ )*[a-zA-Z]+/)],
     ['argValue', regexRule(/^=\d+(em)?/)],
@@ -153,9 +153,7 @@ export const tokenizeArrow = createTokenizer(
     ]
   ],
   {
-    shouldCancel: token =>
-      token.type === 'invalid' ||
-      (token.type === 'bracket' && token.value === ']')
+    shouldStop: token => ['invalid', 'end'].includes(token.type)
   }
 )
 
@@ -179,7 +177,7 @@ export const tokenize = createTokenizer(
 
         let tokens = tokenizeArrow(contents)
         let lastToken = tokens[tokens.length - 1]
-        if (lastToken.type !== 'bracket' || lastToken.value !== ']') return null
+        if (lastToken.type !== 'end') return null
 
         return lastToken.pos + 1
       }
@@ -188,6 +186,6 @@ export const tokenize = createTokenizer(
     ['newrow', regexRule(/^\\\\/)]
   ],
   {
-    shouldCancel: token => ['invalid', 'end'].includes(token.type)
+    shouldStop: token => ['invalid', 'end'].includes(token.type)
   }
 )
