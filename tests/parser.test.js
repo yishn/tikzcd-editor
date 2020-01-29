@@ -63,10 +63,14 @@ t.test('tokenizeArrow', async t => {
     t.strictDeepEqual(tokenTypes, [
       'command',
       'direction',
+      'comma',
       'label',
+      'comma',
       'argName',
       'alt',
+      'comma',
       'argName',
+      'comma',
       'argName',
       'argValue',
       'end'
@@ -74,10 +78,14 @@ t.test('tokenizeArrow', async t => {
     t.strictDeepEqual(tokenValues, [
       '\\arrow[',
       'rr',
+      ',',
       'hi',
+      ',',
       'hook',
       "'",
+      ',',
       'bend left',
+      ',',
       'shift left',
       '2',
       ']'
@@ -97,11 +105,15 @@ t.test('tokenizeArrow', async t => {
       'command',
       'label',
       'alt',
+      'comma',
       'argName',
+      'comma',
       'argName',
       'argValue',
+      'comma',
       'argName',
       'argValue',
+      'comma',
       'argName',
       'argValue',
       'end'
@@ -110,11 +122,15 @@ t.test('tokenizeArrow', async t => {
       '\\arrow[',
       'f',
       "'",
+      ',',
       'loop',
+      ',',
       'distance',
       '2em',
+      ',',
       'in',
       '305',
+      ',',
       'out',
       '235',
       ']'
@@ -207,15 +223,16 @@ t.test('tokenize', async t => {
   ])
 })
 
-t.test('parseArrow', async t => {
+t.only('parseArrow', async t => {
   let arrow = parser.parseArrow(
     '\\arrow[rru, "hi", hook\', bend left, shift left=2, length=2em]'
   )
 
   t.strictDeepEqual(arrow, {
     direction: [2, -1],
+    label: 'hi',
+    labelPosition: 'left',
     args: [
-      {name: 'label', value: 'hi'},
       {name: 'hook', alt: true},
       {name: 'bend left'},
       {name: 'shift left', value: '2'},
@@ -227,11 +244,17 @@ t.test('parseArrow', async t => {
 
   t.strictDeepEqual(arrow, {
     direction: [0, 0],
-    args: [
-      {name: 'label', value: 'hi', alt: true},
-      {name: 'loop'},
-      {name: 'hook'},
-      {name: 'length', value: '2em'}
-    ]
+    label: 'hi',
+    labelPosition: 'right',
+    args: [{name: 'loop'}, {name: 'hook'}, {name: 'length', value: '2em'}]
+  })
+
+  arrow = parser.parseArrow('\\arrow[ldd, "hi" description]')
+
+  t.strictDeepEqual(arrow, {
+    direction: [-1, 2],
+    label: 'hi',
+    labelPosition: 'inside',
+    args: []
   })
 })

@@ -65,7 +65,7 @@ export function parseNode(input) {
 export const tokenizeArrow = createTokenizer({
   rules: [
     regexRule('_whitespace', /^\s+/),
-    regexRule('_comma', /^,/),
+    regexRule('comma', /^,/),
     regexRule('command', /^\\arrow\s*\[/),
     regexRule('end', /^\]/),
     regexRule('alt', /^'/),
@@ -85,7 +85,7 @@ export const tokenizeArrow = createTokenizer({
       }
     }
   ],
-  shouldStop: token => [null, 'end'].includes(token.type)
+  shouldStop: token => token.type === 'end'
 })
 
 export const tokenize = createTokenizer({
@@ -137,10 +137,12 @@ export const tokenize = createTokenizer({
 export function parseArrowTokens(tokens) {
   let arrow = {
     direction: [0, 0],
+    label: null,
+    labelPosition: 'left',
     args: []
   }
 
-  let arg = null
+  let arg = {}
 
   for (let token of tokens) {
     if (token.type == null) {
@@ -148,9 +150,7 @@ export function parseArrowTokens(tokens) {
       error.token = token
 
       throw token
-    }
-
-    if (token.type === 'direction') {
+    } else if (token.type === 'direction') {
       let chars = [...token.value]
 
       arrow.direction = chars.reduce(
@@ -166,27 +166,32 @@ export function parseArrowTokens(tokens) {
           ),
         [0, 0]
       )
-    }
+    } else if (token.type === 'label') {
+      arrow.label = token.value
 
-    if (token.type === 'label') {
-      arrow.args.push(
-        (arg = {
-          name: 'label',
-          value: token.value
-        })
-      )
+      let {done, value: nextToken} = tokens.peek()
+
+      if (!done) {
+        if (nextToken.type === 'alt') {
+          arrow.labelPosition = 'right'
+          tokens.next()
+        } else if (
+          nextToken.type === 'argName' &&
+          nextToken.value === 'description'
+        ) {
+          arrow.labelPosition = 'inside'
+          tokens.next()
+        }
+      }
     } else if (token.type === 'argName') {
-      arrow.args.push(
-        (arg = {
-          name: token.value
-        })
-      )
-    } else if (token.type === 'argValue' && arg != null) {
+      arg.name = token.value
+      arrow.args.push(arg)
+    } else if (token.type === 'argValue') {
       arg.value = token.value
-    } else if (token.type === 'alt' && arg != null) {
+    } else if (token.type === 'alt') {
       arg.alt = true
-    } else {
-      arg = null
+    } else if (token.type === 'comma') {
+      arg = {}
     }
   }
 
