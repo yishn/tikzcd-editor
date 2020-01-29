@@ -74,12 +74,12 @@ t.test('tokenizeArrow', async t => {
     t.strictDeepEqual(tokenValues, [
       '\\arrow[',
       'rr',
-      '"hi"',
+      'hi',
       'hook',
       "'",
       'bend left',
       'shift left',
-      '=2',
+      '2',
       ']'
     ])
   })
@@ -108,15 +108,15 @@ t.test('tokenizeArrow', async t => {
     ])
     t.strictDeepEqual(tokenValues, [
       '\\arrow[',
-      '"f"',
+      'f',
       "'",
       'loop',
       'distance',
-      '=2em',
+      '2em',
       'in',
-      '=305',
+      '305',
       'out',
-      '=235',
+      '235',
       ']'
     ])
   })
@@ -139,9 +139,9 @@ t.test('tokenize', async t => {
   let tokens = [
     ...parser.tokenize(
       `% This is a comment
-      \\begin{tikzcd}
-      A \\ \\arrow[d, "\\overline{g}"'] &  & A\\times B \\arrow[rrdd, "g"]
-        \\arrow[rr, "\\pi_2"] \\arrow[ll, "\\pi_1"']
+      \\begin  {tikzcd}
+      A \\ \\arrow[d, "\\overline{g}"'] &  & A\\times B \\arrow  [rrdd, "g"]
+        \\arrow[rr,  "\\pi_2"] \\arrow [ll,"\\pi_1"']
         \\arrow[dd, "\\overline{g}\\times\\mathbf{1}_B" description, dashed] &
         & B\\% \\arrow[d, "\\mathbf{1}_B"] \\\\
       \\{C^B\\} &  &  &  & {B} % This is a comment
@@ -197,8 +197,12 @@ t.test('tokenize', async t => {
     'A\\times B',
     'B\\%',
     '\\{C^B\\}',
-    '{B}',
+    'B',
     'C^B\\times B',
     'C'
+  ])
+
+  t.strictDeepEqual(tokens.find(token => token.type === 'arrow').value, [
+    ...parser.tokenizeArrow('\\arrow[d, "\\overline{g}"\']')
   ])
 })

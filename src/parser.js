@@ -1,45 +1,45 @@
 import {regexRule, createTokenizer} from 'doken'
 
-export function parseLabel(contents) {
-  if (contents[0] !== '"') return null
+export function parseLabel(input) {
+  if (input[0] !== '"') return null
 
   let i = 1
   let braceNesting = 0
-  let wrapped = contents[1] === '{'
+  let wrapped = input[1] === '{'
 
-  while (i < contents.length) {
-    let c = contents[i]
+  while (i < input.length) {
+    let c = input[i]
 
     if (c === '"' && braceNesting <= 0) break
     if (c === '\\') i++
     if (c === '{') braceNesting++
     if (c === '}') {
       braceNesting--
-      if (braceNesting === 0 && contents[i + 1] !== '"') wrapped = false
+      if (braceNesting === 0 && input[i + 1] !== '"') wrapped = false
     }
 
     i++
   }
 
-  if (contents[i] !== '"') return null
+  if (input[i] !== '"') return null
 
   return {
-    match: contents.slice(0, i + 1),
-    value: !wrapped ? contents.slice(1, i) : contents.slice(2, i - 1),
+    match: input.slice(0, i + 1),
+    value: !wrapped ? input.slice(1, i) : input.slice(2, i - 1),
     wrapped
   }
 }
 
-export function parseNode(contents) {
+export function parseNode(input) {
   let i = 0
 
-  while (i < contents.length) {
-    let c = contents[i]
+  while (i < input.length) {
+    let c = input[i]
 
     if (
       ['&', '%'].includes(c) ||
-      ['\\\\', '\\arrow[', '\\end{tikzcd}'].some(
-        str => contents.slice(i, i + str.length) === str
+      [/^\\\\/, /^\\arrow\s*\[/, /^\\end\s*{tikzcd}/].some(
+        regex => regex.exec(input.slice(i)) != null
       )
     ) {
       break
@@ -49,8 +49,8 @@ export function parseNode(contents) {
     i++
   }
 
-  let match = contents.slice(0, i).trim()
-  if (match[match.length - 1] === '\\') match += contents[match.length]
+  let match = input.slice(0, i).trim()
+  if (match[match.length - 1] === '\\') match += input[match.length]
 
   let wrapped = match[0] === '{' && match[match.length - 1] === '}'
 
@@ -65,18 +65,21 @@ export const tokenizeArrow = createTokenizer({
   rules: [
     regexRule('_whitespace', /^\s+/),
     regexRule('_comma', /^,/),
-    regexRule('command', /^\\arrow\[/),
+    regexRule('command', /^\\arrow\s*\[/),
     regexRule('end', /^\]/),
     regexRule('alt', /^'/),
     regexRule('argName', /^([a-zA-Z]+ )*[a-zA-Z]+/),
-    regexRule('argValue', /^=\d+(em)?/),
+    regexRule('argValue', /^=(\d+(em)?)/, match => match[1]),
     {
       type: 'label',
-      match: contents => {
-        let label = parseLabel(contents)
+      match: input => {
+        let label = parseLabel(input)
         if (label == null) return null
 
-        return {length: label.match.length}
+        return {
+          length: label.match.length,
+          value: label.value
+        }
       }
     }
   ],
@@ -87,25 +90,40 @@ export const tokenize = createTokenizer({
   rules: [
     regexRule('_whitespace', /^\s+/),
     regexRule('_comment', /^%.*/),
-    regexRule('begin', /^\\begin{tikzcd}/),
-    regexRule('end', /^\\end{tikzcd}/),
+    regexRule('begin', /^\\begin\s*{tikzcd}/),
+    regexRule('end', /^\\end\s*{tikzcd}/),
     {
       type: 'node',
-      match: contents => {
-        let {match} = parseNode(contents)
-        return match.length === 0 ? null : {length: match.length}
+      match: input => {
+        let {match, value} = parseNode(input)
+        return match.length === 0
+          ? null
+          : {
+              length: match.length,
+              value
+            }
       }
     },
     {
       type: 'arrow',
-      match: contents => {
-        if (!contents.startsWith('\\arrow[')) return null
+      match: input => {
+        if (!input.startsWith('\\arrow')) return null
 
-        let tokens = [...tokenizeArrow(contents)]
+        let tokens = [...tokenizeArrow(input)]
+        if (tokens.length < 2) return null
+
         let lastToken = tokens[tokens.length - 1]
-        if (lastToken.type !== 'end') return null
+        if (
+          tokens.length < 2 ||
+          tokens[0].type !== 'command' ||
+          lastToken.type !== 'end'
+        )
+          return null
 
-        return {length: lastToken.pos + 1}
+        return {
+          length: lastToken.pos + lastToken.length,
+          value: tokens
+        }
       }
     },
     regexRule('align', /^&/),
