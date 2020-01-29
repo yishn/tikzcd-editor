@@ -1,4 +1,5 @@
 import {regexRule, createTokenizer} from 'doken'
+import {arrAdd} from './helper'
 
 export function parseLabel(input) {
   if (input[0] !== '"') return null
@@ -68,6 +69,7 @@ export const tokenizeArrow = createTokenizer({
     regexRule('command', /^\\arrow\s*\[/),
     regexRule('end', /^\]/),
     regexRule('alt', /^'/),
+    regexRule('direction', /^[lrud]+(?!\w)/),
     regexRule('argName', /^([a-zA-Z]+ )*[a-zA-Z]+/),
     regexRule('argValue', /^=(\d+(em)?)/, match => match[1]),
     {
@@ -131,3 +133,66 @@ export const tokenize = createTokenizer({
   ],
   shouldStop: token => [null, 'end'].includes(token.type)
 })
+
+export function parseArrowTokens(tokens) {
+  let arrow = {
+    direction: [0, 0],
+    args: []
+  }
+
+  let arg = null
+
+  for (let token of tokens) {
+    if (token.type == null) {
+      let error = new Error(`Unexpected token at ${token.pos}`)
+      error.token = token
+
+      throw token
+    }
+
+    if (token.type === 'direction') {
+      let chars = [...token.value]
+
+      arrow.direction = chars.reduce(
+        (direction, c) =>
+          arrAdd(
+            direction,
+            {
+              l: [-1, 0],
+              r: [1, 0],
+              u: [0, -1],
+              d: [0, 1]
+            }[c]
+          ),
+        [0, 0]
+      )
+    }
+
+    if (token.type === 'label') {
+      arrow.args.push(
+        (arg = {
+          name: 'label',
+          value: token.value
+        })
+      )
+    } else if (token.type === 'argName') {
+      arrow.args.push(
+        (arg = {
+          name: token.value
+        })
+      )
+    } else if (token.type === 'argValue' && arg != null) {
+      arg.value = token.value
+    } else if (token.type === 'alt' && arg != null) {
+      arg.alt = true
+    } else {
+      arg = null
+    }
+  }
+
+  return arrow
+}
+
+export function parseArrow(input) {
+  return parseArrowTokens(tokenizeArrow(input))
+}

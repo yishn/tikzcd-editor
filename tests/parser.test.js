@@ -62,7 +62,7 @@ t.test('tokenizeArrow', async t => {
 
     t.strictDeepEqual(tokenTypes, [
       'command',
-      'argName',
+      'direction',
       'label',
       'argName',
       'alt',
@@ -205,4 +205,33 @@ t.test('tokenize', async t => {
   t.strictDeepEqual(tokens.find(token => token.type === 'arrow').value, [
     ...parser.tokenizeArrow('\\arrow[d, "\\overline{g}"\']')
   ])
+})
+
+t.test('parseArrow', async t => {
+  let arrow = parser.parseArrow(
+    '\\arrow[rru, "hi", hook\', bend left, shift left=2, length=2em]'
+  )
+
+  t.strictDeepEqual(arrow, {
+    direction: [2, -1],
+    args: [
+      {name: 'label', value: 'hi'},
+      {name: 'hook', alt: true},
+      {name: 'bend left'},
+      {name: 'shift left', value: '2'},
+      {name: 'length', value: '2em'}
+    ]
+  })
+
+  arrow = parser.parseArrow('\\arrow["hi"\', loop, hook, length=2em]')
+
+  t.strictDeepEqual(arrow, {
+    direction: [0, 0],
+    args: [
+      {name: 'label', value: 'hi', alt: true},
+      {name: 'loop'},
+      {name: 'hook'},
+      {name: 'length', value: '2em'}
+    ]
+  })
 })
