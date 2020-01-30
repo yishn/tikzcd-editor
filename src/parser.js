@@ -2,10 +2,15 @@ import {regexRule, createTokenizer} from 'doken'
 import {arrAdd, arrEquals} from './helper'
 
 export class ParseError extends Error {
-  constructor(message, token) {
+  constructor(message, token = null) {
+    super()
+
     this.name = 'ParseError'
-    this.message = message
     this.token = token
+    this.message =
+      token == null
+        ? message
+        : `${message} at line ${token.row + 1}, column ${token.col + 1}`
   }
 }
 
@@ -149,7 +154,7 @@ export function parseArrowTokens(tokens) {
 
   for (let token of tokens) {
     if (token.type == null) {
-      throw new ParseError('Unexpected token.', token)
+      throw new ParseError('Unexpected token', token)
     } else if (token.type === 'direction') {
       let chars = [...token.value]
 
@@ -256,16 +261,20 @@ export function parseArrow(input) {
 }
 
 export function parseTokens(tokens) {
+  let hasBegin = false
   let diagram = {nodes: [], edges: []}
   let [x, y] = [0, 0]
 
   for (let token of tokens) {
-    if (token.type === 'begin') break
+    if (token.type === 'begin') {
+      hasBegin = true
+      break
+    }
   }
 
   for (let token of tokens) {
     if (token.type == null) {
-      throw new ParseError('Unexpected token.', token)
+      throw new ParseError('Unexpected token', token)
     }
 
     if (token.type === 'end') break
@@ -293,7 +302,7 @@ export function parseTokens(tokens) {
       }
 
       if (arrowTokens.slice(-1)[0].type !== 'end') {
-        throw new ParseError('Arrow does not end.', token)
+        throw new ParseError('Arrow does not end', token)
       }
 
       let arrow = parseArrowTokens(arrowTokens[Symbol.iterator]())
@@ -333,6 +342,10 @@ export function parseTokens(tokens) {
     if (edge.loop) {
       edge.to = edge.from
     }
+  }
+
+  if (!hasBegin) {
+    throw new ParseError('Did not find tikzcd environment')
   }
 
   return diagram
