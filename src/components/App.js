@@ -56,7 +56,7 @@ export default class App extends Component {
         // Arrow keys
 
         this.setState(state =>
-          state.cellEditMode || state.selectedArrow != null
+          state.showCodeBox || state.cellEditMode || state.selectedArrow != null
             ? null
             : {selectedCell: arrAdd(state.selectedCell, arrowControl[evt.key])}
         )
