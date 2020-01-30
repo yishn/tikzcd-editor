@@ -230,7 +230,7 @@ t.test('parseArrow', async t => {
 
   t.strictDeepEqual(arrow, {
     direction: [2, -1],
-    label: 'hi',
+    value: 'hi',
     labelPosition: 'left',
     tail: 'hookalt',
     bend: 30,
@@ -243,7 +243,7 @@ t.test('parseArrow', async t => {
 
   t.strictDeepEqual(arrow, {
     direction: [0, 0],
-    label: 'hi',
+    value: 'hi',
     labelPosition: 'right',
     loop: [270, true],
     tail: 'hook'
@@ -253,7 +253,25 @@ t.test('parseArrow', async t => {
 
   t.strictDeepEqual(arrow, {
     direction: [-1, 2],
-    label: 'hi',
+    value: 'hi',
     labelPosition: 'inside'
   })
+})
+
+t.test('parse', async t => {
+  let diagram = parser.parse(
+    `% This is a comment
+    \\begin  {tikzcd}
+    A \\ \\arrow[d, "\\overline{g}"'] &  & A\\times B \\arrow  [rrdd, "g"]
+      \\arrow[rr,  "\\pi_2"] \\arrow [ll,"\\pi_1"']
+      \\arrow[dd, "\\overline{g}\\times\\mathbf{1}_B" description, dashed] &
+      & B\\% \\arrow[d, "\\mathbf{1}_B"] \\\\
+    \\{C^B\\} &  &  &  & {B} % This is a comment
+      \\\\
+    &  & C^B\\times B \\arrow[llu, "\\pi'_1"] \\arrow[rru, "\\pi'_2"']
+      \\arrow[rr, "{\\mathrm{ev}_{B,C}}"'] &  & C
+    \\end{tikzcd}`
+  )
+
+  t.matchSnapshot(diagram, 'diagram1')
 })

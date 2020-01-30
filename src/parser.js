@@ -79,7 +79,7 @@ export const tokenizeArrow = createTokenizer({
     regexRule('alt', /^'/),
     regexRule('direction', /^[lrud]+(?!\w)/),
     regexRule('argName', /^([a-zA-Z]+ )*[a-zA-Z]+/),
-    regexRule('argValue', /^=(\d+(em)?)/, match => match[1]),
+    regexRule('argValue', /^=(-?\d+(.\d+)?(em)?)/, match => match[1]),
     {
       type: 'label',
       match: input => {
@@ -120,10 +120,10 @@ export const tokenize = createTokenizer({
         if (!input.startsWith('\\arrow')) return null
 
         let tokens = tokenizeArrow(input)
-        let firstToken = tokens.peek()
-        if (firstToken == null || firstToken.type !== 'command') return null
+        let {done, value: firstToken} = tokens.next()
+        if (done || firstToken.type !== 'command') return null
 
-        tokens = [...tokens]
+        tokens = [firstToken, ...tokens]
         let lastToken = tokens[tokens.length - 1]
 
         return {
@@ -141,7 +141,7 @@ export const tokenize = createTokenizer({
 export function parseArrowTokens(tokens) {
   let arrow = {
     direction: [0, 0],
-    label: null,
+    value: null,
     labelPosition: 'left'
   }
 
@@ -168,11 +168,11 @@ export function parseArrowTokens(tokens) {
         [0, 0]
       )
     } else if (token.type === 'label') {
-      arrow.label = token.value
+      arrow.value = token.value
 
-      let nextToken = tokens.peek()
+      let {done, value: nextToken} = tokens.next()
 
-      if (nextToken != null) {
+      if (!done) {
         if (nextToken.type === 'alt') {
           arrow.labelPosition = 'right'
           tokens.next()
@@ -212,7 +212,12 @@ export function parseArrowTokens(tokens) {
         Rightarrow: {line: 'double'},
         dashed: {line: 'dashed'},
         dotted: {line: 'dotted'},
-        phantom: {line: 'none'},
+        phantom: {
+          labelPosition: 'inside',
+          tail: 'none',
+          line: 'none',
+          head: 'none'
+        },
 
         hook: {tail: `hook${alt ? 'alt' : ''}`},
         'maps to': {tail: 'mapsto'},
@@ -251,4 +256,91 @@ export function parseArrowTokens(tokens) {
 
 export function parseArrow(input) {
   return parseArrowTokens(tokenizeArrow(input))
+}
+
+export function parseTokens(tokens) {
+  let diagram = {nodes: [], edges: []}
+  let [x, y] = [0, 0]
+
+  for (let token of tokens) {
+    if (token.type === 'begin') break
+  }
+
+  for (let token of tokens) {
+    if (token.type == null) {
+      throw new ParseError('Unexpected token.', token)
+    }
+
+    if (token.type === 'end') break
+    else if (token.type === 'align') x++
+    else if (token.type === 'newrow') {
+      x = 0
+      y++
+    }
+
+    if (token.type === 'node') {
+      diagram.nodes.push({
+        position: [x, y],
+        value: token.value
+      })
+    } else if (token.type === 'arrow') {
+      let arrowTokens = token.value
+
+      // Adjust position info in arrow tokens
+
+      for (let subtoken of arrowTokens) {
+        ;[subtoken.row, subtoken.col, subtoken.pos] = arrAdd(
+          [subtoken.row, subtoken.col, subtoken.pos],
+          [token.row, token.col, token.pos]
+        )
+      }
+
+      if (arrowTokens.slice(-1)[0].type !== 'end') {
+        throw new ParseError('Arrow does not end.', token)
+      }
+
+      let arrow = parseArrowTokens(arrowTokens[Symbol.iterator]())
+      let from = [x, y]
+      let to = arrAdd(from, arrow.direction)
+
+      let edge = {
+        from,
+        to,
+        ...arrow
+      }
+
+      delete edge.direction
+      diagram.edges.push(edge)
+    }
+  }
+
+  // Transform from/to positions to indices
+
+  let getNodeIndex = position => {
+    let index = diagram.nodes.findIndex(node =>
+      arrEquals(node.position, position)
+    )
+
+    if (index < 0) {
+      index = diagram.nodes.length
+      diagram.nodes.push({position, value: ''})
+    }
+
+    return index
+  }
+
+  for (let edge of diagram.edges) {
+    edge.from = getNodeIndex(edge.from)
+    edge.to = getNodeIndex(edge.to)
+
+    if (edge.loop) {
+      edge.to = edge.from
+    }
+  }
+
+  return diagram
+}
+
+export function parse(input) {
+  return parseTokens(tokenize(input))
 }
