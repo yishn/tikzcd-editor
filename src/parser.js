@@ -134,8 +134,7 @@ export const tokenize = createTokenizer({
     },
     regexRule('align', /^&/),
     regexRule('newrow', /^\\\\/)
-  ],
-  shouldStop: token => [null, 'end'].includes(token.type)
+  ]
 })
 
 export function parseArrowTokens(tokens) {
@@ -175,13 +174,11 @@ export function parseArrowTokens(tokens) {
       if (!done) {
         if (nextToken.type === 'alt') {
           arrow.labelPosition = 'right'
-          tokens.next()
         } else if (
           nextToken.type === 'argName' &&
           nextToken.value === 'description'
         ) {
           arrow.labelPosition = 'inside'
-          tokens.next()
         }
       }
     } else if (token.type === 'argName') {
