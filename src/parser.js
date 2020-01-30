@@ -111,16 +111,12 @@ export const tokenize = createTokenizer({
       match: input => {
         if (!input.startsWith('\\arrow')) return null
 
-        let tokens = [...tokenizeArrow(input)]
-        if (tokens.length < 2) return null
+        let tokens = tokenizeArrow(input)
+        let firstToken = tokens.peek()
+        if (firstToken == null || firstToken.type !== 'command') return null
 
+        tokens = [...tokens]
         let lastToken = tokens[tokens.length - 1]
-        if (
-          tokens.length < 2 ||
-          tokens[0].type !== 'command' ||
-          lastToken.type !== 'end'
-        )
-          return null
 
         return {
           length: lastToken.pos + lastToken.length,
@@ -169,9 +165,9 @@ export function parseArrowTokens(tokens) {
     } else if (token.type === 'label') {
       arrow.label = token.value
 
-      let {done, value: nextToken} = tokens.peek()
+      let nextToken = tokens.peek()
 
-      if (!done) {
+      if (nextToken != null) {
         if (nextToken.type === 'alt') {
           arrow.labelPosition = 'right'
           tokens.next()

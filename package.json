@@ -25,7 +25,7 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "copy-text-to-clipboard": "^2.1.1",
-    "doken": "0.0.7-alpha",
+    "doken": "0.0.8-alpha",
     "jsx-tikzcd": "^0.5.1",
     "lz-string": "^1.4.4",
     "preact": "^10.2.1"
