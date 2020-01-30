@@ -306,17 +306,20 @@ export function parseTokens(tokens) {
       }
 
       let arrow = parseArrowTokens(arrowTokens[Symbol.iterator]())
-      let from = [x, y]
-      let to = arrAdd(from, arrow.direction)
 
-      let edge = {
-        from,
-        to,
-        ...arrow
+      if (arrow.loop || !arrEquals(arrow.direction, [0, 0])) {
+        let from = [x, y]
+        let to = arrAdd(from, arrow.direction)
+
+        let edge = {
+          from,
+          to,
+          ...arrow
+        }
+
+        delete edge.direction
+        diagram.edges.push(edge)
       }
-
-      delete edge.direction
-      diagram.edges.push(edge)
     }
   }
 
