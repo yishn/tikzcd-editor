@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`tests/parser.test.js TAP parse > diagram1 1`] = `
+exports[`parser.test.js TAP parse > diagram1 1`] = `
 Object {
   "edges": Array [
     Object {

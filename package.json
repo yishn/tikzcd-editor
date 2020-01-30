@@ -55,7 +55,7 @@
   },
   "scripts": {
     "start": "http-server",
-    "test": "tap",
+    "test": "cd tests && tap",
     "build": "npm run format-base -- --check && webpack --mode production",
     "dist": "npm run build && node ./ci/createArtifact.js",
     "watch": "concurrently \"webpack --mode development --watch\" \"npm run watch-format\"",
