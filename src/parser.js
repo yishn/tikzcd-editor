@@ -1,5 +1,13 @@
 import {regexRule, createTokenizer} from 'doken'
-import {arrAdd} from './helper'
+import {arrAdd, arrEquals} from './helper'
+
+export class ParseError extends Error {
+  constructor(message, token) {
+    this.name = 'ParseError'
+    this.message = message
+    this.token = token
+  }
+}
 
 export function parseLabel(input) {
   if (input[0] !== '"') return null
@@ -134,18 +142,15 @@ export function parseArrowTokens(tokens) {
   let arrow = {
     direction: [0, 0],
     label: null,
-    labelPosition: 'left',
-    args: []
+    labelPosition: 'left'
   }
 
+  let args = []
   let arg = {}
 
   for (let token of tokens) {
     if (token.type == null) {
-      let error = new Error(`Unexpected token at ${token.pos}`)
-      error.token = token
-
-      throw token
+      throw new ParseError('Unexpected token.', token)
     } else if (token.type === 'direction') {
       let chars = [...token.value]
 
@@ -181,7 +186,7 @@ export function parseArrowTokens(tokens) {
       }
     } else if (token.type === 'argName') {
       arg.name = token.value
-      arrow.args.push(arg)
+      args.push(arg)
     } else if (token.type === 'argValue') {
       arg.value = token.value
     } else if (token.type === 'alt') {
@@ -189,6 +194,56 @@ export function parseArrowTokens(tokens) {
     } else if (token.type === 'comma') {
       arg = {}
     }
+  }
+
+  for (let {name, value, alt} of args) {
+    Object.assign(
+      arrow,
+      {
+        'near start': {labelPositionLongitudinal: 'nearstart'},
+        'very near start': {labelPositionLongitudinal: 'verynearstart'},
+        'near end': {labelPositionLongitudinal: 'nearend'},
+        'very near end': {labelPositionLongitudinal: 'verynearend'},
+
+        harpoon: {head: `harpoon${alt ? 'alt' : ''}`},
+        'two heads': {head: 'twoheads'},
+        'no head': {head: 'none'},
+
+        Rightarrow: {line: 'double'},
+        dashed: {line: 'dashed'},
+        dotted: {line: 'dotted'},
+        phantom: {line: 'none'},
+
+        hook: {tail: `hook${alt ? 'alt' : ''}`},
+        'maps to': {tail: 'mapsto'},
+
+        'bend left': {bend: value != null ? +value : 30},
+        'bend right': {bend: value != null ? -value : -30},
+
+        'shift left': {shift: value != null ? -value : -1},
+        'shift right': {shift: value != null ? value : 1},
+
+        loop: (() => {
+          let loop = [0, false]
+          let [inAngle, outAngle] = ['in', 'out'].map(name => {
+            let arg = args.find(arg => arg.name === name)
+            return arg == null ? null : +arg.value
+          })
+
+          if (inAngle != null && outAngle != null) {
+            let angle = ((inAngle + outAngle) / 2 + 90) % 360
+
+            if ((outAngle - inAngle + 360) % 360 < 180) {
+              loop = [angle, true]
+            } else {
+              loop = [angle, false]
+            }
+          }
+
+          return {loop}
+        })()
+      }[name]
+    )
   }
 
   return arrow

@@ -223,30 +223,30 @@ t.test('tokenize', async t => {
   ])
 })
 
-t.only('parseArrow', async t => {
+t.test('parseArrow', async t => {
   let arrow = parser.parseArrow(
-    '\\arrow[rru, "hi", hook\', bend left, shift left=2, length=2em]'
+    '\\arrow[rru, hook\', bend left, "hi", shift left=2, length=2em]'
   )
 
   t.strictDeepEqual(arrow, {
     direction: [2, -1],
     label: 'hi',
     labelPosition: 'left',
-    args: [
-      {name: 'hook', alt: true},
-      {name: 'bend left'},
-      {name: 'shift left', value: '2'},
-      {name: 'length', value: '2em'}
-    ]
+    tail: 'hookalt',
+    bend: 30,
+    shift: -2
   })
 
-  arrow = parser.parseArrow('\\arrow["hi"\', loop, hook, length=2em]')
+  arrow = parser.parseArrow(
+    '\\arrow["hi"\', loop, hook, in=145, out=215, length=2em]'
+  )
 
   t.strictDeepEqual(arrow, {
     direction: [0, 0],
     label: 'hi',
     labelPosition: 'right',
-    args: [{name: 'loop'}, {name: 'hook'}, {name: 'length', value: '2em'}]
+    loop: [270, true],
+    tail: 'hook'
   })
 
   arrow = parser.parseArrow('\\arrow[ldd, "hi" description]')
@@ -254,7 +254,6 @@ t.only('parseArrow', async t => {
   t.strictDeepEqual(arrow, {
     direction: [-1, 2],
     label: 'hi',
-    labelPosition: 'inside',
-    args: []
+    labelPosition: 'inside'
   })
 })
