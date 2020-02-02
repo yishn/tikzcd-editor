@@ -1,4 +1,4 @@
-import {regexRule, createTokenizer} from 'doken'
+import {createTokenizer, regexRule} from 'doken'
 import {arrAdd, arrEquals} from './helper'
 
 export class ParseError extends Error {
@@ -77,18 +77,19 @@ export function parseNode(input) {
 
 export const tokenizeArrow = createTokenizer({
   rules: [
-    regexRule('_whitespace', /^\s+/),
-    regexRule('comma', /^,/),
-    regexRule('command', /^\\arrow\s*\[/),
-    regexRule('end', /^\]/),
-    regexRule('alt', /^'/),
-    regexRule('direction', /^[lrud]+(?!\w)/),
-    regexRule('argName', /^([a-zA-Z]+ )*[a-zA-Z]+/),
-    regexRule('argValue', /^=(-?\d+(.\d+)?(em)?)/, match => match[1]),
+    regexRule('_whitespace', /\s+/y, {lineBreaks: true}),
+    regexRule('comma', /,/y),
+    regexRule('command', /\\arrow\s*\[/y, {lineBreaks: true}),
+    regexRule('end', /\]/y),
+    regexRule('alt', /'/y),
+    regexRule('direction', /[lrud]+(?!\w)/y),
+    regexRule('argName', /([a-zA-Z]+ )*[a-zA-Z]+/y),
+    regexRule('argValue', /=(-?\d+(.\d+)?(em)?)/y, {value: match => match[1]}),
     {
       type: 'label',
-      match: input => {
-        let label = parseLabel(input)
+      lineBreaks: true,
+      match: (input, position) => {
+        let label = parseLabel(input.slice(position))
         if (label == null) return null
 
         return {
@@ -97,20 +98,20 @@ export const tokenizeArrow = createTokenizer({
         }
       }
     }
-  ],
-  shouldStop: token => token.type === 'end'
+  ]
 })
 
 export const tokenize = createTokenizer({
   rules: [
-    regexRule('_whitespace', /^\s+/),
-    regexRule('_comment', /^%.*/),
-    regexRule('begin', /^\\begin\s*{tikzcd}/),
-    regexRule('end', /^\\end\s*{tikzcd}/),
+    regexRule('_whitespace', /\s+/y, {lineBreaks: true}),
+    regexRule('_comment', /%.*/y),
+    regexRule('begin', /\\begin\s*{tikzcd}/y, {lineBreaks: true}),
+    regexRule('end', /\\end\s*{tikzcd}/y, {lineBreaks: true}),
     {
       type: 'node',
-      match: input => {
-        let {match, value} = parseNode(input)
+      lineBreaks: true,
+      match: (input, position) => {
+        let {match, value} = parseNode(input.slice(position))
         return match.length === 0
           ? null
           : {
@@ -121,14 +122,20 @@ export const tokenize = createTokenizer({
     },
     {
       type: 'arrow',
-      match: input => {
-        if (!input.startsWith('\\arrow')) return null
+      lineBreaks: true,
+      match: (input, position) => {
+        if (!input.slice(position).startsWith('\\arrow')) return null
 
-        let tokens = tokenizeArrow(input)
-        let {done, value: firstToken} = tokens.next()
-        if (done || firstToken.type !== 'command') return null
+        let tokensIter = tokenizeArrow(input.slice(position))
+        let tokens = []
 
-        tokens = [firstToken, ...tokens]
+        for (let token of tokensIter) {
+          if (tokens.length === 0 && token.type !== 'command') return null
+
+          tokens.push(token)
+          if (token.type === 'end') break
+        }
+
         let lastToken = tokens[tokens.length - 1]
 
         return {
@@ -137,8 +144,8 @@ export const tokenize = createTokenizer({
         }
       }
     },
-    regexRule('align', /^&/),
-    regexRule('newrow', /^\\\\/)
+    regexRule('align', /&/y),
+    regexRule('newrow', /\\\\/y)
   ]
 })
 
