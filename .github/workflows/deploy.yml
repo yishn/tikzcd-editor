@@ -20,6 +20,10 @@ jobs:
         npm run dist
       env:
         CI: true
+    - name: Extract info
+      id: info
+      run: |
+        node ./ci/extractInfo.js
     - name: Deploy application
       uses: SamKirkland/FTP-Deploy-Action@2.0.0
       env:
@@ -27,6 +31,6 @@ jobs:
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         METHOD: sftp
-        LOCAL_DIR: dist/tikzcd-editor
+        LOCAL_DIR: dist/tikzcd-editor-v${{ steps.info.outputs.version }}
         REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
         ARGS: --delete

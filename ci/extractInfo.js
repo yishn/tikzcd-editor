@@ -1,4 +1,5 @@
 const path = require('path')
+const {version} = require('../package.json')
 
 function printSetOutputs(outputs) {
   for (let [name, value] of Object.entries(outputs)) {
@@ -7,6 +8,7 @@ function printSetOutputs(outputs) {
 }
 
 printSetOutputs({
-  tag: process.env.GITHUB_REF.replace('refs/tags/', ''),
+  version,
+  tag: (process.env.GITHUB_REF || '').replace('refs/tags/', ''),
   ci: path.resolve(process.cwd(), './ci')
 })
