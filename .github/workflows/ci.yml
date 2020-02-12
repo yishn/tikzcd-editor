@@ -41,7 +41,7 @@ jobs:
         npm ci
         npm run dist
         go get -u github.com/tcnksm/ghr
-        ./ci/bin/ghr -n "tikzcd-editor ${{ steps.info.outputs.version }}" -draft ${{ steps.info.outputs.tag }} ./dist
+        ./ci/bin/ghr -n "tikzcd-editor v${{ steps.info.outputs.version }}" -draft ${{ steps.info.outputs.tag }} ./dist
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOPATH: ${{ steps.info.outputs.ci }}
