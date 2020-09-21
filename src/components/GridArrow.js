@@ -62,7 +62,7 @@ export default class GridArrow extends Component {
 
     if (nextProps == null) nextProps = this.props
 
-    MathJax.Hub.Queue(() => {
+    MathJax.startup.promise.then(() => {
       let {cellSize, fromSize, toSize} = nextProps
       let [fromWidth, fromHeight] = fromSize || [0, 0]
       let [toWidth, toHeight] = toSize || [0, 0]
@@ -115,18 +115,16 @@ export default class GridArrow extends Component {
 
     let {onTypesetFinish = () => {}} = this.props
 
-    for (let el of this.valueElement.querySelectorAll(
-      ['span[id^="MathJax"]', '.MathJax_Preview', 'script'].join(', ')
-    )) {
-      el.remove()
-    }
-
+    let typesetPromise = Promise.resolve()
     if (this.props.value) {
-      MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.valueElement])
-      MathJax.Hub.Queue(() => {
+      // "Re-render" the value element to give to MathJax
+      MathJax.typesetClear(this.valueElement)
+      this.valueElement.innerHTML = `\\(${this.props.value}\\)`
+
+      typesetPromise = MathJax.typesetPromise([this.valueElement]).then(() => {
         onTypesetFinish({
           id: this.props.id,
-          element: this.valueElement.querySelector('.MathJax_Preview + span')
+          element: this.valueElement.querySelector('mjx-container')
         })
       })
     } else {
@@ -136,7 +134,7 @@ export default class GridArrow extends Component {
       })
     }
 
-    MathJax.Hub.Queue(() => {
+    typesetPromise.then(() => {
       if (
         // Conditions on when we don't need to update label positioning
         this.props === prevProps &&

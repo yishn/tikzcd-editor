@@ -359,3 +359,10 @@ a, img {
   .code-box .buttons li.separator {
     flex: 1;
 }
+
+mjx-merror {
+  color: inherit !important;
+  background-color: transparent !important;
+  padding: 2px;
+  border: 1px solid black;
+}
