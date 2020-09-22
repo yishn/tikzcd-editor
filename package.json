@@ -31,7 +31,7 @@
     "preact": "^10.4.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.5",
+    "@babel/core": "^7.11.6",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-react": "^7.10.4",
@@ -41,18 +41,20 @@
     "cross-zip": "^3.1.0",
     "http-server": "^0.12.3",
     "mkdirp": "^1.0.4",
-    "onchange": "^6.1.1",
-    "prettier": "1.19.1",
+    "onchange": "^7.0.2",
+    "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "tap": "^14.10.8",
-    "webpack": "^4.44.1",
+    "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   },
   "prettier": {
     "semi": false,
     "singleQuote": true,
     "bracketSpacing": false,
-    "proseWrap": "always"
+    "proseWrap": "always",
+    "arrowParens": "avoid",
+    "trailingComma": "none"
   },
   "scripts": {
     "start": "http-server",

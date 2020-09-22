@@ -84,7 +84,9 @@ export const tokenizeArrow = createTokenizer({
     regexRule('alt', /'/y),
     regexRule('direction', /[lrud]+(?!\w)/y),
     regexRule('argName', /([a-zA-Z]+ )*[a-zA-Z]+/y),
-    regexRule('argValue', /=(-?\d+(.\d+)?(em)?)/y, {value: match => match[1]}),
+    regexRule('argValue', /=(-?\d+(.\d+)?(em)?)/y, {
+      value: match => match[1]
+    }),
     {
       type: 'label',
       lineBreaks: true,
