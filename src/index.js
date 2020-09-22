@@ -1,10 +1,6 @@
 import {h, render} from 'preact'
 import App from './components/App'
 
-// Render
-
-render(<App />, document.body)
-
 // Configure MathJax
 
 window.MathJax = {
@@ -12,7 +8,12 @@ window.MathJax = {
   loader: {load: ['[tex]/noerrors']},
   startup: {
     // No typeset at startup
-    typeset: false
+    typeset: false,
+    // Render main component when MathJax is ready
+    ready: () => {
+      MathJax.startup.defaultReady()
+      render(<App />, document.body)
+    }
   },
   tex: {
     // Use noerrors package
