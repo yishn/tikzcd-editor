@@ -60,10 +60,12 @@ You can also support this project by [donating](https://paypal.me/yishn/4).
 
 A big thanks to these lovely people:
 
+- Jeremy Rouse
 - Marko Rodriguez
 - Steve Heim
 - Max New
 - Bingyu Zhang
+- Ariella Lee
 
 ## Related
 
