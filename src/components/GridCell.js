@@ -29,6 +29,8 @@ export default class GridCell extends Component {
         })
       })
     } else {
+      MathJax.typesetClear(this.valueElement)
+      this.valueElement.innerHTML = `<span class="hide">_</span>`
       onTypesetFinish({
         position: this.props.position,
         element: null
