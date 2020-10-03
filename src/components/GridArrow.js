@@ -4,7 +4,7 @@ import {arrSubtract, arrEquals, arrScale, arrAdd} from '../helper'
 import {
   norm,
   normalize,
-  getPerpendicularLeftVector,
+  rotate90DegreesAntiClockwise,
   getRectCenteredAround,
   getRectSegmentIntersections
 } from '../geometry'
@@ -85,7 +85,7 @@ export default class GridArrow extends Component {
         m,
         arrScale(
           (length * Math.tan((-(nextProps.bend || 0) * Math.PI) / 180)) / 2,
-          normalize(getPerpendicularLeftVector(d))
+          normalize(rotate90DegreesAntiClockwise(d))
         )
       )
 
