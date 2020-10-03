@@ -114,6 +114,7 @@ export default class GridArrow extends Component {
     if (this.valueElement != null) {
       // Remove residual MathJax artifacts
       this.valueElement.innerHTML = ''
+      MathJax.typesetClear([this.valueElement])
     }
   }
 
@@ -122,8 +123,6 @@ export default class GridArrow extends Component {
 
     let {onTypesetFinish = () => {}} = this.props
     let typesetPromise = Promise.resolve()
-
-    MathJax.typesetClear([this.valueElement])
 
     if (this.props.value) {
       typesetPromise = MathJax.typesetPromise([this.valueElement]).then(() => {

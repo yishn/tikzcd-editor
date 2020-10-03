@@ -18,6 +18,7 @@ export default class GridCell extends Component {
     if (this.valueElement != null) {
       // Remove residual MathJax artifacts
       this.valueElement.innerHTML = ''
+      MathJax.typesetClear([this.valueElement])
     }
   }
 
@@ -25,8 +26,6 @@ export default class GridCell extends Component {
     if (this.valueElement == null) return
 
     let {onTypesetFinish = () => {}} = this.props
-
-    MathJax.typesetClear([this.valueElement])
 
     if (this.props.value) {
       MathJax.typesetPromise([this.valueElement]).then(() => {
