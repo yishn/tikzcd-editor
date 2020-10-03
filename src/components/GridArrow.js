@@ -110,17 +110,22 @@ export default class GridArrow extends Component {
     })
   }
 
+  componentWillUpdate() {
+    if (this.valueElement != null) {
+      // Remove residual MathJax artifacts
+      this.valueElement.innerHTML = ''
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.valueElement == null) return
 
     let {onTypesetFinish = () => {}} = this.props
-
     let typesetPromise = Promise.resolve()
-    if (this.props.value) {
-      // "Re-render" the value element to give to MathJax
-      MathJax.typesetClear(this.valueElement)
-      this.valueElement.innerHTML = `\\(${this.props.value}\\)`
 
+    MathJax.typesetClear([this.valueElement])
+
+    if (this.props.value) {
       typesetPromise = MathJax.typesetPromise([this.valueElement]).then(() => {
         onTypesetFinish({
           id: this.props.id,

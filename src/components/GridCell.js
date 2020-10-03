@@ -14,14 +14,21 @@ export default class GridCell extends Component {
     )
   }
 
+  componentWillUpdate() {
+    if (this.valueElement != null) {
+      // Remove residual MathJax artifacts
+      this.valueElement.innerHTML = ''
+    }
+  }
+
   componentDidUpdate(prevProps) {
+    if (this.valueElement == null) return
+
     let {onTypesetFinish = () => {}} = this.props
 
-    if (this.props.value) {
-      // "Re-render" the value element to give to MathJax
-      MathJax.typesetClear(this.valueElement)
-      this.valueElement.innerHTML = `\\(${this.props.value}\\)`
+    MathJax.typesetClear([this.valueElement])
 
+    if (this.props.value) {
       MathJax.typesetPromise([this.valueElement]).then(() => {
         onTypesetFinish({
           position: this.props.position,
@@ -29,8 +36,6 @@ export default class GridCell extends Component {
         })
       })
     } else {
-      MathJax.typesetClear(this.valueElement)
-      this.valueElement.innerHTML = `<span class="hide">_</span>`
       onTypesetFinish({
         position: this.props.position,
         element: null
