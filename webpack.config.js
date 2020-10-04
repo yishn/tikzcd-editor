@@ -50,7 +50,10 @@ module.exports = (env, argv) => ({
 
   resolve: {
     alias: {
-      preact: path.join(__dirname, 'node_modules/preact/dist/preact.min')
+      preact:
+        argv.mode === 'production'
+          ? path.join(__dirname, 'node_modules/preact/dist/preact.min')
+          : 'preact'
     }
   }
 })

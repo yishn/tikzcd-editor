@@ -4,7 +4,7 @@ import {arrSubtract, arrEquals, arrScale, arrAdd} from '../helper'
 import {
   norm,
   normalize,
-  getPerpendicularLeftVector,
+  rotate90DegreesAntiClockwise,
   getRectCenteredAround,
   getRectSegmentIntersections
 } from '../geometry'
@@ -85,7 +85,7 @@ export default class GridArrow extends Component {
         m,
         arrScale(
           (length * Math.tan((-(nextProps.bend || 0) * Math.PI) / 180)) / 2,
-          normalize(getPerpendicularLeftVector(d))
+          normalize(rotate90DegreesAntiClockwise(d))
         )
       )
 
@@ -110,17 +110,21 @@ export default class GridArrow extends Component {
     })
   }
 
+  componentWillUpdate() {
+    if (this.valueElement != null) {
+      // Remove residual MathJax artifacts
+      this.valueElement.innerHTML = ''
+      MathJax.typesetClear([this.valueElement])
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.valueElement == null) return
 
     let {onTypesetFinish = () => {}} = this.props
-
     let typesetPromise = Promise.resolve()
-    if (this.props.value) {
-      // "Re-render" the value element to give to MathJax
-      MathJax.typesetClear(this.valueElement)
-      this.valueElement.innerHTML = `\\(${this.props.value}\\)`
 
+    if (this.props.value) {
       typesetPromise = MathJax.typesetPromise([this.valueElement]).then(() => {
         onTypesetFinish({
           id: this.props.id,

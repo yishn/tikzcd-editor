@@ -38,12 +38,12 @@ t.test('normalize', async t => {
   t.ok(floatEqual(geometry.norm(geometry.normalize([67.2, 23.65])), 1))
 })
 
-t.test('getPerpendicularLeftVector', async t => {
-  t.strictDeepEqual(geometry.getPerpendicularLeftVector([342, 123]), [
+t.test('rotate90DegreesAntiClockwise', async t => {
+  t.strictDeepEqual(geometry.rotate90DegreesAntiClockwise([342, 123]), [
     -123,
     342
   ])
-  t.strictDeepEqual(geometry.getPerpendicularLeftVector([0.3, 0.2]), [
+  t.strictDeepEqual(geometry.rotate90DegreesAntiClockwise([0.3, 0.2]), [
     -0.2,
     0.3
   ])

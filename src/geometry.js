@@ -34,7 +34,7 @@ export function getRectSegmentIntersections(rect, p1, p2) {
     .filter(p => insideRect(rect, p))
 }
 
-export function getPerpendicularLeftVector([x, y]) {
+export function rotate90DegreesAntiClockwise([x, y]) {
   return [-y, x]
 }
 
