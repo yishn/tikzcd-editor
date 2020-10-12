@@ -169,11 +169,11 @@ export default class GridArrow extends Component {
             ? bbox.y - height - heightDiff / 2 - 5
             : bbox.y + bbox.height - height - heightDiff / 2 - 11,
         right:
-          this.props.bend > 0
+          this.props.bend >= 0
             ? bbox.y + heightDiff / 2 + 11
             : bbox.y + bbox.height + heightDiff / 2 + 5,
         inside:
-          this.props.bend > 0
+          this.props.bend >= 0
             ? bbox.y - height / 2
             : bbox.y + bbox.height - height / 2
       }[labelPosition]
