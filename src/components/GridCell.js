@@ -22,28 +22,25 @@ export default class GridCell extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     if (this.valueElement == null) return
 
     let {onTypesetFinish = () => {}} = this.props
 
-    if (this.props.value) {
-      MathJax.typesetPromise([this.valueElement]).then(() => {
-        onTypesetFinish({
-          position: this.props.position,
-          element: this.valueElement.querySelector('mjx-container')
-        })
-      })
-    } else {
-      onTypesetFinish({
-        position: this.props.position,
-        element: null
-      })
-    }
-
     if (this.inputElement != null && prevProps.edit !== this.props.edit) {
       this.inputElement.select()
     }
+
+    if (this.props.value) {
+      await MathJax.typesetPromise([this.valueElement])
+    }
+
+    onTypesetFinish({
+      position: this.props.position,
+      element: !this.props.value
+        ? null
+        : this.valueElement.querySelector('mjx-container')
+    })
   }
 
   submit = () => {
