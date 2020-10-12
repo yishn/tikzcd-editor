@@ -21,7 +21,7 @@ export default class Grid extends Component {
 
     window.addEventListener('resize', () => this.updateSize())
 
-    document.addEventListener('mouseup', () => {
+    document.addEventListener('pointerup', () => {
       this.mouseDown = null
 
       let {phantomArrow} = this.state
@@ -73,7 +73,7 @@ export default class Grid extends Component {
       }
     })
 
-    document.addEventListener('mousemove', evt => {
+    document.addEventListener('pointermove', evt => {
       if (this.mouseDown == null) return
 
       evt.preventDefault()
@@ -207,7 +207,7 @@ export default class Grid extends Component {
     onPan({cameraPosition: [cx, cy]})
   }
 
-  handleNodeMouseDown = evt => {
+  handleNodePointerDown = evt => {
     if (evt.button !== 0) return
 
     let {cameraPosition} = this.props
@@ -227,7 +227,7 @@ export default class Grid extends Component {
     }
   }
 
-  handleCellGrabberMouseDown = evt => {
+  handleCellGrabberPointerDown = evt => {
     if (evt.button !== 0) return
 
     evt.stopPropagation()
@@ -271,8 +271,7 @@ export default class Grid extends Component {
     onDataChange({data: {nodes: newNodes, edges: newEdges}})
   }
 
-  handleNodeMouseUp = evt => {
-    if (this.mouseDown == null) return
+  handleNodePointerUp = evt => {
 
     let oldEvt = this.mouseDown.evt
     if (evt.clientX !== oldEvt.clientX || evt.clientY !== oldEvt.clientY) return
@@ -381,8 +380,8 @@ export default class Grid extends Component {
             width: cols * cellSize,
             height: rows * cellSize
           }}
-          onMouseDown={this.handleNodeMouseDown}
-          onMouseUp={this.handleNodeMouseUp}
+          onPointerDown={this.handleNodePointerDown}
+          onPointerUp={this.handleNodePointerUp}
         >
           {Array(rows)
             .fill()
@@ -407,7 +406,7 @@ export default class Grid extends Component {
                       selected={selected}
                       edit={selected && this.props.cellEditMode}
                       value={node && node.value}
-                      onGrabberMouseDown={this.handleCellGrabberMouseDown}
+                      onGrabberPointerDown={this.handleCellGrabberPointerDown}
                       onAddLoopClick={this.handleCellAddLoopClick}
                       onSubmit={this.props.onCellSubmit}
                       onChange={this.handleCellChange}
