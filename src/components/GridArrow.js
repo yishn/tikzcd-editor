@@ -46,7 +46,7 @@ export default class GridArrow extends Component {
     return false
   }
 
-  componentWillReceiveProps(nextProps) {
+  async componentWillReceiveProps(nextProps) {
     if (
       // Conditions on when we don't need to update arrow rendering itself
       nextProps != null &&
@@ -62,51 +62,51 @@ export default class GridArrow extends Component {
 
     if (nextProps == null) nextProps = this.props
 
-    MathJax.startup.promise.then(() => {
-      let {cellSize, fromSize, toSize} = nextProps
-      let [fromWidth, fromHeight] = fromSize || [0, 0]
-      let [toWidth, toHeight] = toSize || [0, 0]
+    await MathJax.startup.promise
 
-      ;[toWidth, toHeight] = [toWidth, toHeight].map(x =>
-        Math.min(cellSize, x + 20)
+    let {cellSize, fromSize, toSize} = nextProps
+    let [fromWidth, fromHeight] = fromSize || [0, 0]
+    let [toWidth, toHeight] = toSize || [0, 0]
+
+    ;[toWidth, toHeight] = [toWidth, toHeight].map(x =>
+      Math.min(cellSize, x + 20)
+    )
+    ;[fromWidth, fromHeight] = [fromWidth, fromHeight].map(x =>
+      Math.min(cellSize, x + 20)
+    )
+
+    let [fromCenter, toCenter] = [nextProps.from, nextProps.to].map(x =>
+      x.map(y => y * cellSize + cellSize / 2)
+    )
+    let m = arrScale(0.5, arrAdd(fromCenter, toCenter))
+    let d = arrSubtract(toCenter, fromCenter)
+    let {length} = this.getLengthAngle()
+
+    let controlPoint = arrAdd(
+      m,
+      arrScale(
+        (length * Math.tan((-(nextProps.bend || 0) * Math.PI) / 180)) / 2,
+        normalize(rotate90DegreesAntiClockwise(d))
       )
-      ;[fromWidth, fromHeight] = [fromWidth, fromHeight].map(x =>
-        Math.min(cellSize, x + 20)
-      )
+    )
 
-      let [fromCenter, toCenter] = [nextProps.from, nextProps.to].map(x =>
-        x.map(y => y * cellSize + cellSize / 2)
-      )
-      let m = arrScale(0.5, arrAdd(fromCenter, toCenter))
-      let d = arrSubtract(toCenter, fromCenter)
-      let {length} = this.getLengthAngle()
+    let fromRect = getRectCenteredAround(fromCenter, fromWidth, fromHeight)
+    let toRect = getRectCenteredAround(toCenter, toWidth, toHeight)
 
-      let controlPoint = arrAdd(
-        m,
-        arrScale(
-          (length * Math.tan((-(nextProps.bend || 0) * Math.PI) / 180)) / 2,
-          normalize(rotate90DegreesAntiClockwise(d))
-        )
-      )
+    let fromIntersection = getRectSegmentIntersections(
+      fromRect,
+      fromCenter,
+      controlPoint
+    )[0]
+    let toIntersection = getRectSegmentIntersections(
+      toRect,
+      controlPoint,
+      toCenter
+    )[0]
 
-      let fromRect = getRectCenteredAround(fromCenter, fromWidth, fromHeight)
-      let toRect = getRectCenteredAround(toCenter, toWidth, toHeight)
-
-      let fromIntersection = getRectSegmentIntersections(
-        fromRect,
-        fromCenter,
-        controlPoint
-      )[0]
-      let toIntersection = getRectSegmentIntersections(
-        toRect,
-        controlPoint,
-        toCenter
-      )[0]
-
-      this.setState({
-        startPoint: fromIntersection || fromCenter,
-        endPoint: toIntersection || toCenter
-      })
+    this.setState({
+      startPoint: fromIntersection || fromCenter,
+      endPoint: toIntersection || toCenter
     })
   }
 
@@ -118,72 +118,65 @@ export default class GridArrow extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     if (this.valueElement == null) return
 
     let {onTypesetFinish = () => {}} = this.props
-    let typesetPromise = Promise.resolve()
 
     if (this.props.value) {
-      typesetPromise = MathJax.typesetPromise([this.valueElement]).then(() => {
-        onTypesetFinish({
-          id: this.props.id,
-          element: this.valueElement.querySelector('mjx-container')
-        })
-      })
-    } else {
-      onTypesetFinish({
-        id: this.props.id,
-        element: null
-      })
+      await MathJax.typesetPromise([this.valueElement])
     }
 
-    typesetPromise.then(() => {
-      if (
-        // Conditions on when we don't need to update label positioning
-        this.props === prevProps &&
-        this.state.startPoint === prevState.startPoint &&
-        this.state.endPoint === prevState.endPoint
-      )
-        return
+    onTypesetFinish({
+      id: this.props.id,
+      element: !this.props.value
+        ? null
+        : this.valueElement.querySelector('mjx-container')
+    })
 
-      if (prevProps == null) prevProps = this.props
+    if (
+      // Conditions on when we don't need to update label positioning
+      this.props === prevProps &&
+      this.state.startPoint === prevState.startPoint &&
+      this.state.endPoint === prevState.endPoint
+    )
+      return
 
-      let bbox = this.pathElement.getBBox()
-      let {width, height} = window.getComputedStyle(this.valueElement)
+    if (prevProps == null) prevProps = this.props
 
-      ;[width, height] = [width, height].map(parseFloat)
+    let bbox = this.pathElement.getBBox()
+    let {width, height} = window.getComputedStyle(this.valueElement)
 
-      let labelPosition = this.props.labelPosition || 'left'
-      let [loopAngle, clockwise] = this.props.loop || [0, false]
-      if (clockwise)
-        labelPosition =
-          {left: 'right', right: 'left'}[labelPosition] || labelPosition
+    ;[width, height] = [width, height].map(parseFloat)
 
-      let angle = this.getLengthAngle().angle + (loopAngle * Math.PI) / 180
-      let newHeight =
-        height * Math.abs(Math.cos(angle)) + width * Math.abs(Math.sin(angle))
-      let heightDiff = newHeight - height
-      let labelOffsetX =
-        -width / 2 - (!this.props.loop ? tailHeadHeight / 2 : 0)
+    let labelPosition = this.props.labelPosition || 'left'
+    let [loopAngle, clockwise] = this.props.loop || [0, false]
+    if (clockwise)
+      labelPosition =
+        {left: 'right', right: 'left'}[labelPosition] || labelPosition
 
-      this.setState({
-        labelX: `calc(50% + ${labelOffsetX}px)`,
-        labelY: {
-          left:
-            this.props.bend >= 0
-              ? bbox.y - height - heightDiff / 2 - 5
-              : bbox.y + bbox.height - height - heightDiff / 2 - 11,
-          right:
-            this.props.bend > 0
-              ? bbox.y + heightDiff / 2 + 11
-              : bbox.y + bbox.height + heightDiff / 2 + 5,
-          inside:
-            this.props.bend > 0
-              ? bbox.y - height / 2
-              : bbox.y + bbox.height - height / 2
-        }[labelPosition]
-      })
+    let angle = this.getLengthAngle().angle + (loopAngle * Math.PI) / 180
+    let newHeight =
+      height * Math.abs(Math.cos(angle)) + width * Math.abs(Math.sin(angle))
+    let heightDiff = newHeight - height
+    let labelOffsetX = -width / 2 - (!this.props.loop ? tailHeadHeight / 2 : 0)
+
+    this.setState({
+      labelX: `calc(50% + ${labelOffsetX}px)`,
+      labelY: {
+        left:
+          this.props.bend >= 0
+            ? bbox.y - height - heightDiff / 2 - 5
+            : bbox.y + bbox.height - height - heightDiff / 2 - 11,
+        right:
+          this.props.bend >= 0
+            ? bbox.y + heightDiff / 2 + 11
+            : bbox.y + bbox.height + heightDiff / 2 + 5,
+        inside:
+          this.props.bend >= 0
+            ? bbox.y - height / 2
+            : bbox.y + bbox.height - height / 2
+      }[labelPosition]
     })
   }
 

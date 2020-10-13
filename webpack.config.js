@@ -23,7 +23,7 @@ module.exports = (env, argv) => ({
                 '@babel/preset-env',
                 {
                   modules: false,
-                  targets: 'defaults'
+                  targets: '> 4%'
                 }
               ]
             ],
