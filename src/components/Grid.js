@@ -22,7 +22,7 @@ export default class Grid extends Component {
     window.addEventListener('resize', () => this.updateSize())
 
     document.addEventListener('pointerup', () => {
-      this.mouseDown = null
+      this.pointerDown = null
 
       let {phantomArrow} = this.state
 
@@ -74,24 +74,24 @@ export default class Grid extends Component {
     })
 
     document.addEventListener('pointermove', evt => {
-      if (this.mouseDown == null) return
+      if (this.pointerDown == null) return
 
       evt.preventDefault()
 
       let newPosition = this.coordsToPosition([evt.clientX, evt.clientY])
 
-      if (this.mouseDown.mode === 'pan') {
-        let oldEvt = this.mouseDown.evt
+      if (this.pointerDown.mode === 'pan') {
+        let oldEvt = this.pointerDown.evt
         let oldMouseCoords = [oldEvt.clientX, oldEvt.clientY]
         let newMouseCoords = [evt.clientX, evt.clientY]
         let movement = arrSubtract(newMouseCoords, oldMouseCoords)
         let {onPan = () => {}} = this.props
 
         onPan({
-          cameraPosition: arrSubtract(this.mouseDown.cameraPosition, movement)
+          cameraPosition: arrSubtract(this.pointerDown.cameraPosition, movement)
         })
-      } else if (this.mouseDown.mode === 'move') {
-        let {nodeIndex} = this.mouseDown
+      } else if (this.pointerDown.mode === 'move') {
+        let {nodeIndex} = this.pointerDown
         if (nodeIndex < 0) return
 
         let existingNode = this.props.data.nodes.find(n =>
@@ -111,8 +111,8 @@ export default class Grid extends Component {
             edges: this.props.data.edges
           }
         })
-      } else if (this.mouseDown.mode === 'arrow') {
-        let {position: from} = this.mouseDown
+      } else if (this.pointerDown.mode === 'arrow') {
+        let {position: from} = this.pointerDown
         let to = newPosition
 
         if (
@@ -217,7 +217,7 @@ export default class Grid extends Component {
     )
     let node = this.props.data.nodes[nodeIndex]
 
-    this.mouseDown = {
+    this.pointerDown = {
       evt,
       cameraPosition,
       position,
@@ -238,7 +238,7 @@ export default class Grid extends Component {
     )
     let node = this.props.data.nodes[nodeIndex]
 
-    this.mouseDown = {
+    this.pointerDown = {
       evt,
       position,
       nodeIndex,
@@ -272,11 +272,12 @@ export default class Grid extends Component {
   }
 
   handleNodePointerUp = evt => {
+    if (this.pointerDown == null) return
 
-    let oldEvt = this.mouseDown.evt
+    let oldEvt = this.pointerDown.evt
     if (evt.clientX !== oldEvt.clientX || evt.clientY !== oldEvt.clientY) return
 
-    let {position} = this.mouseDown
+    let {position} = this.pointerDown
     let {onCellClick = () => {}} = this.props
 
     onCellClick({position})
