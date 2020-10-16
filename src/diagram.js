@@ -84,8 +84,8 @@ export function toTeX(diagram) {
           labelPosition={edge.line === 'none' ? null : edge.labelPosition}
           args={[
             ...[
-              edge.head,
               edge.line,
+              edge.head,
               edge.tail,
               edge.labelPositionLongitudinal
             ].map(
@@ -96,8 +96,8 @@ export function toTeX(diagram) {
                   dashed: 'dashed',
                   dotted: 'dotted',
                   none: [
-                    edge.line === 'none' ? null : 'no head',
                     'phantom',
+                    edge.line === 'none' ? null : 'no head',
                     null
                   ][i],
                   default: null,
