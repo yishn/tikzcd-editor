@@ -254,7 +254,8 @@ export default class App extends Component {
     return this.moveInHistory(1)
   }
 
-  handleDataChange = evt => {
+  handleDataChange = (evt, overwriteLastHistory = false) => {
+    if (overwriteLastHistory) this.historyPointer--
     let edgeAdded =
       this.state.diagram.edges.length + 1 === evt.data.edges.length
     let historyEntry = {diagram: evt.data, time: Date.now()}

@@ -67,7 +67,7 @@ export default class Grid extends Component {
           ]
 
           let {onDataChange = () => {}} = this.props
-          onDataChange({data: {nodes: newNodes, edges: newEdges}})
+          onDataChange({data: {nodes: newNodes, edges: newEdges}}, true)
         }
 
         this.setState({phantomArrow: null})
@@ -98,6 +98,8 @@ export default class Grid extends Component {
               edges: this.props.data.edges.map(edge => {
                 if (edge.from == textNode.id) edge.from = emptyNode.id
                 if (edge.to == textNode.id) edge.to = emptyNode.id
+                if (edge.to == edge.from)
+                  edge = {...edge, loop: [0, false], labelPosition: 'right'}
                 return edge
               })
             }
@@ -108,7 +110,7 @@ export default class Grid extends Component {
 
     document.addEventListener('mousemove', evt => {
       if (this.mouseDown == null) return
-      
+
       evt.preventDefault()
 
       let newPosition = this.coordsToPosition([evt.clientX, evt.clientY])
@@ -127,8 +129,8 @@ export default class Grid extends Component {
         let {nodeIndex, node: draggedNode} = this.mouseDown
         if (nodeIndex < 0) return
 
-        let existingNode = this.props.data.nodes.find(n =>
-          arrEquals(n.position, newPosition)
+        let existingNode = this.props.data.nodes.find(
+          n => arrEquals(n.position, newPosition) && draggedNode.id != n.id
         )
 
         let nodesToJoin = null
