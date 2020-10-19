@@ -12,7 +12,8 @@ export default class Grid extends Component {
       width: 0,
       height: 0,
       phantomArrow: null,
-      cellTypesetSizes: {}
+      cellTypesetSizes: {},
+      nodesToJoin: null
     }
   }
 
@@ -24,7 +25,7 @@ export default class Grid extends Component {
     document.addEventListener('mouseup', () => {
       this.mouseDown = null
 
-      let {phantomArrow} = this.state
+      let {phantomArrow, nodesToJoin} = this.state
 
       if (phantomArrow != null) {
         if (!arrEquals(phantomArrow.from, phantomArrow.to)) {
@@ -71,11 +72,43 @@ export default class Grid extends Component {
 
         this.setState({phantomArrow: null})
       }
+      if (nodesToJoin != null) {
+        let [draggedNode, existingNode] = nodesToJoin
+
+        if (draggedNode.id !== existingNode.id) {
+          let [textNode, emptyNode] =
+            draggedNode.value.length > 0
+              ? [draggedNode, existingNode]
+              : [existingNode, draggedNode]
+
+          let {onDataChange = () => {}} = this.props
+          onDataChange({
+            data: {
+              nodes: this.props.data.nodes
+                .filter(node => node.id != textNode.id)
+                .map(node =>
+                  node.id == emptyNode.id
+                    ? {
+                        ...emptyNode,
+                        position: existingNode.position,
+                        value: textNode.value
+                      }
+                    : node
+                ),
+              edges: this.props.data.edges.map(edge => {
+                if (edge.from == textNode.id) edge.from = emptyNode.id
+                if (edge.to == textNode.id) edge.to = emptyNode.id
+                return edge
+              })
+            }
+          })
+        }
+      }
     })
 
     document.addEventListener('mousemove', evt => {
       if (this.mouseDown == null) return
-
+      
       evt.preventDefault()
 
       let newPosition = this.coordsToPosition([evt.clientX, evt.clientY])
@@ -91,13 +124,21 @@ export default class Grid extends Component {
           cameraPosition: arrSubtract(this.mouseDown.cameraPosition, movement)
         })
       } else if (this.mouseDown.mode === 'move') {
-        let {nodeIndex} = this.mouseDown
+        let {nodeIndex, node: draggedNode} = this.mouseDown
         if (nodeIndex < 0) return
 
         let existingNode = this.props.data.nodes.find(n =>
           arrEquals(n.position, newPosition)
         )
-        if (existingNode != null) return
+
+        let nodesToJoin = null
+        if (existingNode != null) {
+          if (existingNode.value.length > 0 && draggedNode.value.length > 0)
+            return
+          if (!arrEquals(newPosition, draggedNode.position))
+            nodesToJoin = [draggedNode, existingNode]
+        }
+        this.setState({nodesToJoin})
 
         let {onDataChange = () => {}} = this.props
 
