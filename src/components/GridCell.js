@@ -10,7 +10,8 @@ export default class GridCell extends Component {
     return (
       nextProps.value !== this.props.value ||
       nextProps.edit !== this.props.edit ||
-      nextProps.selected !== this.props.selected
+      nextProps.selected !== this.props.selected ||
+      nextProps.moving !== this.props.moving
     )
   }
 
@@ -48,11 +49,11 @@ export default class GridCell extends Component {
     onSubmit({position: this.props.position})
   }
 
-  handleGrabberMouseDown = evt => {
-    let {onGrabberMouseDown = () => {}} = this.props
+  handleGrabberPointerDown = evt => {
+    let {onGrabberPointerDown = () => {}} = this.props
 
     evt.position = this.props.position
-    onGrabberMouseDown(evt)
+    onGrabberPointerDown(evt)
   }
 
   handleGrabberDragStart = evt => {
@@ -98,7 +99,8 @@ export default class GridCell extends Component {
       <li
         class={classNames('grid-cell', {
           edit: this.props.edit,
-          selected: this.props.selected
+          selected: this.props.selected,
+          moving: this.props.moving
         })}
         data-position={this.props.position.join(',')}
       >
@@ -118,7 +120,7 @@ export default class GridCell extends Component {
               value={this.props.value}
               onBlur={this.handleInputBlur}
               onInput={this.handleInputChange}
-              onMouseDown={this.stopPropagation}
+              onPointerDown={this.stopPropagation}
               onKeyDown={this.handleEditKeyDown}
             />
           </form>
@@ -127,7 +129,7 @@ export default class GridCell extends Component {
         <img
           class="grabber"
           src="./img/grabber.svg"
-          onMouseDown={this.handleGrabberMouseDown}
+          onPointerDown={this.handleGrabberPointerDown}
           onDragStart={this.handleGrabberDragStart}
         />
 

@@ -4,13 +4,7 @@ import {
   decompressFromEncodedURIComponent
 } from 'lz-string'
 
-import {
-  getId,
-  arrEquals,
-  arrSubtract,
-  b64DecodeUnicode,
-  b64EncodeUnicode
-} from './helper'
+import {getId, arrSubtract, b64DecodeUnicode, b64EncodeUnicode} from './helper'
 import {parse} from './parser'
 
 export function toJSON(diagram) {
