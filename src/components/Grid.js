@@ -12,6 +12,7 @@ export default class Grid extends Component {
       width: 0,
       height: 0,
       phantomArrow: null,
+      movingNodePosition: null,
       cellTypesetSizes: {}
     }
   }
@@ -21,7 +22,7 @@ export default class Grid extends Component {
 
     window.addEventListener('resize', () => this.updateSize())
 
-    document.addEventListener('pointerup', () => {
+    document.addEventListener('pointerup', evt => {
       this.pointerDown = null
 
       let {phantomArrow} = this.state
@@ -71,6 +72,10 @@ export default class Grid extends Component {
 
         this.setState({phantomArrow: null})
       }
+
+      this.setState({
+        movingNodePosition: null
+      })
     })
 
     document.addEventListener('pointermove', evt => {
@@ -111,6 +116,10 @@ export default class Grid extends Component {
 
             edges: this.props.data.edges
           }
+        })
+
+        this.setState({
+          movingNodePosition: newPosition
         })
       } else if (this.pointerDown.mode === 'arrow') {
         let {position: from} = this.pointerDown
@@ -232,10 +241,14 @@ export default class Grid extends Component {
     setTimeout(() => {
       // After pointer hold for 1 sec, switch to move mode
 
-      if (this.pointerDown != null && !this.pointerDown.moved) {
+      if (
+        this.pointerDown != null &&
+        arrEquals(this.pointerDown.position, position) &&
+        !this.pointerDown.moved
+      ) {
         this.handleCellGrabberPointerDown(evt)
       }
-    }, 1000)
+    }, 800)
   }
 
   handleCellGrabberPointerDown = evt => {
@@ -256,6 +269,10 @@ export default class Grid extends Component {
       node,
       mode: 'move'
     }
+
+    this.setState({
+      movingNodePosition: position
+    })
   }
 
   handleCellAddLoopClick = evt => {
@@ -416,6 +433,10 @@ export default class Grid extends Component {
                       position={position}
                       size={cellSize}
                       selected={selected}
+                      moving={
+                        this.state.movingNodePosition != null &&
+                        arrEquals(position, this.state.movingNodePosition)
+                      }
                       edit={selected && this.props.cellEditMode}
                       value={node && node.value}
                       onGrabberPointerDown={this.handleCellGrabberPointerDown}

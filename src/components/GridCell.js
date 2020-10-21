@@ -10,7 +10,8 @@ export default class GridCell extends Component {
     return (
       nextProps.value !== this.props.value ||
       nextProps.edit !== this.props.edit ||
-      nextProps.selected !== this.props.selected
+      nextProps.selected !== this.props.selected ||
+      nextProps.moving !== this.props.moving
     )
   }
 
@@ -101,7 +102,8 @@ export default class GridCell extends Component {
       <li
         class={classNames('grid-cell', {
           edit: this.props.edit,
-          selected: this.props.selected
+          selected: this.props.selected,
+          moving: this.props.moving
         })}
         data-position={this.props.position.join(',')}
       >
