@@ -85,9 +85,9 @@ export default class Grid extends Component {
           onDataChange({
             data: {
               nodes: this.props.data.nodes
-                .filter(node => node.id != textNode.id)
+                .filter(node => node.id !== textNode.id)
                 .map(node =>
-                  node.id == emptyNode.id
+                  node.id === emptyNode.id
                     ? {
                         ...emptyNode,
                         position: existingNode.position,
@@ -96,9 +96,9 @@ export default class Grid extends Component {
                     : node
                 ),
               edges: this.props.data.edges.map(edge => {
-                if (edge.from == textNode.id) edge.from = emptyNode.id
-                if (edge.to == textNode.id) edge.to = emptyNode.id
-                if (edge.to == edge.from)
+                if (edge.from === textNode.id) edge.from = emptyNode.id
+                if (edge.to === textNode.id) edge.to = emptyNode.id
+                if (edge.to === edge.from)
                   edge = {...edge, loop: [0, false], labelPosition: 'right'}
                 return edge
               })
