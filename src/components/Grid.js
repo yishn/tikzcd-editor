@@ -78,6 +78,7 @@ export default class Grid extends Component {
 
       evt.preventDefault()
 
+      this.pointerDown.moved = true
       let newPosition = this.coordsToPosition([evt.clientX, evt.clientY])
 
       if (this.pointerDown.mode === 'pan') {
@@ -217,6 +218,8 @@ export default class Grid extends Component {
     )
     let node = this.props.data.nodes[nodeIndex]
 
+    evt.position = position
+
     this.pointerDown = {
       evt,
       cameraPosition,
@@ -225,6 +228,14 @@ export default class Grid extends Component {
       node,
       mode: this.props.mode
     }
+
+    setTimeout(() => {
+      // After pointer hold for 1 sec, switch to move mode
+
+      if (this.pointerDown != null && !this.pointerDown.moved) {
+        this.handleCellGrabberPointerDown(evt)
+      }
+    }, 1000)
   }
 
   handleCellGrabberPointerDown = evt => {
