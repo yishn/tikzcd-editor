@@ -74,7 +74,6 @@ export default class Grid extends Component {
       }
       if (nodesToJoin != null) {
         let {draggedNode, existingNode} = nodesToJoin
-        console.log(nodesToJoin)
         if (draggedNode.id !== existingNode.id) {
           let [textNode, emptyNode] =
             draggedNode.value.length > 0
@@ -82,7 +81,6 @@ export default class Grid extends Component {
               : [existingNode, draggedNode]
 
           let {onDataChange = () => {}} = this.props
-          console.log('merge')
           onDataChange(
             {
               data: {
@@ -154,7 +152,6 @@ export default class Grid extends Component {
         this.setState({nodesToJoin})
 
         let {onDataChange = () => {}} = this.props
-        console.log('move')
         onDataChange({
           selectedCell: newPosition,
           data: {
