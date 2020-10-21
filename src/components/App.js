@@ -287,7 +287,6 @@ export default class App extends Component {
           }
         : {})
     }))
-    console.log(this.state.diagram.nodes)
   }
 
   handleCellClick = evt => {
