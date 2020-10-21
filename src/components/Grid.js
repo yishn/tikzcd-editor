@@ -67,14 +67,14 @@ export default class Grid extends Component {
           ]
 
           let {onDataChange = () => {}} = this.props
-          onDataChange({data: {nodes: newNodes, edges: newEdges}}, true)
+          onDataChange({data: {nodes: newNodes, edges: newEdges}})
         }
 
         this.setState({phantomArrow: null})
       }
       if (nodesToJoin != null) {
-        let [draggedNode, existingNode] = nodesToJoin
-
+        let {draggedNode, existingNode} = nodesToJoin
+        console.log(nodesToJoin)
         if (draggedNode.id !== existingNode.id) {
           let [textNode, emptyNode] =
             draggedNode.value.length > 0
@@ -82,28 +82,37 @@ export default class Grid extends Component {
               : [existingNode, draggedNode]
 
           let {onDataChange = () => {}} = this.props
-          onDataChange({
-            data: {
-              nodes: this.props.data.nodes
-                .filter(node => node.id !== textNode.id)
-                .map(node =>
-                  node.id === emptyNode.id
-                    ? {
-                        ...emptyNode,
-                        position: existingNode.position,
-                        value: textNode.value
-                      }
-                    : node
-                ),
-              edges: this.props.data.edges.map(edge => {
-                if (edge.from === textNode.id) edge.from = emptyNode.id
-                if (edge.to === textNode.id) edge.to = emptyNode.id
-                if (edge.to === edge.from)
-                  edge = {...edge, loop: [0, false], labelPosition: 'right'}
-                return edge
-              })
-            }
-          })
+          console.log('merge')
+          onDataChange(
+            {
+              data: {
+                nodes: this.props.data.nodes
+                  .filter(node => node.id !== textNode.id)
+                  .map(node =>
+                    node.id === emptyNode.id
+                      ? {
+                          ...emptyNode,
+                          position: existingNode.position,
+                          value: textNode.value
+                        }
+                      : node
+                  ),
+                edges: this.props.data.edges.map(edge => {
+                  edge = {...edge}
+                  if (edge.from === textNode.id) edge.from = emptyNode.id
+                  if (edge.to === textNode.id) edge.to = emptyNode.id
+                  if (edge.to === edge.from)
+                    edge = {
+                      ...edge,
+                      loop: edge.loop || [0, false],
+                      labelPosition: 'right'
+                    }
+                  return edge
+                })
+              }
+            },
+            true
+          )
         }
       }
     })
@@ -129,21 +138,23 @@ export default class Grid extends Component {
         let {nodeIndex, node: draggedNode} = this.mouseDown
         if (nodeIndex < 0) return
 
-        let existingNode = this.props.data.nodes.find(
-          n => arrEquals(n.position, newPosition) && draggedNode.id != n.id
+        let existingNode = this.props.data.nodes.find(n =>
+          arrEquals(n.position, newPosition)
         )
+
+        if (existingNode != null && existingNode.id === draggedNode.id) return
 
         let nodesToJoin = null
         if (existingNode != null) {
           if (existingNode.value.length > 0 && draggedNode.value.length > 0)
             return
           if (!arrEquals(newPosition, draggedNode.position))
-            nodesToJoin = [draggedNode, existingNode]
+            nodesToJoin = {draggedNode, existingNode}
         }
         this.setState({nodesToJoin})
 
         let {onDataChange = () => {}} = this.props
-
+        console.log('move')
         onDataChange({
           selectedCell: newPosition,
           data: {
