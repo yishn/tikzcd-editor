@@ -26,7 +26,6 @@ export default class Grid extends Component {
       this.mouseDown = null
 
       let {phantomArrow, nodesToJoin} = this.state
-
       if (phantomArrow != null) {
         if (!arrEquals(phantomArrow.from, phantomArrow.to)) {
           // Add edge
@@ -73,45 +72,38 @@ export default class Grid extends Component {
         this.setState({phantomArrow: null})
       }
       if (nodesToJoin != null) {
-        let {draggedNode, existingNode} = nodesToJoin
-        if (draggedNode.id !== existingNode.id) {
-          let [textNode, emptyNode] =
-            draggedNode.value.length > 0
-              ? [draggedNode, existingNode]
-              : [existingNode, draggedNode]
-
-          let {onDataChange = () => {}} = this.props
-          onDataChange(
-            {
-              data: {
-                nodes: this.props.data.nodes
-                  .filter(node => node.id !== textNode.id)
-                  .map(node =>
-                    node.id === emptyNode.id
-                      ? {
-                          ...emptyNode,
-                          position: existingNode.position,
-                          value: textNode.value
-                        }
-                      : node
-                  ),
-                edges: this.props.data.edges.map(edge => {
-                  edge = {...edge}
-                  if (edge.from === textNode.id) edge.from = emptyNode.id
-                  if (edge.to === textNode.id) edge.to = emptyNode.id
-                  if (edge.to === edge.from)
-                    edge = {
-                      ...edge,
-                      loop: edge.loop || [0, false],
-                      labelPosition: 'right'
-                    }
-                  return edge
-                })
-              }
-            },
-            true
-          )
-        }
+        let {textNode, emptyNode} = nodesToJoin
+        let {onDataChange = () => {}} = this.props
+        onDataChange(
+          {
+            data: {
+              nodes: this.props.data.nodes
+                .filter(node => node.id !== textNode.id)
+                .map(node =>
+                  node.id === emptyNode.id
+                    ? {
+                        ...emptyNode,
+                        value: textNode.value
+                      }
+                    : node
+                ),
+              edges: this.props.data.edges.map(edge => {
+                edge = {...edge}
+                if (edge.from === textNode.id) edge.from = emptyNode.id
+                if (edge.to === textNode.id) edge.to = emptyNode.id
+                if (edge.to === edge.from)
+                  edge = {
+                    ...edge,
+                    loop: edge.loop || [0, false],
+                    labelPosition: 'right'
+                  }
+                return edge
+              })
+            }
+          },
+          true
+        )
+        this.setState({nodesToJoin: null})
       }
     })
 
@@ -136,18 +128,31 @@ export default class Grid extends Component {
         let {nodeIndex, node: draggedNode} = this.mouseDown
         if (nodeIndex < 0) return
 
-        let existingNode = this.props.data.nodes.find(n =>
-          arrEquals(n.position, newPosition)
+        let existingNode = this.props.data.nodes.find(
+          n => arrEquals(n.position, newPosition) && n.id !== draggedNode.id
         )
 
-        if (existingNode != null && existingNode.id === draggedNode.id) return
+        if (
+          this.props.data.nodes.some(
+            n => arrEquals(n.position, newPosition) && n.id === draggedNode.id
+          )
+        )
+          return
 
         let nodesToJoin = null
         if (existingNode != null) {
           if (existingNode.value.length > 0 && draggedNode.value.length > 0)
             return
-          if (!arrEquals(newPosition, draggedNode.position))
-            nodesToJoin = {draggedNode, existingNode}
+          if (!arrEquals(newPosition, draggedNode.position)) {
+            let [textNode, emptyNode] =
+              draggedNode.value.length > 0
+                ? [draggedNode, existingNode]
+                : [existingNode, draggedNode]
+            nodesToJoin = {
+              textNode: {...textNode, position: newPosition},
+              emptyNode: {...emptyNode, position: newPosition}
+            }
+          }
         }
         this.setState({nodesToJoin})
 
@@ -446,9 +451,22 @@ export default class Grid extends Component {
                     this.props.selectedCell != null &&
                     arrEquals(position, this.props.selectedCell)
 
-                  let node = this.props.data.nodes.find(n =>
-                    arrEquals(n.position, position)
-                  )
+                  let node
+
+                  let {nodesToJoin} = this.state
+                  if (
+                    nodesToJoin != null &&
+                    arrEquals(nodesToJoin.textNode.position, position)
+                  ) {
+                    node = {
+                      ...nodesToJoin.emptyNode,
+                      value: nodesToJoin.textNode.value,
+                      position: position
+                    }
+                  } else
+                    node = this.props.data.nodes.find(n =>
+                      arrEquals(n.position, position)
+                    )
 
                   return (
                     <GridCell
