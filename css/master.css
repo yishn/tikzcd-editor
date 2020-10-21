@@ -87,7 +87,12 @@ a, img {
     border-left: none;
     overflow: hidden;
     white-space: nowrap;
-    transition: background-color .2s;
+    transition: background-color .2s, box-shadow .2s, transform .2s;
+  }
+  .grid-cell.moving {
+    background: white;
+    box-shadow: 0 5px 1rem rgba(0, 0, 0, .3);
+    transform: scale(1.1);
   }
   .grid-cell.selected {
     background: #eee;
