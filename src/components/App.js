@@ -13,7 +13,7 @@ export default class App extends Component {
     super()
 
     this.state = {
-      tool: 'pan',
+      tool: 'pan', // Options: pan, arrow, preview
       cellSize: 130,
       diagram: {nodes: [], edges: []},
 
@@ -48,7 +48,7 @@ export default class App extends Component {
 
     document.addEventListener('keydown', evt => {
       if (toolControl[evt.key] != null) {
-        if (this.prevTool != null) return
+        if (this.prevTool != null || this.state.tool === 'preview') return
 
         this.prevTool = this.state.tool
         this.setState({tool: toolControl[evt.key]})
@@ -386,10 +386,13 @@ export default class App extends Component {
           data={this.state.diagram}
           mode={this.state.tool}
           selectedCell={
-            this.state.selectedArrow == null ? this.state.selectedCell : null
+            this.state.tool !== 'preview' && this.state.selectedArrow == null
+              ? this.state.selectedCell
+              : null
           }
           selectedArrow={this.state.selectedArrow}
           cellEditMode={this.state.cellEditMode}
+          showCellBorders={this.state.tool !== 'preview'}
           onPan={this.handlePan}
           onDataChange={this.handleDataChange}
           onCellClick={this.handleCellClick}
@@ -418,6 +421,13 @@ export default class App extends Component {
             icon="./img/tools/arrow.svg"
             name="Arrow Tool (Shift)"
             onClick={this.handleToolClick('arrow')}
+          />
+
+          <Button
+            checked={this.state.tool === 'preview'}
+            icon="./img/tools/arrow.svg"
+            name="Show/Hide cell borders"
+            onClick={this.handleToolClick('preview')}
           />
 
           <Separator />

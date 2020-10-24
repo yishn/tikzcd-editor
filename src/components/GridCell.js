@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {h, Component, Fragment} from 'preact'
 import classNames from 'classnames'
 
 export default class GridCell extends Component {
@@ -11,7 +11,8 @@ export default class GridCell extends Component {
       nextProps.value !== this.props.value ||
       nextProps.edit !== this.props.edit ||
       nextProps.selected !== this.props.selected ||
-      nextProps.moving !== this.props.moving
+      nextProps.moving !== this.props.moving ||
+      nextProps.showBorder !== this.props.showBorder
     )
   }
 
@@ -100,7 +101,8 @@ export default class GridCell extends Component {
         class={classNames('grid-cell', {
           edit: this.props.edit,
           selected: this.props.selected,
-          moving: this.props.moving
+          moving: this.props.moving,
+          'show-border': this.props.showBorder
         })}
         data-position={this.props.position.join(',')}
       >
@@ -126,20 +128,24 @@ export default class GridCell extends Component {
           </form>
         )}
 
-        <img
-          class="grabber"
-          src="./img/grabber.svg"
-          onPointerDown={this.handleGrabberPointerDown}
-          onDragStart={this.handleGrabberDragStart}
-        />
+        {this.props.showBorder && (
+          <>
+            <img
+              class="grabber"
+              src="./img/grabber.svg"
+              onPointerDown={this.handleGrabberPointerDown}
+              onDragStart={this.handleGrabberDragStart}
+            />
 
-        <img
-          class="loop"
-          src="./img/loop.svg"
-          title="Create Loop"
-          alt="Create Loop"
-          onClick={this.handleAddLoop}
-        />
+            <img
+              class="loop"
+              src="./img/loop.svg"
+              title="Create Loop"
+              alt="Create Loop"
+              onClick={this.handleAddLoop}
+            />
+          </>
+        )}
       </li>
     )
   }

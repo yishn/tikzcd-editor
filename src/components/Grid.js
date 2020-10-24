@@ -86,7 +86,10 @@ export default class Grid extends Component {
       this.pointerDown.moved = true
       let newPosition = this.coordsToPosition([evt.clientX, evt.clientY])
 
-      if (this.pointerDown.mode === 'pan') {
+      if (
+        this.pointerDown.mode === 'pan' ||
+        this.pointerDown.mode === 'preview'
+      ) {
         let oldEvt = this.pointerDown.evt
         let oldMouseCoords = [oldEvt.clientX, oldEvt.clientY]
         let newMouseCoords = [evt.clientX, evt.clientY]
@@ -244,7 +247,8 @@ export default class Grid extends Component {
       if (
         this.pointerDown != null &&
         arrEquals(this.pointerDown.position, position) &&
-        !this.pointerDown.moved
+        !this.pointerDown.moved &&
+        this.props.mode !== 'preview'
       ) {
         this.handleCellGrabberPointerDown(evt)
       }
@@ -398,7 +402,7 @@ export default class Grid extends Component {
       <section
         ref={el => (this.element = el)}
         id="grid"
-        class={this.props.mode}
+        class={this.props.mode === 'preview' ? 'pan' : this.props.mode}
       >
         <ol
           style={{
@@ -438,6 +442,7 @@ export default class Grid extends Component {
                         arrEquals(position, this.state.movingNodePosition)
                       }
                       edit={selected && this.props.cellEditMode}
+                      showBorder={this.props.showCellBorders}
                       value={node && node.value}
                       onGrabberPointerDown={this.handleCellGrabberPointerDown}
                       onAddLoopClick={this.handleCellAddLoopClick}
