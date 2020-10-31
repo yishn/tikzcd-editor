@@ -101,7 +101,8 @@ export default class App extends Component {
             ? null
             : {cellEditMode: true}
         )
-      }
+      } else if (evt.key === 'z' && evt.ctrlKey) this.undo()
+      else if (evt.key === 'y' && evt.ctrlKey) this.redo()
     })
 
     document.addEventListener('keyup', evt => {
